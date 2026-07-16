@@ -8,7 +8,7 @@ import BottomNavigation from "../components/BottomNavigation";
 
 export default function Home() {
   return (
-    <main>
+    <main className="pb-24">
       <Navbar />
       <SearchBar />
       <PromoCarousel />
