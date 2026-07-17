@@ -4,8 +4,9 @@ import {
     Brush,
     Scissors,
     Heart,
-    LucideIcon,
 } from "lucide-react";
+
+import type { LucideIcon } from "lucide-react";
 
 const categories: {
     name: string;
@@ -73,7 +74,6 @@ export default function CategorySelection() {
                                 flex
                                 items-center
                                 justify-center
-                                text-xl
                                 transition
                                 duration-300
                                 group-hover:bg-primary
@@ -87,11 +87,8 @@ export default function CategorySelection() {
                                 {category.name}
                             </span>
                         </div>
-                    )
-                }
-                    
-                )}
-
+                    );
+                })}
             </div>
         </section>
     );

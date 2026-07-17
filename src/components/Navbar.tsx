@@ -6,6 +6,7 @@ export default function Navbar() {
 
             <div className="flex items-center gap-3">
                 <button className="
+                    md:hidden
                     p-2
                     rounded-full
                     text-on-surface-variant

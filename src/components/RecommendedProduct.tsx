@@ -48,7 +48,9 @@ export default function RecommendedProducts() {
 
                 <h2 className="
                     text-2xl
-                    font-semibold
+                    font-display
+                    font-medium
+                    text-on-surface
                 ">
                     Recommended For You
                 </h2>

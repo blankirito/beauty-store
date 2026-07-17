@@ -2,10 +2,10 @@
 
 export default function PromoCarousel() {
     return (
-        <section className="px-4">
+        <section className="px-4 mt-6">
             <div className="
-                h-52 
-                rounded-2x1 
+                h-64
+                rounded-xl
                 bg-cover
                 bg-center
                 relative
@@ -21,7 +21,8 @@ export default function PromoCarousel() {
                     absolute 
                     inset-0 
                     bg-gradient-to-r
-                    from-black/60
+                    from-black/50
+                    via-black/20
                     to-transparent
                 ">
                 </div>
@@ -33,11 +34,11 @@ export default function PromoCarousel() {
                     flex-col
                     justify-center
                     px-8
-                    text-on-primary
+                    text-white
                 ">
                     <span className="
                         text-xs 
-                        tracking-widest 
+                        tracking-[0.2em]
                         font-semibold
                         bg-white/20
                         backdrop-blur-sm
@@ -50,24 +51,37 @@ export default function PromoCarousel() {
                     </span>
 
                     <h2 className="
-                        text-3xl 
-                        font-semibold 
-                        mt-2
+                        text-4xl
+                        font-display
+                        font-medium 
+                        mt-3
                     ">
                         The Serene Collection
                     </h2>
 
+                    <p className="
+                        text-sm
+                        mt-2
+                        text-white/80
+                        max-w-xs
+                    ">
+                        Discover timeless skincare essentials crafted for your daily ritual.
+                    </p>
+
                     <button className="
-                        mt-4
+                        mt-5
                         bg-surface
                         text-foreground
-                        px-5
-                        py-2
-                        rounded-full
+                        px-6
+                        py-3
+                        rounded-lg
                         w-fit
-                        shadow-md
-                        hover:bg-gray-100
+                        text-sm
+                        font-semibold
                         transition
+                        duration-300
+                        hover:bg-primary
+                        hover:text-on-primary
                     ">
                         Shop Now
                     </button>

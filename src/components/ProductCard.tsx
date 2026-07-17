@@ -1,3 +1,7 @@
+import { 
+    Heart,
+    Star
+} from "lucide-react";
 
 type ProductCardProps = {
     name: string,
@@ -20,6 +24,9 @@ export default function ProductCard( {
             rounded-xl
             overflow-hidden
             shadow-sm
+            transition
+            duration-300
+            hover:shadow-md
         ">
 
             <div className="
@@ -27,43 +34,66 @@ export default function ProductCard( {
                 aspect-square
                 bg-cover
                 bg-center
+                group
+                overflow-hidden
             "
             style={{
                 backgroundImage: `url(${image})`,
             }}
             >
+                <div className="
+                    absolute
+                    inset-0
+                    bg-black/0
+                    transition
+                    duration-300
+                    group-hover:bg-black/10
+                "/>
+
                 <button className="
                     absolute
-                    top-2
-                    right-2
-                    w-8
-                    h-8
-                    bg-surface
+                    top-3
+                    right-3
+                    w-9
+                    h-9
                     rounded-full
+                    bg-white/90
+                    flex
+                    items-center
+                    justify-center
+                    text-on-surface
+                    transition
+                    hover:text-primary
                 ">
-                    ❤️
+                    <Heart size={18} />
                 </button>
             </div>
 
-            <div className="p-3">
+            <div className="p-4">
 
                 <div className="
                     flex
                     items-center
                     gap-1
                     text-sm
+                    text-secondary
                 ">
-                    <span>⭐</span>
+                    <Star size={14} fill="currentColor"/>
                     <span>{rating}</span>
                 </div>
                 
                 <h3 className="
-                    font-semibold
+                    mt-1
+                    font-display
+                    text-lg
+                    font-medium
+                    text-on-surface
                 ">
                     {name}
                 </h3>
 
                 <p className="
+                    mt-1
                     text-on-surface-variant
                     text-sm
                 ">
@@ -71,8 +101,10 @@ export default function ProductCard( {
                 </p>
 
                 <p className="
-                    font-bold
-                    mt-2
+                    font-semibold
+                    mt-3
+                    text-lg
+                    text-primary
                 ">
                     RM{price}
                 </p>
