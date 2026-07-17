@@ -1,4 +1,8 @@
 import ProductCard from "./ProductCard";
+import { 
+    Search,
+    SlidersHorizontal
+} from "lucide-react";
 
 const products = [
   {
@@ -50,12 +54,23 @@ export default function RecommendedProducts() {
                     text-2xl
                     font-display
                     font-medium
-                    text-on-surface
+                    text-primary
                 ">
                     Recommended For You
                 </h2>
 
-                <span>Sort</span>
+                <button className="
+                    w-10
+                    h-10
+                    flex
+                    items-center
+                    justify-center
+                    text-on-surface-variant
+                    hover:text-primary
+                    transition
+                ">
+                    <SlidersHorizontal size={18} />
+                </button>
 
             </div>
 

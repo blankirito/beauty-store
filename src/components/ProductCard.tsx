@@ -87,7 +87,7 @@ export default function ProductCard( {
                     font-display
                     text-lg
                     font-medium
-                    text-on-surface
+                    text-primary
                 ">
                     {name}
                 </h3>

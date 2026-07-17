@@ -40,9 +40,9 @@ export default function CategorySelection() {
 
             <div className="flex justify-between items-center px-4 mb-4">
 
-                <h2 className="text-2xl font-display font-medium text-on-surface">Categories</h2>
+                <h2 className="text-2xl font-display font-medium text-primary">Categories</h2>
 
-                <button className="text-sm text-primary font-medium">View All</button>
+                <button className="text-sm text-on-surface font-medium">View All</button>
 
             </div>
 
