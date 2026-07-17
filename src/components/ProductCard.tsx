@@ -16,7 +16,7 @@ export default function ProductCard( {
 }: ProductCardProps) {
     return (
         <div className="
-            bg-white
+            bg-surface
             rounded-xl
             overflow-hidden
             shadow-sm
@@ -38,7 +38,7 @@ export default function ProductCard( {
                     right-2
                     w-8
                     h-8
-                    bg-white/90
+                    bg-surface
                     rounded-full
                 ">
                     ❤️
@@ -64,7 +64,7 @@ export default function ProductCard( {
                 </h3>
 
                 <p className="
-                    text-gray-700
+                    text-on-surface-variant
                     text-sm
                 ">
                     {description}

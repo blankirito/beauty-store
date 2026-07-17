@@ -2,14 +2,33 @@
 
 :root {
   --background: #fbf9f5;
-  --foreground: #171717;
+  --foreground: #1b1c1a;
+
+  --primary: #845145;
+  --primary-continer: #e8a798;
+  --secondary: #705b3e;
+
+  --surface: #ffffff;
+  --surface-low: #f5f3ef;
+
+  --outline: #d6c2be;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-primary: var(--primary);
+    --primary-continer: var(--primary-continer);
+    --color-secondary: var(--secondary);
+
+    --color-surface: var(--surface);
+    --color-surface-low: var(--surface-low);
+
+    --color-outline: var(--outline);
+
+    --font-sans: var(--font-inter);
+    --font-mono: var(--font-playfair);
 }
 
 body {

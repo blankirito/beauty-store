@@ -33,7 +33,7 @@ export default function PromoCarousel() {
                     flex-col
                     justify-center
                     px-8
-                    text-white
+                    text-on-primary
                 ">
                     <span className="
                         text-xs 
@@ -59,8 +59,8 @@ export default function PromoCarousel() {
 
                     <button className="
                         mt-4
-                        bg-white
-                        text-black
+                        bg-surface
+                        text-foreground
                         px-5
                         py-2
                         rounded-full

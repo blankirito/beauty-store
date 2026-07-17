@@ -1,24 +1,35 @@
+import {
+    Sparkles,
+    Droplets,
+    Brush,
+    Scissors,
+    Heart,
+    LucideIcon,
+} from "lucide-react";
 
-const categories = [
+const categories: {
+    name: string;
+    icon: LucideIcon;
+}[] = [
     {
         name: "Beauty",
-        icon: "✨",
+        icon: Sparkles,
     },
     {
         name: "Skincare",
-        icon: "🧴",
+        icon: Droplets,
     },
     {
         name: "Makeup",
-        icon: "💄",
+        icon: Brush,
     },
     {
         name: "Hair",
-        icon: "💇",
+        icon: Scissors,
     },
     {
         name: "Body Care",
-        icon: " 🧖",
+        icon: Heart,
     },
 ]
 
@@ -28,19 +39,22 @@ export default function CategorySelection() {
 
             <div className="flex justify-between items-center px-4 mb-4">
 
-                <h2 className="text-2xl font-semibold text-primary">Categories</h2>
+                <h2 className="text-2xl font-display font-medium text-on-surface">Categories</h2>
 
-                <button className="text-sm">View All</button>
+                <button className="text-sm text-primary font-medium">View All</button>
 
             </div>
 
             <div className="flex gap-6 overflow-x-auto px-4 no-scrollbar">
 
-                {categories.map((category) => (
+                {categories.map((category) => {
 
-                    <div
-                        key={category.name}
-                        className="
+                    const Icon = category.icon;
+
+                    return (
+                        <div
+                            key={category.name}
+                            className="
                             group
                             flex
                             flex-col
@@ -49,31 +63,34 @@ export default function CategorySelection() {
                             min-w-[72px]
                             cursor-pointer
                             "
-                    >
-                        <div 
-                            className="
+                        >
+                            <div
+                                className="
                                 w-14
                                 h-14
                                 rounded-2xl
-                                bg-[#f3e8e3]
+                                bg-surface-low
                                 flex
                                 items-center
                                 justify-center
                                 text-xl
                                 transition
                                 duration-300
-                                group-hover:bg-[#845145]
-                                group-hover:text-white
-                            "
-                        >
-                            {category.icon}
-                        </div>
+                                group-hover:bg-primary
+                                group-hover:text-on-primary
+                                group-hover:scale-105
+                            ">
+                                <Icon size={26} strokeWidth={1.5} />
+                            </div>
 
-                        <span className="text-sm">
-                            {category.name}
-                        </span>
-                    </div>
-                ))}
+                            <span className="text-sm text-on-surface-variant">
+                                {category.name}
+                            </span>
+                        </div>
+                    )
+                }
+                    
+                )}
 
             </div>
         </section>
