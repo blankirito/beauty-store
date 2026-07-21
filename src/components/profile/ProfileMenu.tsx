@@ -27,7 +27,7 @@ const menu: {
     {
         name: "Saved Addresses",
         icon: MapPin,
-        href: "/address",
+        href: "/savedaddress",
     },
     {
         name: "Settings",

@@ -1,29 +1,40 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+
 import {
     X,
     ChevronDown,
     ChevronRight,
 } from "lucide-react";
 
+
 type Props = {
     open: boolean;
     onClose: () => void;
 };
 
+
 export default function SideMenu({
     open,
     onClose,
 }: Props) {
+
+
+    const [productOpen, setProductOpen] = useState(false);
+
+
     return (
         <>
+
             {/* Overlay */}
 
             <div
                 onClick={onClose}
                 className={`
-                    fixed inset-0
+                    fixed
+                    inset-0
                     bg-black/40
                     transition-opacity
                     duration-300
@@ -31,11 +42,15 @@ export default function SideMenu({
 
                     ${
                         open
-                            ? "opacity-100"
-                            : "pointer-events-none opacity-0"
+                        ?
+                        "opacity-100"
+                        :
+                        "pointer-events-none opacity-0"
                     }
                 `}
             />
+
+
 
             {/* Drawer */}
 
@@ -54,36 +69,90 @@ export default function SideMenu({
 
                     ${
                         open
-                            ? "translate-x-0"
-                            : "-translate-x-full"
+                        ?
+                        "translate-x-0"
+                        :
+                        "-translate-x-full"
                     }
                 `}
             >
-                <div className="flex justify-between items-center p-5 border-b border-outline">
 
-                    <h2 className="font-display text-2xl text-primary">
+
+                {/* Header */}
+
+                <div
+                    className="
+                        flex
+                        justify-between
+                        items-center
+                        p-5
+                        border-b
+                        border-outline
+                    "
+                >
+
+                    <h2
+                        className="
+                            font-display
+                            text-2xl
+                            text-primary
+                        "
+                    >
                         Boutique
                     </h2>
 
+
                     <button
                         onClick={onClose}
-                        className="text-primary"
+                        className="
+                            text-primary
+                            p-2
+                            rounded-full
+                            hover:bg-surface-low
+                        "
                     >
-                        <X />
+                        <X size={22}/>
                     </button>
+
 
                 </div>
 
-                <nav className="p-3 space-y-2">
+
+
+                {/* Menu */}
+
+                <nav
+                    className="
+                        p-3
+                        space-y-2
+                    "
+                >
+
+
+                    {/* Home */}
 
                     <Link
                         href="/"
-                        className="block p-3 rounded-lg hover:bg-surface-low"
+                        className="
+                            block
+                            p-3
+                            rounded-lg
+                            hover:bg-surface-low
+                        "
                     >
                         Home
                     </Link>
 
+
+
+
+
+                    {/* Products */}
+
                     <button
+                        onClick={() =>
+                            setProductOpen(!productOpen)
+                        }
                         className="
                             w-full
                             flex
@@ -94,63 +163,131 @@ export default function SideMenu({
                             hover:bg-surface-low
                         "
                     >
-                        Products
 
-                        <ChevronDown size={18} />
+                        <span>
+                            Products
+                        </span>
+
+
+                        <ChevronDown
+                            size={18}
+                            className={`
+                                transition-transform
+                                duration-300
+
+                                ${
+                                    productOpen
+                                    ?
+                                    "rotate-180"
+                                    :
+                                    ""
+                                }
+                            `}
+                        />
+
                     </button>
 
-                    <div className="ml-5 space-y-2">
 
-                        <button
-                            className="
-                                flex
-                                justify-between
-                                w-full
-                                py-2
-                            "
-                        >
-                            Skincare
 
-                            <ChevronRight size={16}/>
-                        </button>
 
-                        <button
-                            className="
-                                flex
-                                justify-between
-                                w-full
-                                py-2
-                            "
-                        >
-                            Makeup
+                    {/* Product Children */}
 
-                            <ChevronRight size={16}/>
-                        </button>
+                    {
+                        productOpen && (
 
-                        <button
-                            className="
-                                flex
-                                justify-between
-                                w-full
-                                py-2
-                            "
-                        >
-                            Haircare
+                            <div
+                                className="
+                                    ml-5
+                                    space-y-2
+                                "
+                            >
 
-                            <ChevronRight size={16}/>
-                        </button>
 
-                    </div>
+                                <button
+                                    className="
+                                        flex
+                                        justify-between
+                                        items-center
+                                        w-full
+                                        py-2
+                                        text-sm
+                                    "
+                                >
+
+                                    Skincare
+
+                                    <ChevronRight size={16}/>
+
+                                </button>
+
+
+
+                                <button
+                                    className="
+                                        flex
+                                        justify-between
+                                        items-center
+                                        w-full
+                                        py-2
+                                        text-sm
+                                    "
+                                >
+
+                                    Makeup
+
+                                    <ChevronRight size={16}/>
+
+                                </button>
+
+
+
+
+                                <button
+                                    className="
+                                        flex
+                                        justify-between
+                                        items-center
+                                        w-full
+                                        py-2
+                                        text-sm
+                                    "
+                                >
+
+                                    Haircare
+
+                                    <ChevronRight size={16}/>
+
+                                </button>
+
+
+                            </div>
+
+                        )
+                    }
+                    
+                    {/* Profile */}
 
                     <Link
                         href="/profile"
-                        className="block p-3 rounded-lg hover:bg-surface-low"
+                        className="
+                            block
+                            p-3
+                            rounded-lg
+                            hover:bg-surface-low
+                        "
                     >
                         Profile
                     </Link>
 
+
+
                 </nav>
+
+
+
             </aside>
+
+
         </>
     );
 }

@@ -10,13 +10,61 @@ import {
   ChevronDown,
 } from "lucide-react";
 
+const menu = [
+    {
+        name: "Home",
+        href: "/",
+    },
+    {
+        name: "Product",
+        children: [
+            {
+                name: "skincare",
+                href: "/products/skincare"
+            },
+            {
+                name: "Makeup",
+                href: "/products/makeup"
+            },
+            {
+                name: "Body Care",
+                href: "/products/bodycare"
+            },
+            {
+                name: "Hair Cair",
+                href: "/products/haircare"
+            },
+        ]
+    },
+    {
+        name: "About",
+        href: "/about",
+    },
+    {
+        name: "Profile",
+        href: "/profile",
+    },
+    
+]
+
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [productOpen, setProductOpen] = useState(false);
 
   return (
     <>
-      <header className="flex justify-between items-center h-16 px-6 bg-surface shadow-sm">
+      <header className="
+        sticky
+        top-0
+        z-50
+        h-16
+        px-6
+        bg-surface
+        shadow-sm
+        flex
+        items-center
+        justify-between
+      ">
 
         {/* Left */}
         <div className="flex items-center gap-3">
@@ -26,10 +74,7 @@ export default function Navbar() {
             onClick={() => setMenuOpen(!menuOpen)}
             className="
               md:hidden
-              p-2
-              rounded-full
-              text-on-surface-variant
-              hover:bg-surface-low
+              text-primary
             "
           >
             {menuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -40,7 +85,6 @@ export default function Navbar() {
             className="
               text-xl
               font-display
-              font-medium
               text-primary
             "
           >
@@ -50,33 +94,33 @@ export default function Navbar() {
           {/* Desktop */}
           <nav className="hidden md:flex gap-8 ml-10">
 
-            <Link
-              href="/"
-              className="hover:text-primary"
-            >
-              Home
-            </Link>
+            {
+                menu.map((item) => (
+                    item.children?
 
-            <Link
-              href="/products"
-              className="hover:text-primary"
-            >
-              Products
-            </Link>
+                    <div 
+                        key={item.name}>
+                            {item.name}
+                    </div>
 
-            <Link
-              href="/about"
-              className="hover:text-primary"
-            >
-              About
-            </Link>
+                    :
+
+                    <Link
+                        key={item.name}
+                        href={item.href}
+                        className="hover:text-primary"
+                    >
+                        {item.name}
+                    </Link>
+                ))
+            }
 
           </nav>
 
         </div>
 
         {/* Right */}
-        <div className="flex items-center gap-2">
+        <div className="flex gap-2">
 
           <Link
             href="/search"
@@ -117,95 +161,86 @@ export default function Navbar() {
           "
         >
 
-          <nav className="flex flex-col">
-
-            <Link
-              href="/"
-              className="px-6 py-4 hover:bg-surface-low"
-            >
-              Home
-            </Link>
-
-            {/* Products */}
-            <button
-              onClick={() => setProductOpen(!productOpen)}
-              className="
+          <nav className="
                 flex
-                justify-between
-                items-center
-                px-6
-                py-4
-                hover:bg-surface-low
-              "
-            >
-              Products
+                flex-col
+          ">
+            {
+                menu.map((item) => (
 
-              <ChevronDown
-                size={18}
-                className={`
-                  transition-transform
-                  ${productOpen ? "rotate-180" : ""}
-                `}
-              />
-            </button>
+                    item.children?
 
-            {productOpen && (
+                    <div key={item.name}>
 
-              <div className="bg-surface-low">
+                        <button
+                            onClick={() => setProductOpen(!productOpen)
 
-                <Link
-                  href="/products/skincare"
-                  className="block px-10 py-3"
-                >
-                  Skincare
-                </Link>
+                            }
+                            className="
+                                w-full
+                                flex
+                                justify-between
+                                px-6
+                                py-4
+                            "
+                        >
+                            {item.name}
 
-                <Link
-                  href="/products/makeup"
-                  className="block px-10 py-3"
-                >
-                  Makeup
-                </Link>
+                            <ChevronDown
+                                size={18}
+                                className={
+                                    productOpen
+                                    ?
+                                    "rotate-180"
+                                    :
+                                    ""
+                                }
+                            />
+                        </button>
+                                {
+                                    productOpen && (
+                                        
+                                        <div className="
+                                            bg-surface-low
+                                        ">
+                                            {
+                                                item.children.map(
+                                                (child)=>(
 
-                <Link
-                  href="/products/bodycare"
-                  className="block px-10 py-3"
-                >
-                  Body Care
-                </Link>
+                                                    <Link
+                                                        key={child.name}
+                                                        href={child.href}
+                                                        className="
+                                                        block
+                                                        px-10
+                                                        py-3
+                                                        "
+                                                    >
+                                                        {child.name}
+                                                    </Link>
+                                                )
+                                            )
+                                            }
+                                            
+                                        </div>
+                                    )
+                                }
+                    </div>
 
-                <Link
-                  href="/products/haircare"
-                  className="block px-10 py-3"
-                >
-                  Hair Care
-                </Link>
+                    :
 
-              </div>
-
-            )}
-
-            <Link
-              href="/search"
-              className="px-6 py-4 hover:bg-surface-low"
-            >
-              Search
-            </Link>
-
-            <Link
-              href="/profile"
-              className="px-6 py-4 hover:bg-surface-low"
-            >
-              Profile
-            </Link>
-
-            <Link
-              href="/about"
-              className="px-6 py-4 hover:bg-surface-low"
-            >
-              About
-            </Link>
-
+                    <Link 
+                        key={item.name}
+                        href={item.href}
+                        className="
+                        px-6
+                        py-4
+                        "
+                    >
+                        {item.name}
+                    </Link>
+                ))
+            }
           </nav>
 
         </div>

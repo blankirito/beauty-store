@@ -17,6 +17,11 @@
   --secondary-container: #fbdeb9;
   --on-secondary-container: #766143;
 
+  --tertiary: #6e5b44;
+  --tertiary-fixed: #f8dec1;
+
+  --error: #ba1a1a;
+  --error-container: #ffdad6;
   --primary-fixed: #ffdad2;
   --on-primary-fixed: #341008;
 
@@ -41,6 +46,12 @@
     --color-secondary: var(--secondary);
     --color-secondary-container: var(--secondary-container);
     --color-on-secondary-container: var(--on-secondary-container);
+
+    --color-tertiary: var(--tertiary);
+    --color-tertiary-fixed: var(--tertiary-fixed);
+
+    --color-error: var(--error);
+    --color-error-container: var(--error-container);
 
     --color-primary-fixed: var(--primary-fixed);
     --color-on-primary-fixed: var(--on-primary-fixed);
