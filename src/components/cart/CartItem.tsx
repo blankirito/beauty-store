@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
     Minus, 
     Plus,
@@ -5,6 +6,7 @@ import {
 } from "lucide-react";
 
 type CartItemProps = {
+    id: number,
     name: string,
     description: string,
     price: number,
@@ -14,6 +16,7 @@ type CartItemProps = {
     
 
 export default function CartItem({ 
+    id,
     name,
      description, 
      price, 
@@ -21,103 +24,118 @@ export default function CartItem({
      image,
 }: CartItemProps) {
     return (
-        <div className="
-            flex
-            items-center
-            gap-4
-            bg-surface
-            p-4
-            rounded-xl
-            shadow-sm
-        ">
-            {/* checkbox */}
-            <input
-                type="checkbox"
-                className="
-                    w-5
-                    h-5
-                    accent-primary
-                "
-            />
-
-            {/* image */}
-            <div className="
-                relative
-                w-24
-                h-24
-                rounded-lg
-                overflow-hidden
-                flex-shrink-0
+        <Link 
+            href={`/product/${id}`}
+            className="
+                block
+                transition
+                duration-150
+                active:scale-[0.97]
+                active:opacity-70
             ">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                    src={image}
-                    alt={name}
-                    className="w-full h-full object-cover"
-                />
-            </div>
-                
-            
+                <div className="
+                    flex
+                    items-center
+                    gap-4
+                    bg-surface
+                    p-4
+                    rounded-xl
+                    shadow-sm
+                ">
+                    {/* checkbox */}
+                    <input
+                        type="checkbox"
+                        className="
+                            w-5
+                            h-5
+                            accent-primary
+                        "
+                    />
 
-            {/* right side */}
-            <div className="flex-1 flex flex-col justify-between h-24">
-                {/* top */}
-                <div className="flex justify-between">
-                    <div>
-                        <h3 className="
-                            font-display
-                            text-lg
-                            text-primary
-                        ">
-                            {name}
-                        </h3>
-                        <p className="
-                            text-sm
-                            text-on-surface-variant
-                        ">
-                            {description}
-                        </p>
-                    </div>
-
-                    <button className="text-primary hover:text-red-500">
-                        <Trash2 size={18} />
-                    </button>
-                </div>
-
-                {/* bottom */}
-                <div className="flex justify-between items-end">
+                    {/* image */}
                     <div className="
-                        flex
-                        items-center
-                        border
-                        border-outline
-                        rounded-full
-                        px-2
-                        py-1
+                        relative
+                        w-24
+                        h-24
+                        rounded-lg
+                        overflow-hidden
+                        flex-shrink-0
                     ">
-                        <button className="p-1">
-                            <Minus size={14} />
-                        </button>
-
-                        <span className="px-4 font-semibold">
-                            {quantity}
-                            </span>
-
-                        <button className="p-1">
-                            <Plus size={14} />
-                        </button>
-
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                            src={image}
+                            alt={name}
+                            className="w-full h-full object-cover"
+                        />
                     </div>
+                        
+                    
 
-                    <span className="
-                        text-lg
-                        font-bold
-                        text-primary
-                    ">
-                        RM{price.toFixed(2)}
-                    </span>
+                    {/* right side */}
+                    <div className="flex-1 min-w-0 flex flex-col justify-between h-24">
+                        {/* top */}
+                        <div className="flex justify-between items-start gap-2">
+                            <div className="flex-1 min-w-0 overflow-hidden">
+                                <h3 className="
+                                    font-display
+                                    text-lg
+                                    text-primary
+                                    truncate
+                                    break-all
+                                ">
+                                    {name}
+                                </h3>
+                                <p className="
+                                    text-sm
+                                    text-on-surface-variant
+                                    truncate
+                                    break-all
+                                ">
+                                    {description}
+                                </p>
+                            </div>
+
+                            <button className="text-outline hover:text-red-500 flex-shrink-0">
+                                <Trash2 size={18} />
+                            </button>
+                        </div>
+
+                        {/* bottom */}
+                        <div className="flex justify-between items-end">
+                            <div className="
+                                flex
+                                items-center
+                                border
+                                border-outline
+                                rounded-full
+                                px-2
+                                py-1
+                            ">
+                                <button className="p-1">
+                                    <Minus size={14} />
+                                </button>
+
+                                <span className="px-4 font-semibold">
+                                    {quantity}
+                                    </span>
+
+                                <button className="p-1">
+                                    <Plus size={14} />
+                                </button>
+
+                            </div>
+
+                            <span className="
+                                text-lg
+                                font-bold
+                                text-primary
+                            ">
+                                RM{price.toFixed(2)}
+                            </span>
+                        </div>
+                    </div>              
                 </div>
-            </div>              
-        </div>
+            </Link>
+        
     )
 }
