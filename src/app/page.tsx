@@ -4,7 +4,7 @@ import SearchBar from "@/components/home/SearchBar";
 import PromoCarousel from "@/components/home/PromoCarousel";
 import CategorySelection from "@/components/home/CategorySelection";
 import RecommendedProducts from "@/components/home/RecommendedProduct";
-import BottomNavigation from "@/components/home/BottomNavigation";
+import BottomNavigation from "@/components/shared/BottomNavigation";
 
 export default function Home() {
   return (

@@ -6,14 +6,7 @@ import ProductDescription from "@/components/product/ProductDescription";
 import ReviewSection from "@/components/product/ReviewSection";
 import BottomActionBar from "@/components/product/BottomActionBar";
 
-type Props = {
-	params: {
-		id: string,
-	};
-};
-export default function ProductDetailPage({ params }: Props) {
-
-	const productId = params.id;
+export default function ProductDetailPage() {
 
 	return (
 		<main className="pb-24">

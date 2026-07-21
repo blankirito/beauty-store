@@ -22,7 +22,7 @@ export default function ProductCard({
     image,
 }: ProductCardProps) {
     return (
-        <Link href={`/product/${id}`} className="w-full">
+        <Link href={`/product/${id}`} className="w-full block transition duration-150 active:scale=[0.98] active:opacity-80">
             <div className="
                 bg-surface
                 rounded-xl
