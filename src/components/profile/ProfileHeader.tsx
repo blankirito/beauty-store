@@ -21,7 +21,7 @@ export default function ProfileHeader() {
                     rounded-full
                     overflow-hidden
                     border-2
-                    border-primary
+                    border-primary-fixed
                 ">
                     <img 
                         src="https://images.unsplash.com/photo-1494790108377-be9c29b29330"
@@ -61,8 +61,8 @@ export default function ProfileHeader() {
                 px-4
                 py-2
                 rounded-full
-                bg-seconday-container
-                text-secondary
+                bg-secondary-container
+                text-on-secondary-container
                 flex
                 items-center
                 gap-1
