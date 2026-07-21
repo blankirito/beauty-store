@@ -7,17 +7,17 @@ import { settingsSections } from "@/components/setting/settingsData";
 export default function SettingsPage(){
 
     return(
-        <main
+        <>
+         <Navbar />
+
+         <main
             className="
                 min-h-screen
                 bg-background
                 px-5
-                md:px-16
-                py-12
+                py-5
             "
         >
-
-            <Navbar />
 
             <div
                 className="
@@ -52,5 +52,7 @@ export default function SettingsPage(){
             </div>
 
         </main>
+        </>
+       
     )
 }
