@@ -36,10 +36,10 @@ const menu = [
             },
         ]
     },
-    {
-        name: "About",
-        href: "/about",
-    },
+    // {
+    //     name: "About",
+    //     href: "/about",
+    // },
     {
         name: "Profile",
         href: "/profile",
