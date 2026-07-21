@@ -14,7 +14,7 @@ export default function Home() {
       <PromoCarousel />
       <CategorySelection />
       <RecommendedProducts />
-      <BottomNavigation />
+      {/* <BottomNavigation /> */}
     </main>
   );
 }

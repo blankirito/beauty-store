@@ -12,7 +12,7 @@ export default function OrderPage() {
             <OrdersHeader />
             <OrderTab />
             <OrderList />
-            <BottomNavigation />
+            {/* <BottomNavigation /> */}
         </main>
     )
 }

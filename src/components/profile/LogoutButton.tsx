@@ -18,7 +18,6 @@ export default function LogOut() {
                 items-center
                 justify-center
                 gap-2
-                hover:bg-red-50
                 active:scale-[0.97]
                 transition
             ">

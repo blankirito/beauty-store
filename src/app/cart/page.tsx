@@ -16,7 +16,7 @@ export default function CartPage() {
             <OrderSummary />
             <PromoCode />
             <CheckoutBar />
-            <BottomNavigation />
+            {/* <BottomNavigation /> */}
         </main>
     )
 }

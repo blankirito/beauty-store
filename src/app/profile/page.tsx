@@ -13,7 +13,7 @@ export default function ProfilePage() {
             <ProfileStats />
             <ProfileMenu />
             <LogOut />
-            <BottomNavigation />
+            {/* <BottomNavigation /> */}
         </main>
     )
 }

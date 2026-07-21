@@ -1,35 +1,45 @@
 import {
+    ReceiptText,
     Heart,
     MapPin,
     Settings,
     Info,
     ArrowRight,
 } from "lucide-react";
-
+import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 
 const menu: {
     name: string;
     icon: LucideIcon;
+    href: string;
 }[] = [
+    {
+        name: "Order History",
+        icon: ReceiptText,
+        href: "/orders",
+    },
     {
         name: "Wishlist",
         icon: Heart,
+        href: "/wishlist",
     },
     {
         name: "Saved Addresses",
         icon: MapPin,
+        href: "/address",
     },
     {
         name: "Settings",
         icon: Settings,
+        href: "/settings",
     },
     {
         name: "Help Center",
         icon: Info,
+        href: "/help",
     },
-]
-
+];
 export default function ProfileMenu() {
     return (
         <section className="
@@ -42,8 +52,9 @@ export default function ProfileMenu() {
                     const Icon = menus.icon;
 
                     return (
-                        <div
+                        <Link
                             key={menus.name}
+                            href={menus.href}
                             className="
                                 w-full
                                 flex
@@ -53,6 +64,8 @@ export default function ProfileMenu() {
                                 p-4
                                 rounded-xl
                                 shadow-sm
+                                hover:bg-surface-low
+                                active:scale-[0.97]
                             "
                         >
 
@@ -93,7 +106,7 @@ export default function ProfileMenu() {
                                 "
                             />
 
-                        </div>
+                        </Link>
                     )
                 })
             }
