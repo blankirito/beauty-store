@@ -37,7 +37,7 @@ const menu: {
     {
         name: "Help Center",
         icon: Info,
-        href: "/help",
+        href: "/helpcenter",
     },
 ];
 export default function ProfileMenu() {
