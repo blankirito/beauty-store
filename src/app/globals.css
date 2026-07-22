@@ -34,6 +34,10 @@
   --surface-low: #f5f3ef;
 
   --outline: #d6c2be;
+
+  --surface-container: #efeeea;
+  --surface-container-high: #eae8e4;
+  --surface-container-highest: #e4e2de;
 }
 
 @theme inline {
@@ -68,6 +72,10 @@
 
     --font-sans: var(--font-inter);
     --font-display: var(--font-playfair);
+
+    --color-surface-container: var(--surface-container);
+    --color-surface-container-high: var(--surface-container-high);
+    --color-surface-container-highest: var(--surface-container-highest);
 }
 
 body {

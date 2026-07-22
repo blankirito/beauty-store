@@ -1,9 +1,9 @@
-import { 
-    ArrowRight
+import {
+    ShoppingBag
 } from "lucide-react";
 import Link from "next/link";
 
-export default function CheckoutBar() {
+export default function PlaceOrderButton() {
     return (
         <div className="
             left-0
@@ -13,7 +13,7 @@ export default function CheckoutBar() {
             py-4
         ">
             <Link
-                href="/checkout"
+                href="/ordersuccess"
             >
                 <button className="
                     w-full
@@ -31,10 +31,19 @@ export default function CheckoutBar() {
                     active:scale-[0.98]
                     transition
                 ">
-                    Proceed to Checkout
-                    <ArrowRight size={20} />
+                    <ShoppingBag size={20} />
+                    Place Order · RM228.90
                 </button>
             </Link>
+            
+            <p className="
+                text-center
+                text-xs
+                text-on-surface-variant
+                mt-2
+            ">
+                By placing an order, you agree to our Terms and Conditions.
+            </p>
         </div>
     )
 }
