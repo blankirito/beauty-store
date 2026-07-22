@@ -260,12 +260,16 @@ export default function Navbar() {
                                                 )
                                             }
                                             className="
-                                                w-full
-                                                flex
-                                                justify-between
-                                                items-center
-                                                px-6
-                                                py-4
+                                              w-full
+                                              flex
+                                              justify-between
+                                              items-center
+                                              px-6
+                                              py-4
+                                              rounded-lg
+                                              hover:bg-surface-low
+                                              active:bg-surface-low
+                                              transition
                                             "
                                         >
 
@@ -297,7 +301,6 @@ export default function Navbar() {
 
                                                 <div
                                                     className="
-                                                        bg-surface-low
                                                     "
                                                 >
 
@@ -316,6 +319,10 @@ export default function Navbar() {
                                                                         block
                                                                         px-10
                                                                         py-3
+                                                                        rounded-lg
+                                                                        hover:bg-surface-low
+                                                                        active:scale-[0.98]
+                                                                        transition
                                                                     "
                                                                 >
                                                                     {child.name}

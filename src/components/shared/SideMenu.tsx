@@ -125,7 +125,15 @@ export default function SideMenu({ open, onClose }: Props) {
                   key={item.id}
                   href={item.href}
                   onClick={onClose}
-                  className="block p-3 rounded-lg hover:bg-surface-low"
+                  className="
+                    block
+                    p-3
+                    rounded-lg
+                    hover:bg-surface-low
+                    active:bg-surface-low
+                    active:scale-[0.98]
+                    transition
+                  "
                 >
                   {item.title}
                 </Link>
@@ -141,7 +149,18 @@ export default function SideMenu({ open, onClose }: Props) {
                   onClick={() =>
                     setOpenMenu(isOpen ? null : item.id)
                   }
-                  className="w-full flex justify-between items-center p-3 rounded-lg hover:bg-surface-low"
+                  className="
+                        w-full
+                        flex
+                        justify-between
+                        items-center
+                        p-3
+                        rounded-lg
+                        hover:bg-surface-low
+                        active:bg-surface-low
+                        active:scale-[0.98]
+                        transition
+                  "
                 >
                   <span>{item.title}</span>
 
@@ -160,7 +179,18 @@ export default function SideMenu({ open, onClose }: Props) {
                         key={child.id}
                         href={child.href}
                         onClick={onClose}
-                        className="flex justify-between items-center py-2 text-sm hover:text-primary"
+                        className="
+                            block
+                            py-2
+                            px-3
+                            rounded-lg
+                            text-sm
+                            hover:bg-surface-low
+                            hover:text-primary
+                            active:bg-surface-low
+                            active:scale-[0.98]
+                            transition
+                        "
                       >
                         <span>{child.title}</span>
                         {/* <ChevronRight size={16} /> */}
