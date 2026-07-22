@@ -53,15 +53,18 @@ export default function FAQSection() {
                 ))
             }
             <div className="
-                items-center
+                flex
                 justify-center
+                mt-6
             ">
                 <button className="
                     text-primary
+                    hover:underline
                 ">
                     View All FAQs
                 </button>
             </div>
+
         </section>
     )
 }
