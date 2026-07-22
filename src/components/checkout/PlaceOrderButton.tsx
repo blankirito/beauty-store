@@ -14,8 +14,7 @@ export default function PlaceOrderButton() {
         ">
             <Link
                 href="/ordersuccess"
-            >
-                <button className="
+                className="
                     w-full
                     bg-primary
                     text-white
@@ -30,10 +29,11 @@ export default function PlaceOrderButton() {
                     shadow-md
                     active:scale-[0.98]
                     transition
-                ">
-                    <ShoppingBag size={20} />
-                    Place Order · RM228.90
-                </button>
+                "
+            >
+                <ShoppingBag size={20} />
+                Place Order · RM228.90
+               
             </Link>
             
             <p className="

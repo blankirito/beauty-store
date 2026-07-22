@@ -1,4 +1,5 @@
 import { Truck} from "lucide-react";
+import Link from "next/link";
 
 export default function SuccessAction() {
     return (
@@ -7,34 +8,44 @@ export default function SuccessAction() {
             flex-col
             gap-3
         ">
-            <button className="
-                w-full
-                bg-primary
-                text-white
-                py-4
-                rounded-full
-                font-semibold
-                flex
-                justify-center
-                items-center
-                gap-2
-            ">
+            <Link
+                href="/orders"
+                className="
+                    w-full
+                    bg-primary
+                    text-white
+                    py-4
+                    rounded-full
+                    font-semibold
+                    flex
+                    justify-center
+                    items-center
+                    gap-2
+                "
+            >
                 <Truck size={20} />
                 Track Order
-            </button>
-
-            <button className="
-                w-full
-                bg-surface
-                border
-                border-primary
-                text-primary
-                py-4
-                rounded-full
-                font-semibold
-            ">
-                Continue Shoppping
-            </button>
+            </Link>
+            
+            <Link
+                href="/"
+                className="
+                    w-full
+                    bg-surface
+                    border
+                    border-primary
+                    text-primary
+                    py-4
+                    rounded-full
+                    font-semibold
+                    flex
+                    justify-center
+                    items-center
+                "
+            >
+                Continue Shopping
+            </Link>
+                        
         </div>
     )
 }
