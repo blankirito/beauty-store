@@ -83,3 +83,8 @@ body {
 .no-scrollbar {
   scrollbar-width: none;
 }
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
