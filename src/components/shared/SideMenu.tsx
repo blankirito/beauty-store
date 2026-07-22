@@ -60,9 +60,9 @@ const menuItems: MenuItem[] = [
         href: "/profile",
       },
       {
-        id: "signup",
-        title: "Sign Up",
-        href: "/signup",
+        id: "signin",
+        title: "Sign In",
+        href: "/login",
       },
     ],
   },

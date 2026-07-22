@@ -16,8 +16,10 @@ export default function AddressHeader({
             md:justify-between
             md:items-end
             mb-10
+            mb-4
             px-5
-            py-10
+            pt-10
+            pb-2
         ">
             <div>
                 <h1
@@ -33,12 +35,12 @@ export default function AddressHeader({
                     Saved Addresses
                 </h1>
 
-                <p className="
+                {/* <p className="
                     text-[#524440]
                     mt-3
                 ">
                     Manage your delivery locations
-                </p>
+                </p> */}
             </div>
             <button
                 onClick={onAdd}

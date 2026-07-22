@@ -14,10 +14,10 @@ export default function OrdersHeader() {
                 mb-2
             ">Order History</h1>
 
-            <p className="
+            {/* <p className="
                 text-sm
                 text-on-surface-variant
-            ">Keep track of all your boutique finds and shipments</p>
+            ">Keep track of all your boutique finds and shipments</p> */}
         </section>
     )
 }

@@ -22,7 +22,7 @@ export default function SettingsHeader(){
             </h1>
 
 
-            <p
+            {/* <p
                 className="
                     mt-4
                     text-on-surface-variant
@@ -32,7 +32,7 @@ export default function SettingsHeader(){
                 Customize your skincare journey.
                 Manage your preferences, security,
                 and application experience here.
-            </p>
+            </p> */}
 
 
         </section>

@@ -44,8 +44,8 @@ const menu = [
                 href: "/profile"
             },
             {
-                name: "Sign Up",
-                href: "/signup"
+                name: "Sign In",
+                href: "/login"
             },
         ]
     },

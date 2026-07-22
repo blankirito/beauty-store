@@ -13,13 +13,13 @@ export default function WishListHeader(){
                 ">
                     WishList
                 </h1>
-
+{/* 
                 <p className="
                     mt-3
                     text-on-surface-variant
                 ">
                     Your saved skincare products
-                </p>
+                </p> */}
             </section>
     )
 }
