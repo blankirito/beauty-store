@@ -55,6 +55,11 @@ const menuItems: MenuItem[] = [
     title: "Your Account",
     children: [
       {
+        id: "profile",
+        title: "Profile",
+        href: "/profile",
+      },
+      {
         id: "signup",
         title: "Sign Up",
         href: "/signup",
@@ -158,7 +163,7 @@ export default function SideMenu({ open, onClose }: Props) {
                         className="flex justify-between items-center py-2 text-sm hover:text-primary"
                       >
                         <span>{child.title}</span>
-                        <ChevronRight size={16} />
+                        {/* <ChevronRight size={16} /> */}
                       </Link>
                     ))}
                   </div>

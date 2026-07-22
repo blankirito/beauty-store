@@ -40,12 +40,12 @@ const menu = [
         name: "Your Account",
         children: [
             {
-                name: "Sign Up",
-                href: "/signup"
-            },
-            {
                 name: "Profile",
                 href: "/profile"
+            },
+            {
+                name: "Sign Up",
+                href: "/signup"
             },
         ]
     },
