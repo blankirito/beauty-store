@@ -16,7 +16,7 @@ export default function ProductDetailPage() {
 			<QuantitySelector />
 			<ProductDescription />
 			<ReviewSection />
-			{/* <BottomActionBar /> */}
+			<BottomActionBar />
 		</main>
 	)
 }

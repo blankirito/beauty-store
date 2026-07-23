@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function ProductActionBar() {
     return (
         <nav
@@ -19,7 +21,6 @@ export default function ProductActionBar() {
                 shadow-lg
             "
         >
-
             <button
                 className="
                     flex-1
@@ -38,8 +39,8 @@ export default function ProductActionBar() {
                 Add to Cart
             </button>
 
-
-            <button
+            <Link
+                href="/checkout"
                 className="
                     flex-1
                     h-14
@@ -51,10 +52,14 @@ export default function ProductActionBar() {
                     tracking-wider
                     text-sm
                     shadow-lg
+                    flex
+                    items-center
+                    justify-center
                 "
             >
                 Buy Now
-            </button>
+            </Link>
+            
 
         </nav>
     );
