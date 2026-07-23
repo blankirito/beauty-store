@@ -1,12 +1,12 @@
 import Image from "next/image";
 
-const images = [
-    "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908",
-    "https://images.unsplash.com/photo-1556228578-8c89e6adf883",
-    "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9",
-];
+type ProductGalleryProps = {
+    images: string[];
+}
 
-export default function ProductGallery() {
+export default function ProductGallery({
+    images,
+}: ProductGalleryProps) {
     return (
         <section className="
             relative

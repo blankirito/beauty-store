@@ -1,19 +1,9 @@
-const products=[
-    {
-        name:"Premium Leather Tote",
-        price:"RM185",
-        image:"https://images.unsplash.com/photo-1556228578-8c89e6adf883"
-    },
-    {
-        name:"Minimalist Pendant",
-        price:"RM95",
-        image:"https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9"
-    }
-]
-
+import Link from "next/link";
+import { products } from "@/data/products"; 
 
 export default function Recommendation(){
 
+    const recommendedProducts = products.slice(0, 2);
     return (
         <div>
             <h2
@@ -34,36 +24,42 @@ export default function Recommendation(){
                 "
             >
                 {
-                    products.map(product=>(
-                        <div key={product.name}>
+                    recommendedProducts.map(product => (
+                        <Link 
+                            key={product.id}
+                            href={`/product/${product.id}`}
+                            className="
+                                block
+                                transition
+                                active:scale-[0.97]
+                            "
+                        >
+                            <div>
+                                <img    
+                                    src={product.image}
+                                    alt={product.name}
+                                    className="
+                                        aspect-square
+                                        rounded-xl
+                                        object-cover
+                                    "
+                                />
 
-                            <img
-                                src={product.image}
-                                alt={product.name}
-                                className="
-                                    aspect-square
-                                    rounded-xl
-                                    object-cover
-                                "
-                            />
+                                <p className="
+                                    mt-2
+                                    truncate
+                                ">
+                                    {product.name}
+                                </p>
 
-                            <p className="
-                                mt-2
-                                truncate
-                            ">
-                                {product.name}
-                            </p>
-
-                            <p
-                                className="
+                                <p className="
                                     text-primary
                                     font-semibold
-                                "
-                            >
-                                {product.price}
-                            </p>
-
-                        </div>
+                                ">
+                                    RM{product.price}
+                                </p>
+                            </div>
+                        </Link>
                     ))
                 }
             </div>

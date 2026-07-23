@@ -2,6 +2,7 @@ import {
     X, 
     Star
 } from "lucide-react";
+import Link from "next/link";
 
 type WishListItem = {
     id: number, 
@@ -12,6 +13,7 @@ type WishListItem = {
 }
 
 export default function WishListCard({
+    id,
     name, 
     price,
     image,
@@ -32,15 +34,20 @@ export default function WishListCard({
                 relative
                 aspect-[4/5]
             ">
-                <img
-                    src={image}
-                    alt={name}
-                    className="
-                        w-full
-                        h-full
-                        object-cover
-                    "
-                />
+                <Link
+                    href={`/product/${id}`}
+                >
+                    <img
+                        src={image}
+                        alt={name}
+                        className="
+                            w-full
+                            h-full
+                            object-cover
+                        "
+                    />
+                </Link>
+                
 
                 <button className="
                     absolute

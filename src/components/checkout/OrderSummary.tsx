@@ -1,4 +1,18 @@
 import OrderItem from "./OrderItem";
+import { products } from "@/data/products";
+
+const orderItems = [
+    {
+        productId: 1,
+        quantity: 1,
+        variant: "Color: Charcoal",
+    },
+    {
+        productId: 3,
+        quantity: 3,
+        variant: "Size: OS",
+    },
+]
 
 export default function OrderSummary() {
     return (
@@ -21,21 +35,26 @@ export default function OrderSummary() {
                 space-y-4
                 mb-6
             ">
-                <OrderItem
-                    image="https://images.unsplash.com/photo-1556228578-8c89e6adf883"
-                    title="Handcrafted Wallet"
-                    price={85}
-                    quantity={1}
-                    variant="Color: Charcoal"
-                />
+                {
+                    orderItems.map(item=>{
+                        const product = products.find(
+                            product => product.id === item.productId
+                        );
 
-                <OrderItem
-                    image="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9"
-                    title="Vitamin C Serum"
-                    price={125}
-                    quantity={2}
-                    variant="Size: OS"
-                />
+                        if(!product) return null;
+
+                        return (
+                            <OrderItem
+                                key={product.id}
+                                image={product.image}
+                                title={product.name}
+                                price={product.price}
+                                quantity={item.quantity}
+                                variant={item.variant}
+                            />
+                        )
+                    })
+                }
             </div>
 
             <div className="

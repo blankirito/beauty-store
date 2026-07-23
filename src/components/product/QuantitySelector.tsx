@@ -1,6 +1,14 @@
+import React from "react";
 
+type QuantitySelectorProps = {
+    quantity: number;
+    setQuantity: React.Dispatch<React.SetStateAction<number>>;
+};
 
-export default function QuantitySelector() {
+export default function QuantitySelector({
+    quantity,
+    setQuantity,
+}: QuantitySelectorProps) {
     return (
         <section className="
             px-5
@@ -28,15 +36,19 @@ export default function QuantitySelector() {
                 px-2
                 py-1
             ">
-                <button className="
-                    w-10
-                    h-10
-                    flex
-                    items-center
-                    justify-center
-                    text-primary
-                    text-xl
-                ">-</button>
+                <button 
+                    onClick={() => setQuantity(prev => Math.max(1, prev-1))}
+                    className="
+                        w-10
+                        h-10
+                        flex
+                        items-center
+                        justify-center
+                        text-primary
+                        text-xl
+                    "
+                >-
+                </button>
 
                 <span className="
                     w-10
@@ -47,17 +59,22 @@ export default function QuantitySelector() {
                     text-center
                     font-semibold
                     text-primary
-                ">1</span>
+                ">
+                    {quantity}
+                </span>
 
-                <button className="
-                    w-10
-                    h-10
-                    flex
-                    items-center
-                    justify-center
-                    text-primary
-                    text-xl
-                ">+</button>
+                <button 
+                    onClick={() => setQuantity(prev => prev + 1)}
+                    className="
+                        w-10
+                        h-10
+                        flex
+                        items-center
+                        justify-center
+                        text-primary
+                        text-xl
+                    "
+                >+</button>
             </div>
         </section>
     );

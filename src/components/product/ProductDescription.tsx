@@ -2,7 +2,15 @@
     CircleCheck
 } from "lucide-react";
 
-export default function ProductDescription() {
+type ProductDescriptionProps = {
+    description: string;
+    features: string[];
+}
+
+export default function ProductDescription({
+    description,
+    features
+}: ProductDescriptionProps) {
     return (
         <section className="px-5 mt-8">
             <h2 className="
@@ -18,7 +26,7 @@ export default function ProductDescription() {
                 text-on-surface-variant
                 leading-relaxed
             ">
-                Elevate your daily skincare routine with our premium collection. Carefully crafted with high quality ingredients to provide hydration and nourishment for you skin.
+                {description}
             </p>
 
             <ul className="
@@ -27,47 +35,25 @@ export default function ProductDescription() {
                 text-sm
                 text-on-surface-variant
             ">
-                <li className="
-                    flex
-                    items-center
-                    gap-2
-                ">
-                    <span className="
-                        text-primary
-                        text-lg
-                    ">
-                        <CircleCheck size={14} className="text-primary" />
-                    </span>
-                    Premium quality ingredients
-                </li>
+                {
+                    features.map((feature, index)=>(
+                        <li
+                            key={index}
+                            className="
+                                flex
+                                items-center
+                                gap-2
+                            "
+                        >
+                            <CircleCheck
+                                size={16}
+                                className="text-primary"
+                            />
 
-                <li className="
-                    flex
-                    items-center
-                    gap-2
-                ">
-                    <span className="
-                        text-primary
-                        text-lg
-                    ">
-                        <CircleCheck size={14} className="text-primary" />
-                    </span>
-                Suitable for daily use
-                </li>
-
-                <li className="
-                    flex
-                    items-center
-                    gap-2
-                ">
-                    <span className="
-                        text-primary
-                        text-lg
-                    ">
-                        <CircleCheck size={14} className="text-primary" />
-                    </span>
-                Dermatologically tested
-                </li>
+                            {feature}
+                        </li>
+                    ))
+                }
             </ul>
         </section>
     );

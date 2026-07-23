@@ -1,29 +1,18 @@
 import CartItem  from "./CartItem";
+import { products } from "@/data/products";
 
 const cartItems = [
     {
-        id: 1,
-        name: "Glow Serum",
-        description: "Premiun Skincare",
-        price: 89,
+        productId: 1,
         quantity: 1,
-        image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883",
     },
     {
-        id: 2,
-        name: "Vitamin C Serum",
-        description: "Brightening essence",
-        price: 45,
+        productId: 2,
         quantity: 2,
-        image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9",
     },
     {
-        id: 3,
-        name: "Hydrating Face Cream",
-        description: "Deep moisture formula",
-        price: 185,
-        quantity: 1,
-        image: "https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd",
+        productId: 3,
+        quantity: 5,
     },
 ];
 export default function CartList() {
@@ -33,12 +22,23 @@ export default function CartList() {
             mt-6
             space-y-4
         ">
-            {cartItems.map((item) => (
-                <CartItem
-                    key={item.id}
-                    {...item}
-                />
-            ))}
+            {
+                cartItems.map((item) => {
+                    const product = products.find(
+                        product => product.id === item.productId
+                    );
+
+                    if(!product) return null;
+
+                    return (
+                        <CartItem
+                            key={product.id}
+                            {...product}
+                            quantity={item.quantity}
+                        />
+                    )
+                })
+            }
         </section>
     )
 }

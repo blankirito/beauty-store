@@ -1,22 +1,54 @@
 import ProductNavbar from "@/components/product/ProductNavbar";
 import ProductGallery from "@/components/product/ProductGallery";
 import ProductInfo from "@/components/product/ProductInfo";
-import QuantitySelector from "@/components/product/QuantitySelector";
 import ProductDescription from "@/components/product/ProductDescription";
 import ReviewSection from "@/components/product/ReviewSection";
-import BottomActionBar from "@/components/product/BottomActionBar";
+import ProductClient from "@/components/product/ProductClient";
 
-export default function ProductDetailPage() {
+import { products } from "@/data/products";
+
+type Props = {
+	params: Promise<{
+		id: string,
+	}>;
+}
+
+export default async function ProductDetailPage({
+	params,
+}: Props) {
+
+	const { id } = await params;
+	const product = products.find(
+		item => item.id === Number(id)
+	);
+
+	if(!product) {
+		return (
+			<div>
+				Product Not Found
+			</div>
+		)
+	}
 
 	return (
 		<main className="pb-24">
 			<ProductNavbar />
-			<ProductGallery />
-			<ProductInfo />
-			<QuantitySelector />
-			<ProductDescription />
+			<ProductGallery 
+				images={product.images}
+			/>
+			<ProductInfo 
+				name={product.name}
+				price={product.price}
+				// rating={product.rating}
+			/>
+			<ProductClient
+				id={product.id}
+			/>
+			<ProductDescription
+				description={product.description}
+				features={product.features}
+			/>
 			<ReviewSection />
-			<BottomActionBar />
 		</main>
 	)
 }

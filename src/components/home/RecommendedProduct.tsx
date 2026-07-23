@@ -4,44 +4,7 @@ import {
     SlidersHorizontal
 } from "lucide-react";
 
-const products = [
-    {
-    id: 1,
-    name: "Glow Serum",
-    description: "Premium skincare",
-    price: 99,
-    rating: 4.9,
-    image:
-      "https://images.unsplash.com/photo-1556228578-8c89e6adf883",
-  },
-    {
-    id: 2,
-    name: "Vitamin C Serum",
-    description: "Brightening essence",
-    price: 129,
-    rating: 4.8,
-    image:
-      "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9",
-  },
-    {
-    id: 3,
-    name: "Moisturizer",
-    description: "Hydrating cream",
-    price: 89,
-    rating: 4.7,
-    image:
-      "https://images.unsplash.com/photo-1620916566398-39f1143ab7be",
-  },
-    {
-    id: 4,
-    name: "Cleanser",
-    description: "Gentle face wash",
-    price: 59,
-    rating: 4.9,
-    image:
-      "https://images.unsplash.com/photo-1601612628452-9e99ced43524",
-  },
-];
+import { products } from "@/data/products";
 
 export default function RecommendedProducts() {
     return (

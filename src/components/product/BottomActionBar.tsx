@@ -1,6 +1,14 @@
 import Link from "next/link";
 
-export default function ProductActionBar() {
+type Props = {
+    id: number,
+    quantity: number;
+}
+
+export default function ProductActionBar({
+    id,
+    quantity,
+}: Props) {
     return (
         <nav
             className="
@@ -40,7 +48,7 @@ export default function ProductActionBar() {
             </button>
 
             <Link
-                href="/checkout"
+                href={`/cart?product=${id}&quantity=${quantity}`}
                 className="
                     flex-1
                     h-14

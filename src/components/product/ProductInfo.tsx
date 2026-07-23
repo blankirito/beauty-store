@@ -1,6 +1,13 @@
 ﻿
+type ProductInfoProps = {
+    name: string;
+    price: number;
+};
 
-export default function ProductInfo() {
+export default function ProductInfo({
+    name,
+    price,
+}: ProductInfoProps) {
     return (
         <section className="
             px-5
@@ -20,7 +27,9 @@ export default function ProductInfo() {
                         font-display
                         font-medium
                         text-foreground
-                    ">Premium Ceramic Vase</h1>
+                    ">
+                        {name}
+                    </h1>
 
                     <div className="
                         flex
@@ -34,12 +43,14 @@ export default function ProductInfo() {
                             text-green-700
                         ">In Stock</span>
 
-                        <span aria-hidden="true" className="text-on-surface-variant/30">•</span>
+                        {/* <span aria-hidden="true" className="text-on-surface-variant/30">•</span>
 
                         <span className="
                             text-sm
                             text-foreground/60
-                        ">Handcrafted Series</span>  
+                        ">
+                            {description}    
+                        </span>   */}
                     </div>
                 </div>
 
@@ -49,7 +60,9 @@ export default function ProductInfo() {
                         font-display
                         font-medium
                         text-primary
-                    ">RM45.00</p>
+                    ">
+                        RM{price.toFixed(2)}
+                    </p>
                 </div>
             </div>
         </section>
