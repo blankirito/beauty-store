@@ -48,7 +48,7 @@ export default function ProductActionBar({
             </button>
 
             <Link
-                href={`/cart?product=${id}&quantity=${quantity}`}
+                href={`/checkout?product=${id}&quantity=${quantity}`}
                 className="
                     flex-1
                     h-14
