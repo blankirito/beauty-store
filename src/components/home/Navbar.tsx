@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import {
   Menu,
-  ShoppingBag,
+  ShoppingCart,
   User,
   X,
   ChevronDown,
@@ -188,7 +188,7 @@ export default function Navbar() {
                             hover:bg-surface-low
                         "
                     >
-                        <ShoppingBag size={22}/>
+                        <ShoppingCart size={22}/>
                     </Link>
 
 
