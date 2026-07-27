@@ -15,7 +15,7 @@ const menu: {
     href: string;
 }[] = [
     {
-        name: "Order History",
+        name: "Order",
         icon: ReceiptText,
         href: "/orders",
     },
