@@ -14,8 +14,8 @@ export default function ProfileStats() {
                 title="Orders"
             />
             <StatCard 
-                number="24"
-                title="Wishlist"
+                number="2"
+                title="Active Order"
             />
         </section>
     )
