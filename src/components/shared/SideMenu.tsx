@@ -56,7 +56,7 @@ const menuItems: MenuItem[] = [
     children: [
       {
         id: "profile",
-        title: "Profile",
+        title: "Account",
         href: "/profile",
       },
       {

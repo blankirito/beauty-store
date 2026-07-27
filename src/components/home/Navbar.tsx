@@ -40,7 +40,7 @@ const menu = [
         name: "Your Account",
         children: [
             {
-                name: "Profile",
+                name: "Account",
                 href: "/profile"
             },
             {
