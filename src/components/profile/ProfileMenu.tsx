@@ -5,6 +5,7 @@ import {
     Settings,
     Info,
     ArrowRight,
+    CreditCard,
 } from "lucide-react";
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
@@ -18,6 +19,12 @@ const menu: {
         name: "Order",
         icon: ReceiptText,
         href: "/orders",
+        
+    },
+    {
+        name: "Payment Method",
+        icon: CreditCard,
+        href: "/paymentmethod",
     },
     {
         name: "Wishlist",

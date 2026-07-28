@@ -11,7 +11,7 @@ export default function ProfileHeader() {
             items-center
             text-center
         ">
-            <div className="
+            {/* <div className="
                 relative
                 mb-4
             ">
@@ -48,7 +48,7 @@ export default function ProfileHeader() {
                 ">
                     <Pencil size={16} />
                 </button>
-            </div>
+            </div> */}
 
             <h1 className="
                 text-3xl
@@ -56,7 +56,7 @@ export default function ProfileHeader() {
                 text-foreground
             ">Alex Morgan</h1>
 
-            <div className="
+            {/* <div className="
                 mt-4
                 px-4
                 py-2
@@ -71,7 +71,7 @@ export default function ProfileHeader() {
             ">
                 <Star size={15} fill="currentColor" />
                 Premium Member
-            </div>
+            </div> */}
         </section>
     )
 }

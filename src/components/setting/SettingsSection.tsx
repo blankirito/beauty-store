@@ -1,20 +1,28 @@
 import SettingsItem from "./SetingsItem";
+import type { LucideIcon } from "lucide-react";
 
+export interface SettingsItemData {
+    title: string;
+    description: string;
+    icon: LucideIcon;
+    type: "link";
+}
+
+export interface SettingsSectionData {
+    title: string;
+    icon: LucideIcon;
+    color: Color;
+    items: readonly SettingsItemData[];
+}
+
+export type Color =
+    | "primary"
+    | "secondary"
+    | "tertiary"
+    | "error";
 
 interface Props {
-
-    section: {
-        title: string;
-        icon: any;
-        color:
-        | "primary"
-        | "secondary"
-        | "tertiary"
-        | "error";
-
-        items: readonly any[];
-    }
-
+    section: SettingsSectionData;
 }
 
 
@@ -31,8 +39,8 @@ export default function SettingsSection({
 
         <div
             className="
-space-y-6
-"
+                space-y-6
+            "
         >
 
 
@@ -40,10 +48,10 @@ space-y-6
 
             <div
                 className="
-flex
-items-center
-gap-3
-"
+                    flex
+                    items-center
+                    gap-3
+                "
             >
 
                 <SectionIcon
@@ -54,10 +62,10 @@ gap-3
 
                 <h3
                     className="
-text-2xl
-font-display
-text-primary
-"
+                        text-2xl
+                        font-display
+                        text-primary
+                    "
                 >
 
                     {section.title}
@@ -74,12 +82,12 @@ text-primary
 
             <div
                 className="
-bg-surface-container-lowest
-rounded-xl
-overflow-hidden
-border
-border-outline/20
-"
+                    bg-surface-container-lowest
+                    rounded-xl
+                    overflow-hidden
+                    border
+                    border-outline/20
+                "
             >
 
 

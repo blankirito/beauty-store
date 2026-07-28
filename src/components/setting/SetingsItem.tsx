@@ -1,28 +1,12 @@
 import {
     ChevronRight
 } from "lucide-react";
-
-
-type Color =
-    | "primary"
-    | "secondary"
-    | "tertiary"
-    | "error";
-
+import type { SettingsItemData, Color } from "./SettingsSection";
 
 interface Props {
-
-    item: {
-        title: string;
-        description: string;
-        icon: any;
-        type: string;
-    };
-
+    item: SettingsItemData;
     color: Color;
-
 }
-
 
 
 const iconBackground: Record<Color, string> = {
