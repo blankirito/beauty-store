@@ -15,6 +15,7 @@ export default function Home() {
       <CategorySelection />
       <RecommendedProducts />
       {/* <BottomNavigation /> */}
+      testing
     </main>
   );
 }
