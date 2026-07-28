@@ -14,6 +14,7 @@ export default function CategoryFilter() {
             flex
             gap-3
             overflow-x-auto
+            no-scrollbar
         ">
             {
                 filters.map(item=>(

@@ -1,6 +1,6 @@
 
 
-export default function PaymentHeader() {
+export default function PasswordHeader() {
 
     return (
 
@@ -25,7 +25,7 @@ export default function PaymentHeader() {
                         font-display
                     "
                 >
-                    Payment Method
+                    Password
                 </h1>
             </div>
         </div>
