@@ -1,19 +1,21 @@
-import ProductCard from "@/components/home/ProductCard";
 import { Products } from "@/types/products";
+import ProductCard from "@/components/home/ProductCard";
 
 type Props = {
-    products:Products[];
+    products: Products[];
 }
 
-export default function SearchProductGrid({
-    products,
-}:Props){
-    return(
+export default function CategoryProductGrid({
+    products
+}: Props) {
+    return (
         <section className="
             px-5
-            mt-10
+            mt-8
             grid
             grid-cols-2
+            md:grid-cols-3
+            lg:grid-cols-4
             gap-4
         ">
             {

@@ -19,7 +19,9 @@ export const products: Products[] = [
             "Premium quanlity ingredients",
             "Suitable for daily use",
             "Dermatologically tested",
-        ]
+        ],
+        isNew: true,
+        category: "Skincare",
     },
     {
         id: 2,
@@ -39,7 +41,9 @@ export const products: Products[] = [
             "Premium quanlity ingredients",
             "Suitable for daily use",
             "Dermatologically tested",
-        ]
+        ],
+        isNew: false,
+        category: "Beauty",
     },
     {
         id: 3,
@@ -59,6 +63,8 @@ export const products: Products[] = [
             "Premium quanlity ingredients",
             "Suitable for daily use",
             "Dermatologically tested",
-        ]
+        ],
+        isNew: true,
+        category: "Hair",
     },
 ];

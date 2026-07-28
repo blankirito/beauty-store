@@ -1,18 +1,12 @@
 import Navbar from "@/components/shared/Navbar"
+import PaymentHeader from "@/components/paymentmethod/PaymentHeader"
 
 export default function PaymentMethodPage() {
     return (
-        <>
-        <Navbar />
-        <main className="
-            min-h-screen
-            bg-background
-            px-5
-            md:px-16
-            py-12
-        ">
-        </main>
-        </>
+        <main className="pb-24">
+              <Navbar />
+              <PaymentHeader />
+            </main>
         
     )
 }

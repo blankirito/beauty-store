@@ -6,6 +6,7 @@ export interface SettingsItemData {
     description: string;
     icon: LucideIcon;
     type: "link";
+    href?: string;
 }
 
 export interface SettingsSectionData {

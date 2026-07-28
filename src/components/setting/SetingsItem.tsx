@@ -2,6 +2,7 @@ import {
     ChevronRight
 } from "lucide-react";
 import type { SettingsItemData, Color } from "./SettingsSection";
+import Link from "next/link";
 
 interface Props {
     item: SettingsItemData;
@@ -38,8 +39,8 @@ export default function SettingsItem({
 
     return (
 
-        <button
-
+        <Link
+            href={item.href ?? "#"}
             className="
                 w-full
                 flex
@@ -151,7 +152,7 @@ export default function SettingsItem({
 
 
 
-        </button>
+        </Link>
 
     );
 

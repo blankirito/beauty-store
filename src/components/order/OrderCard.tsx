@@ -1,4 +1,5 @@
 import { Truck, RotateCcw } from "lucide-react";
+import Link from "next/link";
 
 type OrderItemProps = {
     id: number,
@@ -120,37 +121,42 @@ export default function OrderCard({
                 flex
                 gap-3
             ">
-                <button className="
-                    flex-1
-                    h-12
-                    rounded-xl
-                    bg-primary
-                    text-white
-                    flex
-                    items-center
-                    justify-center
-                    gap-2
-                    font-semibold
-                ">
-                    <Truck size={18} />
-                    Track Order
-                </button>
 
-                <button className="
-                    h-12
-                    px-5
-                    rounded-xl
-                    border-2
-                    border-primary
-                    text-primary
-                    flex
-                    items-center
-                    justify-center
-                    gap-2
-                    font-semibold
-                ">
-                    Details
-                </button>
+                <Link
+                    href={`/orders/${id}/track`}
+                    className="
+                        flex-1
+                        h-12
+                        rounded-xl
+                        bg-primary
+                        text-white
+                        flex
+                        items-center
+                        justify-center
+                        gap-2
+                        font-semibold
+                    ">
+                        <Truck size={18} />
+                        Track Order
+                </Link>
+
+                <Link
+                    href={`/orders/${id}`}
+                    className="
+                        h-12
+                        px-5
+                        rounded-xl
+                        border-2
+                        border-primary
+                        text-primary
+                        flex
+                        items-center
+                        justify-center
+                        gap-2
+                        font-semibold
+                    ">
+                        Details
+                </Link>
             </div>
         </div>
     )

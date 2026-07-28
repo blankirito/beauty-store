@@ -1,11 +1,6 @@
-interface AddressHeaderProps {
-    onAdd: () => void;
-}
 
 
-export default function AddressHeader({
-    onAdd
-}: AddressHeaderProps) {
+export default function PaymentHeader() {
 
     return (
 
@@ -30,7 +25,7 @@ export default function AddressHeader({
                         font-display
                     "
                 >
-                    Saved Addresses
+                    Payment Method
                 </h1>
 
                 {/* <p className="
@@ -40,20 +35,6 @@ export default function AddressHeader({
                     Manage your delivery locations
                 </p> */}
             </div>
-            <button
-                onClick={onAdd}
-                className="
-                    mt-5
-                    md:mt-0
-                    bg-primary
-                    text-white
-                    px-8
-                    py-3
-                    rounded-full
-                    "
-            >
-                + Add New Address
-            </button>
         </div>
     )
 

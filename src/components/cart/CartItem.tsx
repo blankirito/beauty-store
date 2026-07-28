@@ -72,7 +72,7 @@ export default function CartItem({
                     
 
                     {/* right side */}
-                    <div className="flex-1 min-w-0 flex flex-col justify-between h-24">
+                    <div className="flex-1 min-w-0 flex flex-col justify-between min-h-28">
                         {/* top */}
                         <div className="flex justify-between items-start gap-2">
                             <div className="flex-1 min-w-0 overflow-hidden">
@@ -101,9 +101,17 @@ export default function CartItem({
                         </div>
 
                         {/* bottom */}
-                        <div className="flex justify-between items-end">
+                        <div className="
+                            mt-3
+                            flex
+                            flex-wrap
+                            items-end
+                            gap-x-3
+                            gap-y-5
+                        ">
                             <div className="
                                 flex
+                                w-fit
                                 items-center
                                 border
                                 border-outline
@@ -129,6 +137,9 @@ export default function CartItem({
                                 text-lg
                                 font-bold
                                 text-primary
+                                whitespace-nowrap
+                                flex-shrink-0
+                                sm:ml-auto
                             ">
                                 RM{price.toFixed(2)}
                             </span>

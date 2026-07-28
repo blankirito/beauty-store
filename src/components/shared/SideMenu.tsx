@@ -34,19 +34,29 @@ const menuItems: MenuItem[] = [
     title: "Products",
     children: [
       {
+        id: "beauty",
+        title: "Beauty",
+        href: "/category/beauty",
+      },
+      {
         id: "skincare",
         title: "Skincare",
-        href: "/products/skincare",
+        href: "/category/skincare",
       },
       {
         id: "makeup",
         title: "Makeup",
-        href: "/products/makeup",
+        href: "/category/makeup",
       },
       {
-        id: "haircare",
-        title: "Haircare",
-        href: "/products/haircare",
+        id: "bodycare",
+        title: "Body Care",
+        href: "/category/bodycare",
+      },
+      {
+        id: "hair",
+        title: "Hair",
+        href: "/category/hair",
       },
     ],
   },

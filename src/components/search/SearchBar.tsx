@@ -1,6 +1,14 @@
 import { Search } from "lucide-react";
 
-export default function SearchBar() {
+type Props = {
+    value: string,
+    onChange:(value: string) => void;
+}
+
+export default function SearchBar({
+    value,
+    onChange,
+}:Props ) {
     return (
         <div className="
             relative
@@ -19,6 +27,8 @@ export default function SearchBar() {
             />
 
             <input
+                value={value}
+                onChange={(e)=>onChange(e.target.value)}
                 placeholder="Search Products..."
                 className="
                     w-full

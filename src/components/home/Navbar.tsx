@@ -19,20 +19,24 @@ const menu = [
         name: "Product",
         children: [
             {
+                name: "Beauty",
+                href: "/category/beauty"
+            },
+            {
                 name: "Skincare",
-                href: "/products/skincare"
+                href: "/category/skincare"
             },
             {
                 name: "Makeup",
-                href: "/products/makeup"
+                href: "/category/makeup"
             },
             {
                 name: "Body Care",
-                href: "/products/bodycare"
+                href: "/category/bodycare"
             },
             {
                 name: "Hair Care",
-                href: "/products/haircare"
+                href: "/category/haircare"
             },
         ]
     },

@@ -46,8 +46,11 @@ export default function OrderItem({
                     flex
                     justify-between
                     items-start
+                    gap-4
                 ">
                     <p className="
+                        flex-1
+                        min-w-0
                         font-semibold
                         text-base
                         leading-tight
@@ -56,6 +59,8 @@ export default function OrderItem({
                     </p>
 
                     <p className="
+                        shrink-0
+                        whitespace-nowrap
                         font-bold
                         text-base
                     ">

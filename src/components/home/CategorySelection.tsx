@@ -8,6 +8,8 @@ import {
 
 import type { LucideIcon } from "lucide-react";
 
+import Link from "next/link";
+
 const categories: {
     name: string;
     icon: LucideIcon;
@@ -53,8 +55,9 @@ export default function CategorySelection() {
                     const Icon = category.icon;
 
                     return (
-                        <div
+                        <Link
                             key={category.name}
+                            href={`/category/${category.name.toLowerCase().replace(" ", "-")}`}
                             className="
                             group
                             flex
@@ -86,7 +89,7 @@ export default function CategorySelection() {
                             <span className="text-sm text-on-surface-variant">
                                 {category.name}
                             </span>
-                        </div>
+                        </Link>
                     );
                 })}
             </div>

@@ -27,13 +27,15 @@ export const settingsSections = [
                 title:"Personal Information",
                 description:"Update your name, bio, and delivery address",
                 icon: Badge,
-                type:"link"
+                type:"link",
+                href:"/settings/account"
             },
             {
                 title:"Password",
                 description:"Change your account password for better security",
                 icon: LockKeyhole,
-                type:"link"
+                type:"link",
+                href:"/settings/password"
             }
         ]
     },

@@ -92,17 +92,21 @@ export default function ProductCard({
                         text-lg
                         font-medium
                         text-primary
+                        truncate
+                        break-all
                     ">
                         {name}
                     </h3>
 
-                    <p className="
+                    {/* <p className="
                         mt-1
                         text-on-surface-variant
                         text-sm
+                        truncate
+                        break-all
                     ">
                         {description}
-                    </p>
+                    </p> */}
 
                     <p className="
                         font-semibold

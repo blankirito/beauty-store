@@ -6,5 +6,7 @@ export type Products = {
     rating: number;
     image: string;
     images: string[];
-    features: string[],
+    features: string[];
+    isNew?: boolean;
+    category: string;
 };
