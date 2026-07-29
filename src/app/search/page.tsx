@@ -1,6 +1,6 @@
 "use client";
 
-import Navbar from "@/components/shared/Navbar";
+import Navbar2 from "@/components/shared/Navbar2";
 import SearchBar from "@/components/search/SearchBar";
 import RecentSearch from "@/components/search/RecentSearch";
 import PopularCategory from "@/components/search/PopularCategory";
@@ -23,7 +23,7 @@ export default function SearchPage() {
 
     return(
         <main className="pb-10">
-            <Navbar />
+            <Navbar2 />
             
             <SearchBar 
                 value={Search}

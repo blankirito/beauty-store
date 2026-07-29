@@ -1,11 +1,11 @@
-import Navbar from "@/components/shared/Navbar";
+import Navbar2 from "@/components/shared/Navbar2";
 import PasswordHeader from "@/components/setting/Password/PasswordHeader";
 import PasswordForm from "@/components/setting/Password/PasswordForm";
 
 export default function PasswordPage() {
     return (
         <main className="pb-24 ">
-            <Navbar />
+            <Navbar2 />
             <PasswordHeader />
             <section
                 className="

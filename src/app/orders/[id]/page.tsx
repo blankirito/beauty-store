@@ -1,4 +1,4 @@
-import Navbar from "@/components/shared/Navbar";
+import Navbar2 from "@/components/shared/Navbar2";
 import OrderDetailHeader from "@/components/order/detail/OrderDetailHeader";
 import OrderTimeLine from "@/components/order/detail/OrderTimeLine";
 import OrderItems from "@/components/order/detail/OrderItems";
@@ -13,7 +13,7 @@ export default function OrderDetailPage() {
         <main className="
             pb-24
         ">
-            <Navbar />
+            <Navbar2 />
             <section className="
                 px-5
                 pt-10

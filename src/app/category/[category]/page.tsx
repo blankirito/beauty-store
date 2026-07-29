@@ -1,4 +1,4 @@
-import Navbar from "@/components/shared/Navbar";
+import Navbar2 from "@/components/shared/Navbar2";
 import CategoryHeader from "@/components/category/CategoryHeader";
 import CategoryFilter from "@/components/category/CategoryFilter";
 import CategoryProductGrid from "@/components/category/CategoryProductGrid";
@@ -30,7 +30,7 @@ export default async function CategoryProductPage({
 
     return(
         <main className="pb-24">
-            <Navbar />
+            <Navbar2 />
             <CategoryHeader
                 category={displayCategory}
                 count={filteredProducts.length}

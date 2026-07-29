@@ -1,4 +1,4 @@
-import Navbar from "@/components/shared/Navbar";
+import Navbar2 from "@/components/shared/Navbar2";
 import TrackHeader from "@/components/order/track/TrackHeader";
 import OrderTimeline from "@/components/order/track/OrderTimeLine";
 import DeliveryAddress from "@/components/order/track/DeliveryAddress";
@@ -8,7 +8,7 @@ import {trackingSteps} from "@/data/orderTracking";
 export default function TrackOrderPage() {
     return (
         <main className="pb-24">
-            <Navbar />
+            <Navbar2 />
             <div
                 className="
                     px-5

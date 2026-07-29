@@ -1,4 +1,4 @@
-import Navbar from "@/components/shared/Navbar"
+import Navbar2 from "@/components/shared/Navbar2"
 import CollectionHeader from "@/components/collection/CollectionHeader";
 import CollectionProductGrid from "@/components/collection/CollectionProductGrid";
 
@@ -12,7 +12,7 @@ export default function NewArrivalPage() {
 
     return(
         <main className="pb-24">
-            <Navbar />
+            <Navbar2 />
             <CollectionHeader />
             <CollectionProductGrid
                 products={newProducts}

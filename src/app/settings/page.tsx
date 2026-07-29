@@ -1,4 +1,4 @@
-import Navbar from "@/components/shared/Navbar";
+import Navbar2 from "@/components/shared/Navbar2";
 import SettingsHeader from "@/components/setting/SettingsHeader";
 import SettingsSection from "@/components/setting/SettingsSection";
 import { settingsSections } from "@/components/setting/settingsData";
@@ -8,8 +8,7 @@ export default function SettingsPage(){
 
     return(
         <>
-         <Navbar />
-
+         <Navbar2 />
          <main
             className="
                 min-h-screen
@@ -18,23 +17,18 @@ export default function SettingsPage(){
                 py-5
             "
         >
-
             <div
                 className="
                     max-w-[1000px]
                     mx-auto
                 "
             >
-
                 <SettingsHeader />
-
-
                 <div
                     className="
                         space-y-10
                     "
                 >
-
                     {
                         settingsSections.map((section)=>(
 
@@ -45,12 +39,8 @@ export default function SettingsPage(){
 
                         ))
                     }
-
                 </div>
-
-
             </div>
-
         </main>
         </>
        

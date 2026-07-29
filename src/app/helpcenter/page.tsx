@@ -1,4 +1,4 @@
-import Navbar from "@/components/shared/Navbar"
+import Navbar2 from "@/components/shared/Navbar2"
 import HelpHeader from "@/components/helpcenter/HelpHeader";
 import SearchBar from "@/components/helpcenter/SearchBar";
 import CategoryGrid from "@/components/helpcenter/CategoryGrid";
@@ -8,7 +8,7 @@ import ContactSection from "@/components/helpcenter/ContactSection";
 export default function HelpCenterPage() {
     return (
         <>
-        <Navbar />
+        <Navbar2 />
         <main className="
             min-h-screen
             bg-background
