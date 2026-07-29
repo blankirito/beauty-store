@@ -11,7 +11,6 @@ export default function AccountHeader() {
             md:justify-between
             md:items-end
             mb-10
-            mb-4
             px-5
             pt-10
             pb-2
@@ -25,7 +24,7 @@ export default function AccountHeader() {
                         font-display
                     "
                 >
-                    Account
+                    Edit Profile
                 </h1>
             </div>
         </div>

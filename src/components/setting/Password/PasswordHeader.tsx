@@ -25,7 +25,7 @@ export default function PasswordHeader() {
                         font-display
                     "
                 >
-                    Password
+                    Change Password
                 </h1>
             </div>
         </div>

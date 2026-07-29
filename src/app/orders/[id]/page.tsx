@@ -12,64 +12,69 @@ export default function OrderDetailPage() {
     return (
         <main className="
             pb-24
-            px-5
-            lg:px-16
-            space-y-8
         ">
             <Navbar />
-            <OrderDetailHeader
-                orderId="BTQ-102938"
-                date="October 24, 2026"
-                status="Confirmed"
-            />
-
-            <div className="
-                grid
-                grid-cols-1
-                lg:grid-cols-12
-                gap-8
-                lg:gap-16
+            <section className="
+                px-5
+                pt-10
+                lg:px-16
+                space-y-8
             ">
-                <div className="
-                    lg:col-span-7
-                    space-y-12
-                ">
-                    <OrderTimeLine 
-                        steps={trackingSteps}
-                    />
-                    <OrderItems />
-                </div>
+                
+                <OrderDetailHeader
+                    orderId="BTQ-102938"
+                    date="October 24, 2026"
+                    status="Confirmed"
+                />
 
                 <div className="
-                    lg:col-span-5
-                    space-y-8
+                    grid
+                    grid-cols-1
+                    lg:grid-cols-12
+                    gap-8
+                    lg:gap-16
                 ">
-                    <OrderSummary 
-                        subtotal={210}
-                        shipping={15}
-                        tax={18.9}
-                        total={243.9}
-                    />
                     <div className="
-                        grid
-                        md:grid-cols-2
-                        gap-8
+                        lg:col-span-7
+                        space-y-12
                     ">
-                        <ShippingInfo 
-                            name="Alex Morgan"
-                            address={[
-                                "1280 Hillside Drive",
-                                "Apt 4B",
-                                "San Francisco, CA 94114"
-                            ]}
+                        <OrderTimeLine 
+                            steps={trackingSteps}
                         />
-                        <PaymentInfo 
-                            method="Visa ending in 4242"
-                            description="Billing address matches shipping"
+                        <OrderItems />
+                    </div>
+
+                    <div className="
+                        lg:col-span-5
+                        space-y-8
+                    ">
+                        <OrderSummary 
+                            subtotal={210}
+                            shipping={15}
+                            tax={18.9}
+                            total={243.9}
                         />
+                        <div className="
+                            grid
+                            md:grid-cols-2
+                            gap-8
+                        ">
+                            <ShippingInfo 
+                                name="Alex Morgan"
+                                address={[
+                                    "1280 Hillside Drive",
+                                    "Apt 4B",
+                                    "San Francisco, CA 94114"
+                                ]}
+                            />
+                            <PaymentInfo 
+                                method="Visa ending in 4242"
+                                description="Billing address matches shipping"
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
         </main>
     )
 }

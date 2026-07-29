@@ -1,14 +1,16 @@
+"use client";
 import { LucideIcon, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
 interface Props {
     label: string;
     placeholder: string;
-    icon: LucideIcon;
+    icon?: LucideIcon;
     type?: string;
     value?: string;
     onChange?: (
         e:React.ChangeEvent<HTMLInputElement>)=>void;
+    autoComplete?: string;
 }
 
 export default function AuthInput({
@@ -18,6 +20,7 @@ export default function AuthInput({
     type="text",
     value,
     onChange,
+    autoComplete,
 }: Props) {
 
     const [showPassword, setShowPassword] = useState(false);
@@ -51,21 +54,26 @@ export default function AuthInput({
                 focus-within:bg-white
                 overflow-hidden
             ">
-                <Icon 
-                    size={20}
-                    className="
-                        ml-4
-                        text-outline
-                        group-focus-within:text-primary
-                    "
-                />
+                {
+                    Icon && (
+                        <Icon 
+                            size={20}
+                            className="
+                                ml-4
+                                text-outline
+                                group-focus-within:text-primary
+                            "
+                        />
+                    )
+                }
+                
 
                 <input 
                     type={inputType}
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}
-                    autoComplete="current-password"
+                    autoComplete={autoComplete}
                     className="
                         flex-1
                         bg-transparent
