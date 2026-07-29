@@ -5,6 +5,7 @@ interface Props {
     holder: string;
     expiry: string;
     isDefault?: boolean;
+    onClick?: () => void;
 }
 
 export default function PaymentCard({
@@ -13,22 +14,25 @@ export default function PaymentCard({
     holder,
     expiry,
     isDefault = false,
+    onClick,
 }: Props) {
     return (
-        <div className={`
-            bg-surface-container-lowest
-            rounded-xl
-            p-6
-            relative
-            cursor-pointer
-            transition
-            ${
-                isDefault
-                ?
-                "border-2 border-primary-container shadow-[0_4px_24px_rgba(232,167,152,0.08)]"
-                :
-                "border border-outline hover:shadow-[0_8px_32px_rgba(232,167,152,0.15)]"
-            }    
+        <div 
+            onClick={onClick}
+            className={`
+                bg-surface-container-lowest
+                rounded-xl
+                p-6
+                relative
+                cursor-pointer
+                transition
+                ${
+                    isDefault
+                    ?
+                    "border-2 border-primary-container shadow-[0_4px_24px_rgba(232,167,152,0.08)]"
+                    :
+                    "border border-outline hover:shadow-[0_8px_32px_rgba(232,167,152,0.15)]"
+                }    
         `}>
             {
                 isDefault && (

@@ -1,7 +1,32 @@
+"use client";
+
+import { useState } from "react";
+
 import PaymentCard from "./PaymentCard";
 import AddCardButton from "./AddCardButton";
 
+const cards = [
+    {
+        id: "card_1",
+        brand: "VISA",
+        cardNumber: "•••• •••• •••• 4242",
+        holder: "Evelyn Rose",
+        expiry: "12/26",
+    },
+
+    {
+        id: "card_2",
+        brand: "MC",
+        cardNumber: "•••• •••• •••• 8891",
+        holder: "Evelyn Rose",
+        expiry: "08/25",
+    },
+];
+
 export default function SavedCard() {
+
+    const [defaultCard, setDefaultCard] = useState("card_1");
+    
     return (
         <section className="
             space-y-6
@@ -20,19 +45,25 @@ export default function SavedCard() {
                 md:grid-cols-2
                 gap-6
             ">
-                <PaymentCard
-                    brand="VISA"
-                    cardNumber="•••• •••• •••• 4242"
-                    holder="Alex Morgan"
-                    expiry="11/26"
-                    isDefault
-                />
-                <PaymentCard
-                    brand="MC"
-                    cardNumber="•••• •••• •••• 5498"
-                    holder="Alex Morgan"
-                    expiry="1/27"
-                />
+                {
+                    cards.map((card)=>(
+                        <PaymentCard
+                            key={card.id}
+                            brand={card.brand}
+                            cardNumber={card.cardNumber}
+                            holder={card.holder}
+                            expiry={card.expiry}
+
+                            isDefault={
+                                defaultCard === card.id
+                            }
+
+                            onClick={() =>
+                                setDefaultCard(card.id)
+                            }
+                        />
+                    ))
+                }
 
                 <AddCardButton />
             </div>
