@@ -30,7 +30,7 @@ export default function OrderTimeLine({
                 text-on-surface
                 pb-4
                 mb-6
-                border-l-2
+                border-b
                 border-surface-container-highest
             ">Delivery Status</h3>
 
@@ -45,7 +45,8 @@ export default function OrderTimeLine({
                     top-3
                     bottom-3
                     w-px
-                    bg-surface-container-highest
+                    border-l-2
+                    border-surface-container-highest
                 "/>
                 {
                     steps.map((step)=>(
