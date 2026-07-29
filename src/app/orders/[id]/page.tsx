@@ -14,8 +14,6 @@ export default function OrderDetailPage() {
             pb-24
             px-5
             lg:px-16
-            pt-8
-            pt-8
             space-y-8
         ">
             <Navbar />
