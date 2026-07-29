@@ -30,7 +30,7 @@ export default function OrderTimeLine({
                 className="
                     relative
                     pl-8
-                    border-l
+                    border-l-2
                     border-surface-container-highest
                     space-y-10
                 "
@@ -44,7 +44,9 @@ export default function OrderTimeLine({
                             <div className={`
                                 absolute
                                 -top-1
-                                -left-[45px]
+                                -left-11
+                                w-6
+                                h-6
                                 rounded-full
                                 flex
                                 items-center
@@ -52,13 +54,13 @@ export default function OrderTimeLine({
                                 ${
                                     step.status==="current"
                                     ?
-                                    "w-7 h-7 bg-primary text-white shadow-md"
+                                    "bg-primary text-white shadow-md"
                                     :
                                     step.status==="completed"
                                     ?
-                                    "w-6 h-6 bg-primary-container text-primary"
+                                    "bg-primary-container text-primary"
                                     :
-                                    "w-5 h-5 bg-surface-container-highest"
+                                    "bg-surface-container-highest"
                                 }
                             `}
                             >

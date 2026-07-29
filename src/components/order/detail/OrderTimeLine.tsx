@@ -41,11 +41,10 @@ export default function OrderTimeLine({
             ">
                 <div className="
                     absolute
-                    left-[15px]
-                    top-2
-                    bottom-2
+                    left-0
+                    top-3
+                    bottom-3
                     w-px
-                    border-b
                     bg-surface-container-highest
                 "/>
                 {
@@ -54,14 +53,14 @@ export default function OrderTimeLine({
                             key={step.title}
                             className="
                                 relative
-                                flex
-                                gap-4
                             "
                         >
                             <div className={`
                                 absolute
-                                -left-7
+                                -left-11
                                 top-0
+                                w-6
+                                h-6
                                 rounded-full
                                 flex
                                 items-center
@@ -69,13 +68,13 @@ export default function OrderTimeLine({
                                 ${
                                     step.status==="current"
                                     ?
-                                    "w-7 h-7 bg-primary-container text-white"
+                                    "bg-primary-container text-white ring-4 ring-primary-container/30"
                                     :
                                     step.status==="completed"
                                     ?
-                                    "w-6 h-6 bg-primary text-white"
+                                    "bg-primary text-white"
                                     :
-                                    "w-5 h-5 bg-surface-container-highest"
+                                    "bg-surface-container-highest text-outline"
                                 }
                             `}>
                                 {
@@ -99,7 +98,6 @@ export default function OrderTimeLine({
                                 <p className={`
                                     text-sm
                                     font-semibold
-                                    ml-4
                                     ${
                                         step.status==="current"
                                         ?
@@ -113,7 +111,6 @@ export default function OrderTimeLine({
 
                                 <p className="
                                     mt-1
-                                    ml-4
                                     text-sm
                                     text-on-surface-variant
                                 ">
