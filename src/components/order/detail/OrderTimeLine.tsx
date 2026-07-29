@@ -30,7 +30,7 @@ export default function OrderTimeLine({
                 text-on-surface
                 pb-4
                 mb-6
-                border-b
+                border-l-2
                 border-surface-container-highest
             ">Delivery Status</h3>
 
