@@ -1,65 +1,54 @@
-import { CheckCircle2 } from "lucide-react";
+import type { CustomerOrderStatus } from "@/data/customerOrders";
 
-interface Props {
-    orderId: string;
-    date: string;
-    status: string;
+type OrderDetailHeaderProps = {
+  orderId: string;
+  date: string;
+  status: CustomerOrderStatus;
+};
+
+function getStatusClass(status: CustomerOrderStatus) {
+  if (status === "Pending") {
+    return "bg-secondary-container text-on-secondary-container";
+  }
+
+  if (status === "Processing") {
+    return "bg-primary-container/35 text-on-primary-container";
+  }
+
+  if (status === "Shipping") {
+    return "bg-primary text-on-primary";
+  }
+
+  return "bg-surface-container text-on-surface-variant";
 }
 
 export default function OrderDetailHeader({
-    orderId,
-    date,
-    status,
-}:Props) {
-    return (
-        <section className="
-            mb-10
-            text-center
-        ">
-            <h1 className="
-                text-3xl
-                md-text-4xl
-                font-display
-                text-on-surface
-                mb-3
-            ">
-                Order #{orderId}
-            </h1>
+  orderId,
+  date,
+  status,
+}: OrderDetailHeaderProps) {
+  return (
+    <section className="mb-10 text-center">
+      <h1 className="mb-3 font-display text-3xl text-on-surface md:text-4xl">
+        Order #{orderId}
+      </h1>
 
-            <div className="
-                flex
-                items-center
-                justify-center
-                md:justify-start
-                gap-2
-                text-sm
-                text-on-surface-variant
-            ">
-                <span>
-                    Placed on {date}
-                </span>
+      <div className="flex flex-wrap items-center justify-center gap-2 text-sm text-on-surface-variant">
+        <span>Placed on {date}</span>
 
-                <span className="
-                    w-1
-                    h-1
-                    rounded-full
-                    bg-surface-container-highest
-                "/>
+        <span
+          aria-hidden="true"
+          className="h-1 w-1 rounded-full bg-surface-container-highest"
+        />
 
-                <span className="
-                    flex
-                    items-center
-                    gap-1
-                    text-primary
-                    font-medium
-                ">
-                    <CheckCircle2
-                        size={16}
-                        className="fill-primary text-white"
-                    />
-                    {status}
-                </span>
-            </div>
-        </section>
-    )
+        <span
+          className={`rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusClass(
+            status,
+          )}`}
+        >
+          {status}
+        </span>
+      </div>
+    </section>
+  );
 }

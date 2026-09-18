@@ -1,74 +1,56 @@
-import Link from "next/link";
+"use client";
+
+import { Check, ShoppingBag } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useCart } from "@/components/cart/CartProvider";
 
 type Props = {
-    id: number,
-    quantity: number;
-}
+  id: number;
+  quantity: number;
+};
 
-export default function ProductActionBar({
-    id,
-    quantity,
-}: Props) {
-    return (
-        <nav
-            className="
-                fixed
-                bottom-0
-                left-0
-                w-full
-                z-50
-                bg-white
-                border-t
-                border-outline
-                px-5
-                py-4
-                flex
-                items-center
-                justify-center
-                gap-6
-                shadow-lg
-            "
-        >
-            <button
-                className="
-                    flex-1
-                    h-14
-                    rounded-xl
-                    border-[2px]
-                    border-primary
-                    bg-transparent
-                    text-primary
-                    font-bold
-                    uppercase
-                    tracking-wider
-                    text-sm
-                "
-            >
-                Add to Cart
-            </button>
+export default function BottomActionBar({ id, quantity }: Props) {
+  const router = useRouter();
+  const { addItem } = useCart();
+  const [isAdded, setIsAdded] = useState(false);
 
-            <Link
-                href={`/checkout?product=${id}&quantity=${quantity}`}
-                className="
-                    flex-1
-                    h-14
-                    rounded-xl
-                    bg-primary
-                    text-white
-                    font-bold
-                    uppercase
-                    tracking-wider
-                    text-sm
-                    shadow-lg
-                    flex
-                    items-center
-                    justify-center
-                "
-            >
-                Buy Now
-            </Link>
-            
+  function handleAddToCart() {
+    addItem(id, quantity);
+    setIsAdded(true);
 
-        </nav>
-    );
+    window.setTimeout(() => {
+      setIsAdded(false);
+    }, 1800);
+  }
+
+  function handleBuyNow() {
+    addItem(id, quantity);
+    router.push(`/checkout?product=${id}&quantity=${quantity}`);
+  }
+
+  return (
+    <nav className="fixed bottom-0 left-0 z-50 flex w-full items-center justify-center gap-3 border-t border-outline bg-surface px-5 py-4 shadow-lg">
+      <button
+        type="button"
+        onClick={handleAddToCart}
+        className={
+          isAdded
+            ? "flex h-14 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-sm font-bold uppercase tracking-wider text-white transition"
+            : "flex h-14 flex-1 items-center justify-center gap-2 rounded-xl border-2 border-primary bg-transparent text-sm font-bold uppercase tracking-wider text-primary transition hover:bg-primary/5"
+        }
+      >
+        {isAdded ? <Check size={18} /> : <ShoppingBag size={18} />}
+        {isAdded ? "Added" : "Add to Cart"}
+      </button>
+
+      <button
+        type="button"
+        onClick={handleBuyNow}
+        className="flex h-14 flex-1 items-center justify-center rounded-xl bg-primary text-sm font-bold uppercase tracking-wider text-white shadow-lg transition hover:opacity-90 active:scale-[0.98]"
+      >
+        Buy Now
+      </button>
+    </nav>
+  );
 }

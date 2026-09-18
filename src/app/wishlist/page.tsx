@@ -4,7 +4,7 @@ import WishListHeader from "@/components/wishlist/WishListHeader";
 
 export default function WishListPage(){
     return (
-        <main>
+        <main className="pb-24">
             <Navbar2 />
             <WishListHeader />
             <WishListList />

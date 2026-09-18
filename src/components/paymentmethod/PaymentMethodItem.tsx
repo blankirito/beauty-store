@@ -15,7 +15,9 @@ export default function PaymentMethodItem({
 }: Props) {
     return (
         <button
+            type="button"
             onClick={onClick}
+            aria-pressed={selected}
             className="
                 w-full
                 flex

@@ -1,112 +1,78 @@
 "use client";
-import { LucideIcon, Eye, EyeOff } from "lucide-react";
+
+import { Eye, EyeOff, type LucideIcon } from "lucide-react";
 import { useState } from "react";
 
-interface Props {
-    label: string;
-    placeholder: string;
-    icon?: LucideIcon;
-    type?: string;
-    value?: string;
-    onChange?: (
-        e:React.ChangeEvent<HTMLInputElement>)=>void;
-    autoComplete?: string;
-}
+type AuthInputProps = {
+  id: string;
+  label: string;
+  placeholder: string;
+  icon?: LucideIcon;
+  type?: "text" | "email" | "tel" | "password";
+  name?: string;
+  value?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  autoComplete?: string;
+  required?: boolean;
+};
 
 export default function AuthInput({
-    label,
-    placeholder,
-    icon:Icon,
-    type="text",
-    value,
-    onChange,
-    autoComplete,
-}: Props) {
+  id,
+  label,
+  placeholder,
+  icon: Icon,
+  type = "text",
+  name,
+  value,
+  onChange,
+  autoComplete,
+  required = false,
+}: AuthInputProps) {
+  const [showPassword, setShowPassword] = useState(false);
 
-    const [showPassword, setShowPassword] = useState(false);
-    const inputType = type === "password" ? (showPassword ? "text" : "password") : type
-    return (
-        <div className="
-            flex
-            flex-col
-            gap-2
-        ">
-            <label className="
-                text-sm
-                font-semibold
-                tracking-wide
-                text-on-surface-variant
-                ml-1
-            ">
-                {label}
-            </label>
+  const inputType =
+    type === "password" && showPassword ? "text" : type;
 
-            <div className="
-                group
-                flex
-                items-center
-                bg-surface-low
-                rounded-xl
-                border-2
-                border-transparent
-                transition
-                focus-within:border-primary
-                focus-within:bg-white
-                overflow-hidden
-            ">
-                {
-                    Icon && (
-                        <Icon 
-                            size={20}
-                            className="
-                                ml-4
-                                text-outline
-                                group-focus-within:text-primary
-                            "
-                        />
-                    )
-                }
-                
+  return (
+    <div className="flex flex-col gap-2">
+      <label
+        htmlFor={id}
+        className="ml-1 text-sm font-semibold tracking-wide text-on-surface-variant"
+      >
+        {label}
+      </label>
 
-                <input 
-                    type={inputType}
-                    value={value}
-                    onChange={onChange}
-                    placeholder={placeholder}
-                    autoComplete={autoComplete}
-                    className="
-                        flex-1
-                        bg-transparent
-                        border-none
-                        outline-none
-                        px-4
-                        py-4
-                        text-on-surface
-                        placeholder:text-outline
-                        focus:ring-0
-                    "
-                />
-                {
-                    type === "password" && (
-                        <button 
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="
-                                mr-4
-                                text-outline
-                                hover:text-primary
-                                transition
-                            "
-                        >
-                            {
-                                showPassword
-                                    ? <EyeOff size={20} />
-                                    : <Eye size={20} />
-                            }
-                        </button>
-                    )
-                }
-            </div>
-        </div>
-    )
+      <div className="group flex items-center overflow-hidden rounded-xl border-2 border-transparent bg-surface-low transition focus-within:border-primary focus-within:bg-surface">
+        {Icon && (
+          <Icon
+            size={20}
+            className="ml-4 text-outline transition group-focus-within:text-primary"
+          />
+        )}
+
+        <input
+          id={id}
+          name={name}
+          type={inputType}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          autoComplete={autoComplete}
+          required={required}
+          className="flex-1 bg-transparent px-4 py-4 text-on-surface outline-none placeholder:text-outline focus:ring-0"
+        />
+
+        {type === "password" && (
+          <button
+            type="button"
+            onClick={() => setShowPassword((current) => !current)}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            className="mr-4 text-outline transition hover:text-primary"
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+        )}
+      </div>
+    </div>
+  );
 }

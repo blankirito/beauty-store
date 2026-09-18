@@ -1,77 +1,57 @@
-import {
-    Mail, 
-    MessageCircle,
-} from "lucide-react";
+"use client";
 
-export default function ContactCard(){
-    return (
-        <div className="
-            bg-surface-low
-            border
-            border-outline/20
-            rounded-2xl
-            p-10
-            flex
-            flex-col
-            justify-center
-        ">
-            <h3 className="
-                text-2xl
-                font-display
-                text-primary
-                text-center
-                mb-8
-            ">Contact Our Concierge</h3>
+import { useState } from "react";
+import { Mail, MessageCircle } from "lucide-react";
 
-            <div className="
-                space-y-4
-            ">
-                <button className="
-                    w-full
-                    flex
-                    items-center
-                    justify-center
-                    gap-3
-                    py-4
-                    bg-primary
-                    text-white
-                    rounded-full
-                    hover:opacity-90
-                    transition
-                ">
-                    <Mail size={20}/>
-                    Email Support
-                </button>
+export default function ContactCard() {
+  const [notice, setNotice] = useState("");
 
-                <button className="
-                    w-full
-                    flex
-                    items-center
-                    justify-center
-                    gap-3
-                    py-4
-                    bg-white
-                    text-primary
-                    border
-                    border-outline/30
-                    rounded-full
-                    hover:bg-primary-container/20
-                    transition
-                ">
-                    <MessageCircle size={20}/>
-                    Live Chat
-                </button>
-            </div>
+  return (
+    <div className="flex flex-col justify-center rounded-2xl border border-outline/20 bg-surface-low p-10">
+      <h3 className="mb-8 text-center font-display text-2xl text-primary">
+        Contact Our Concierge
+      </h3>
 
-            <p className="
-                text-center
-                text-sm
-                text-on-surface-variant
-                mt-8
-                italic
-            ">
-                Response time: Typically within 24 hours
-            </p>
-        </div>
-    )
+      <div className="space-y-4">
+        <button
+          type="button"
+          onClick={() =>
+            setNotice(
+              "Email support will be connected after your official support email is ready.",
+            )
+          }
+          className="flex w-full items-center justify-center gap-3 rounded-full bg-primary py-4 text-white transition hover:opacity-90"
+        >
+          <Mail size={20} />
+          Email Support
+        </button>
+
+        <button
+          type="button"
+          onClick={() =>
+            setNotice(
+              "Live Chat will be available after a customer-support service is connected.",
+            )
+          }
+          className="flex w-full items-center justify-center gap-3 rounded-full border border-outline/30 bg-surface py-4 text-primary transition hover:bg-primary-container/20"
+        >
+          <MessageCircle size={20} />
+          Live Chat
+        </button>
+      </div>
+
+      {notice && (
+        <p
+          role="status"
+          className="mt-5 rounded-xl bg-primary-container/20 p-3 text-center text-sm text-on-surface-variant"
+        >
+          {notice}
+        </p>
+      )}
+
+      <p className="mt-8 text-center text-sm italic text-on-surface-variant">
+        Response time: Typically within 24 hours
+      </p>
+    </div>
+  );
 }

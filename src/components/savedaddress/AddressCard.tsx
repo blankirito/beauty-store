@@ -1,87 +1,48 @@
-import { Address } from "@/types/address"
+import type { Address } from "@/types/address";
 
-interface AddressCardProps {
+type AddressCardProps = {
   address: Address;
-}
+  onEdit: () => void;
+  onDelete: () => void;
+  onSetDefault: () => void;
+};
 
-export default function AddressCard({ address }: AddressCardProps) {
+export default function AddressCard({
+  address,
+  onEdit,
+  onDelete,
+  onSetDefault,
+}: AddressCardProps) {
   return (
-    <div
-      className="
-        bg-white
-        border
-        border-[#d6c2be]/30
-        rounded-xl
-        p-5
-        md:p-8
-        flex
-        flex-col
-        justify-between
-        transition-all
-        duration-300
-        hover:shadow-lg
-      "
-    >
-      {/* Header */}
+    <article className="flex flex-col justify-between rounded-xl border border-outline/30 bg-surface p-5 shadow-sm transition hover:shadow-lg md:p-8">
       <div>
-        <div className="flex justify-between items-start mb-6">
+        <div className="mb-6 flex items-start justify-between">
           <span
-            className={`
-              px-3
-              py-1
-              rounded-full
-              text-xs
-              font-medium
-              tracking-widest
-              uppercase
-              ${
-                address.isDefault
-                  ? "bg-[#fbdeb9] text-[#705b3e]"
-                  : "bg-[#f5f3ef] text-[#524440]"
-              }
-            `}
+            className={
+              address.isDefault
+                ? "rounded-full bg-secondary-container px-3 py-1 text-xs font-medium uppercase tracking-widest text-on-secondary-container"
+                : "rounded-full bg-surface-low px-3 py-1 text-xs font-medium uppercase tracking-widest text-on-surface-variant"
+            }
           >
             {address.label}
           </span>
 
           {address.isDefault && (
-            <span className="text-[#845145] text-xs font-semibold flex items-center gap-1">
+            <span className="flex items-center gap-1 text-xs font-semibold text-primary">
               ✓ Default
             </span>
           )}
         </div>
 
-
-        {/* Customer info */}
-        <h3
-          className="
-            text-xl
-            md:text-2xl
-            font-medium
-            text-[#845145]
-            mb-2
-          "
-          style={{
-            fontFamily: "Playfair Display",
-          }}
-        >
+        <h3 className="mb-2 font-display text-xl font-medium text-primary md:text-2xl">
           {address.name}
         </h3>
 
-
-        <p className="text-[#524440] text-sm md:text-base mb-1">
+        <p className="mb-1 text-sm text-on-surface-variant md:text-base">
           {address.phone}
         </p>
 
-
-        <p
-          className="
-            text-[#524440]
-            text-sm
-            md:text-base
-            leading-relaxed
-          "
-        >
+        <p className="text-sm leading-relaxed text-on-surface-variant md:text-base">
           {address.address}
           <br />
           {address.city}, {address.state}
@@ -90,44 +51,35 @@ export default function AddressCard({ address }: AddressCardProps) {
           <br />
           {address.country}
         </p>
-
       </div>
 
+      <div className="mt-8 flex flex-wrap gap-x-5 gap-y-3 border-t border-outline/30 pt-5">
+        {!address.isDefault && (
+          <button
+            type="button"
+            onClick={onSetDefault}
+            className="text-sm font-semibold text-primary transition hover:opacity-70"
+          >
+            Set as default
+          </button>
+        )}
 
-      {/* Actions */}
-      <div
-        className="
-          mt-8
-          pt-5
-          border-t
-          border-[#d6c2be]/30
-          flex
-          gap-6
-        "
-      >
         <button
-          className="
-            text-[#845145]
-            text-sm
-            font-semibold
-            hover:opacity-70
-          "
+          type="button"
+          onClick={onEdit}
+          className="text-sm font-semibold text-primary transition hover:opacity-70"
         >
           Edit
         </button>
 
         <button
-          className="
-            text-[#524440]
-            text-sm
-            font-semibold
-            hover:text-red-500
-          "
+          type="button"
+          onClick={onDelete}
+          className="text-sm font-semibold text-on-surface-variant transition hover:text-error"
         >
           Delete
         </button>
       </div>
-
-    </div>
+    </article>
   );
 }

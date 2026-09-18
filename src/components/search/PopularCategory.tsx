@@ -1,51 +1,33 @@
 import { ChevronRight } from "lucide-react";
 
-const categories = [
-    "Skincare",
-    "Serum",
-    "Anti-aging",
-    "Hydration"
-]
+const categories = ["Skincare", "Serum", "Anti-aging", "Hydration"];
 
-export default function PopularCategory() {
-    return (
-        <section className="
-            px-5
-            mt-10
-        ">
-            <h2 className="
-                text-sm
-                font-semibold
-                tracking-widest
-                text-primary
-                mb-4
-            ">POPULAR CATEGORY</h2>
+type PopularCategoryProps = {
+  onSelect: (category: string) => void;
+};
 
-            <div className="
-                grid
-                grid-cols-2
-                gap-4
-            ">
-                {
-                    categories.map(category=>(
-                        <button
-                            key={category}
-                            className="
-                                flex
-                                justify-between
-                                items-center
-                                p-4
-                                rounded-xl
-                                bg-surface
-                                shadow-sm
-                            "
-                        >
-                            <span>{category}</span>
-                            <ChevronRight size={18} className="text-outline"/>
-                        </button>
-                    ))
-                }
-            </div>
-        </section>
-    )
+export default function PopularCategory({
+  onSelect,
+}: PopularCategoryProps) {
+  return (
+    <section className="mt-10 px-5">
+      <h2 className="mb-4 text-sm font-semibold tracking-widest text-primary">
+        POPULAR CATEGORIES
+      </h2>
+
+      <div className="grid grid-cols-2 gap-4">
+        {categories.map((category) => (
+          <button
+            key={category}
+            type="button"
+            onClick={() => onSelect(category)}
+            className="flex items-center justify-between rounded-xl bg-surface p-4 text-left shadow-sm transition hover:bg-surface-low"
+          >
+            <span>{category}</span>
+            <ChevronRight size={18} className="text-outline" />
+          </button>
+        ))}
+      </div>
+    </section>
+  );
 }

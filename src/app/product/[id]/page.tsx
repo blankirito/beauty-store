@@ -22,7 +22,7 @@ export default async function ProductDetailPage({
 		item => item.id === Number(id)
 	);
 
-	if(!product) {
+	if (!product) {
 		return (
 			<div>
 				Product Not Found
@@ -33,13 +33,13 @@ export default async function ProductDetailPage({
 	return (
 		<main className="pb-24">
 			<ProductNavbar />
-			<ProductGallery 
+			<ProductGallery
 				images={product.images}
 			/>
-			<ProductInfo 
+			<ProductInfo
+				id={product.id}
 				name={product.name}
 				price={product.price}
-				// rating={product.rating}
 			/>
 			<ProductClient
 				id={product.id}

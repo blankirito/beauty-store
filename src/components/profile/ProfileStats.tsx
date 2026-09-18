@@ -15,7 +15,7 @@ export default function ProfileStats() {
             />
             <StatCard 
                 number="2"
-                title="Active Order"
+                title="Active Orders"
             />
         </section>
     )

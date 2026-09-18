@@ -1,98 +1,56 @@
 import {
-    Sparkles,
-    Droplets,
-    Brush,
-    Scissors,
-    Heart,
+  Sparkles,
+  Droplets,
+  Brush,
+  Scissors,
+  Heart,
 } from "lucide-react";
-
 import type { LucideIcon } from "lucide-react";
-
 import Link from "next/link";
 
 const categories: {
-    name: string;
-    icon: LucideIcon;
+  name: string;
+  icon: LucideIcon;
 }[] = [
-    {
-        name: "Beauty",
-        icon: Sparkles,
-    },
-    {
-        name: "Skincare",
-        icon: Droplets,
-    },
-    {
-        name: "Makeup",
-        icon: Brush,
-    },
-    {
-        name: "Hair",
-        icon: Scissors,
-    },
-    {
-        name: "Body Care",
-        icon: Heart,
-    },
-]
+  { name: "Beauty", icon: Sparkles },
+  { name: "Skincare", icon: Droplets },
+  { name: "Makeup", icon: Brush },
+  { name: "Hair", icon: Scissors },
+  { name: "Body Care", icon: Heart },
+];
 
 export default function CategorySelection() {
-    return (
-        <section className="mt-10">
+  return (
+    <section className="mt-10">
+      <div className="px-4">
+        <h2 className="font-display text-2xl font-medium text-primary">
+          Categories
+        </h2>
+      </div>
 
-            <div className="flex justify-between items-center px-4 mb-4">
+      <div className="mt-4 grid grid-cols-5 gap-2 px-4">
+        {categories.map((category) => {
+          const Icon = category.icon;
 
-                <h2 className="text-2xl font-display font-medium text-primary">Categories</h2>
+          return (
+            <Link
+              key={category.name}
+              href={`/category/${category.name
+                .toLowerCase()
+                .replace(" ", "-")}`}
+              className="group flex min-w-0 flex-col items-center gap-2"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-low text-on-surface transition duration-200 group-hover:bg-primary group-hover:text-on-primary group-active:scale-95">
+                <Icon size={23} strokeWidth={1.6} />
+              </div>
 
-                <button className="text-sm text-on-surface font-medium">View All</button>
-
-            </div>
-
-            <div className="flex gap-6 overflow-x-auto px-4 no-scrollbar">
-
-                {categories.map((category) => {
-
-                    const Icon = category.icon;
-
-                    return (
-                        <Link
-                            key={category.name}
-                            href={`/category/${category.name.toLowerCase().replace(" ", "-")}`}
-                            className="
-                            group
-                            flex
-                            flex-col
-                            items-center
-                            gap-2
-                            min-w-[72px]
-                            cursor-pointer
-                            "
-                        >
-                            <div
-                                className="
-                                w-14
-                                h-14
-                                rounded-2xl
-                                bg-surface-low
-                                flex
-                                items-center
-                                justify-center
-                                transition
-                                duration-300
-                                group-hover:bg-primary
-                                group-hover:text-on-primary
-                                group-hover:scale-105
-                            ">
-                                <Icon size={26} strokeWidth={1.5} />
-                            </div>
-
-                            <span className="text-sm text-on-surface-variant">
-                                {category.name}
-                            </span>
-                        </Link>
-                    );
-                })}
-            </div>
-        </section>
-    );
+              <span className="min-h-8 text-center text-xs leading-4 text-on-surface-variant">
+                {category.name}
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+    </section>
+  );
 }

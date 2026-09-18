@@ -1,59 +1,40 @@
 import { MapPin } from "lucide-react";
 
-export default function DeliveryAddress() {
-    return (
-        <section className="
-            bg-surface-container-lowest
-            rounded-xl
-            p-6
-            shadow-sm
-        ">
-            <h3 className="
-                text-xl
-                font-display
-                text-on-surface
-                mb-5
-            ">Delivery Address</h3>
+type DeliveryAddressProps = {
+  name: string;
+  address: {
+    street: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+  };
+};
 
-            <div className="
-                flex
-                gap-4
-                items-start
-            ">
-                <div className="
-                    w-10
-                    h-10
-                    rounded-full
-                    bg-surface-container
-                    flex
-                    items-center
-                    justify-center
-                    shrink-0
-                ">
-                    <MapPin 
-                        size={20}
-                        className="text-primary"
-                    />
-                </div>
+export default function DeliveryAddress({
+  name,
+  address,
+}: DeliveryAddressProps) {
+  return (
+    <section className="rounded-xl bg-surface-container-lowest p-6 shadow-sm">
+      <h3 className="mb-5 font-display text-xl text-on-surface">
+        Delivery Address
+      </h3>
 
-                <div>
-                    <p className="
-                        font-medium
-                        text-on-surface
-                    ">Home</p>
+      <div className="flex items-start gap-4">
+        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-surface-container">
+          <MapPin size={20} className="text-primary" />
+        </div>
 
-                    <p className="
-                        mt-1
-                        text-sm
-                        text-on-surface-variant
-                        leading-relaxed
-                    ">
-                        123 Serenity Lane, Apt 4B
-                        <br />
-                        Beverly Hills, CA 90210                        
-                    </p>
-                </div>
-            </div>
-        </section>
-    )
+        <div className="text-sm leading-relaxed text-on-surface-variant">
+          <p className="font-medium text-on-surface">{name}</p>
+          <p className="mt-1">{address.street}</p>
+          <p>
+            {address.city}, {address.state} {address.postalCode}
+          </p>
+          <p>{address.country}</p>
+        </div>
+      </div>
+    </section>
+  );
 }

@@ -1,163 +1,114 @@
-import { Truck, RotateCcw } from "lucide-react";
+import type { CustomerOrder } from "@/data/customerOrders";
+import type { Products } from "@/types/products";
+import { ChevronRight, Truck } from "lucide-react";
 import Link from "next/link";
 
-type OrderItemProps = {
-    id: number,
-    name: string,
-    price: number,
-    quantity: number,
-    image: string,
+type OrderCardProps = {
+  order: CustomerOrder;
+  product: Products;
+};
+
+function getStatusClass(status: CustomerOrder["status"]) {
+  if (status === "Pending") {
+    return "bg-secondary-container text-on-secondary-container";
+  }
+
+  if (status === "Processing") {
+    return "bg-primary-container/35 text-on-primary-container";
+  }
+
+  if (status === "Shipping") {
+    return "bg-primary text-white";
+  }
+
+  return "bg-surface-container text-on-surface-variant";
 }
 
 export default function OrderCard({
-    id, 
-    name,
-    price,
-    quantity,
-    image,
-}: OrderItemProps) {
-    return (
-        <div className="
-            bg-surface
-            rounded-xl
-            p-4
-            shadow-sm
-            space-y-4
-        ">
-            {/* header */}
-            <div className="
-                flex
-                justify-between
-                items-start
-            ">
-                <div>
-                    <p className="
-                        text-xs
-                        uppercase
-                        tracking-wider
-                        text-on-surface-variant
-                    ">Order #{id}</p>
-                    <p className="
-                        text-sm
-                        text-outline
-                        mt-1
-                    ">
-                        placed on Oct 24, 2026
-                    </p>
-                </div>
+  order,
+  product,
+}: OrderCardProps) {
+  const hasMultipleItems = order.items.length > 1;
+  const canTrack = order.status === "Shipping";
 
-                <span className="
-                    px-3
-                    py-1
-                    rounded-full
-                    bg-primary-container
-                    text-primary
-                    text-xs
-                    font-semibold
-                ">
-                    In Transit
-                </span>
-            </div>
+  return (
+    <article className="space-y-4 rounded-xl bg-surface p-4 shadow-sm">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
+            Order #{order.id}
+          </p>
 
-            {/* product */}
-            <div className="
-                flex
-                items-center
-                gap-4
-            ">
-                <div className="
-                    relative
-                    w-20
-                    h-20
-                    rounded-lg
-                    overflow-hidden
-                    flex-shrink-0
-                ">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img 
-                        src={image}
-                        alt={name}
-                        className="w-full h-full object-cover"
-                    />
-                </div>
-
-                <div className="
-                    flex-1
-                    min-w-0
-                ">
-                    <h3 className="
-                        font-display
-                        text-lg
-                        text-primary
-                        font-medium
-                        truncate
-                    ">
-                        {name}
-                    </h3>
-
-                    <p className="
-                        text-sm
-                        text-on-surface-variant
-                        mt-1
-                    ">
-                        Qty: {quantity}
-                    </p>
-                </div>
-
-                <div className="
-                    text-lg
-                    font-bold
-                    text-primary
-                ">
-                    RM{price.toFixed(2)}
-                </div>
-            </div>
-            
-            {/* footer */}
-            <div className="
-                border-t
-                border-outline
-                pt-4
-                flex
-                gap-3
-            ">
-
-                <Link
-                    href={`/orders/${id}/track`}
-                    className="
-                        flex-1
-                        h-12
-                        rounded-xl
-                        bg-primary
-                        text-white
-                        flex
-                        items-center
-                        justify-center
-                        gap-2
-                        font-semibold
-                    ">
-                        <Truck size={18} />
-                        Track Order
-                </Link>
-
-                <Link
-                    href={`/orders/${id}`}
-                    className="
-                        h-12
-                        px-5
-                        rounded-xl
-                        border-2
-                        border-primary
-                        text-primary
-                        flex
-                        items-center
-                        justify-center
-                        gap-2
-                        font-semibold
-                    ">
-                        Details
-                </Link>
-            </div>
+          <p className="mt-1 text-sm text-outline">
+            Placed on {order.date}
+          </p>
         </div>
-    )
+
+        <span
+          className={`rounded-full px-3 py-1 text-xs font-semibold ${getStatusClass(
+            order.status,
+          )}`}
+        >
+          {order.status}
+        </span>
+      </div>
+
+      <Link
+        href={`/orders/${order.id}`}
+        className="flex items-center gap-4 rounded-lg transition active:opacity-70"
+      >
+        <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-surface-low">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={product.image}
+            alt={product.name}
+            className="h-full w-full object-cover"
+          />
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <h3 className="truncate font-display text-lg font-medium text-primary">
+            {product.name}
+          </h3>
+
+          <p className="mt-1 text-sm text-on-surface-variant">
+            {order.items[0].quantity} item
+            {order.items[0].quantity > 1 ? "s" : ""}
+            {hasMultipleItems && ` · +${order.items.length - 1} more`}
+          </p>
+        </div>
+
+        <div className="text-right">
+          <p className="text-lg font-bold text-primary">
+            RM{order.total.toFixed(2)}
+          </p>
+
+          <ChevronRight size={18} className="ml-auto mt-1 text-outline" />
+        </div>
+      </Link>
+
+      <div className="flex gap-3 border-t border-outline/60 pt-4">
+        {canTrack && (
+          <Link
+            href={`/orders/${order.id}/track`}
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-semibold text-white transition hover:opacity-90"
+          >
+            <Truck size={18} />
+            Track Order
+          </Link>
+        )}
+
+        <Link
+          href={`/orders/${order.id}`}
+          className={
+            canTrack
+              ? "flex items-center justify-center rounded-xl border-2 border-primary px-5 py-3 text-sm font-semibold text-primary transition hover:bg-primary/5"
+              : "flex flex-1 items-center justify-center rounded-xl border-2 border-primary py-3 text-sm font-semibold text-primary transition hover:bg-primary/5"
+          }
+        >
+          View Details
+        </Link>
+      </div>
+    </article>
+  );
 }

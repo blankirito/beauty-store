@@ -1,72 +1,55 @@
 "use client";
 
-import { useState } from "react";
-
 import PaymentCard from "./PaymentCard";
 import AddCardButton from "./AddCardButton";
 
 const cards = [
-    {
-        id: "card_1",
-        brand: "VISA",
-        cardNumber: "•••• •••• •••• 4242",
-        holder: "Evelyn Rose",
-        expiry: "12/26",
-    },
-
-    {
-        id: "card_2",
-        brand: "MC",
-        cardNumber: "•••• •••• •••• 8891",
-        holder: "Evelyn Rose",
-        expiry: "08/25",
-    },
+  {
+    id: "card_1",
+    brand: "VISA",
+    cardNumber: "•••• •••• •••• 4242",
+    holder: "Alex Morgan",
+    expiry: "12/28",
+  },
+  {
+    id: "card_2",
+    brand: "MC",
+    cardNumber: "•••• •••• •••• 8891",
+    holder: "Alex Morgan",
+    expiry: "08/28",
+  },
 ];
 
-export default function SavedCard() {
+type SavedCardsProps = {
+  selectedPaymentId: string;
+  onSelect: (paymentId: string) => void;
+  onAddCard: () => void;
+};
 
-    const [defaultCard, setDefaultCard] = useState("card_1");
-    
-    return (
-        <section className="
-            space-y-6
-        ">
-            <h2 className="
-                text-2xl
-                font-display
-                text-primary
-            ">
-                Saved Cards
-            </h2>
+export default function SavedCards({
+  selectedPaymentId,
+  onSelect,
+  onAddCard,
+}: SavedCardsProps) {
+  return (
+    <section className="space-y-6">
+      <h2 className="font-display text-2xl text-primary">Saved Cards</h2>
 
-            <div className="
-                grid
-                grid-cols-1
-                md:grid-cols-2
-                gap-6
-            ">
-                {
-                    cards.map((card)=>(
-                        <PaymentCard
-                            key={card.id}
-                            brand={card.brand}
-                            cardNumber={card.cardNumber}
-                            holder={card.holder}
-                            expiry={card.expiry}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        {cards.map((card) => (
+          <PaymentCard
+            key={card.id}
+            brand={card.brand}
+            cardNumber={card.cardNumber}
+            holder={card.holder}
+            expiry={card.expiry}
+            isSelected={selectedPaymentId === card.id}
+            onClick={() => onSelect(card.id)}
+          />
+        ))}
 
-                            isDefault={
-                                defaultCard === card.id
-                            }
-
-                            onClick={() =>
-                                setDefaultCard(card.id)
-                            }
-                        />
-                    ))
-                }
-
-                <AddCardButton />
-            </div>
-        </section>
-    )
+        <AddCardButton onClick={onAddCard} />
+      </div>
+    </section>
+  );
 }

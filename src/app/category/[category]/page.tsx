@@ -1,46 +1,36 @@
 import Navbar2 from "@/components/shared/Navbar2";
-import CategoryHeader from "@/components/category/CategoryHeader";
-import CategoryFilter from "@/components/category/CategoryFilter";
-import CategoryProductGrid from "@/components/category/CategoryProductGrid";
-
+import CategoryClient from "@/components/category/CategoryClient";
 import { products } from "@/data/products";
 
 type Props = {
-    params: Promise<{
-        category: string;
-    }>
+  params: Promise<{
+    category: string;
+  }>;
+};
+
+function toSlug(value: string) {
+  return value.trim().toLowerCase().replace(/\s+/g, "-");
 }
 
-export default async function CategoryProductPage({
-    params
-}: Props){
+export default async function CategoryProductPage({ params }: Props) {
+  const { category } = await params;
 
-    const {category} = await params;
+  const categoryProducts = products.filter(
+    (product) => toSlug(product.category) === category.toLowerCase(),
+  );
 
-    const filteredProducts = products.filter(
-        product =>
-        product.category.toLowerCase()
-        === category.toLowerCase()
-    );
+  const displayCategory = category
+    .replaceAll("-", " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 
-    const displayCategory =
-    category
-    .replace("-"," ")
-    .replace(/\b\w/g,char=>char.toUpperCase());
+  return (
+    <main className="pb-24">
+      <Navbar2 />
 
-    return(
-        <main className="pb-24">
-            <Navbar2 />
-            <CategoryHeader
-                category={displayCategory}
-                count={filteredProducts.length}
-            />
-
-            <CategoryFilter />
-
-            <CategoryProductGrid
-                products={filteredProducts}
-            />
-        </main>
-    )
+      <CategoryClient
+        category={displayCategory}
+        products={categoryProducts}
+      />
+    </main>
+  );
 }

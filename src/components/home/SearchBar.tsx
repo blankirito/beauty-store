@@ -1,23 +1,20 @@
-"use client";
 import Link from "next/link";
-
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search } from "lucide-react";
 
 export default function SearchBar() {
-    return (
-        <Link
-            href="/search"
-        >
-            <div className="flex items-center gap-3 px-4 mt-4">
-                <div className="flex items-center flex-1 bg-surface-low rounded-xl px-4 h-12">
-                    <Search size={18} className="text-on-surface-variant" />
-                    <input type="text" placeholder="Search curated collection..." className="flex-1 ml-3 outline-none bg-transparent text-on-surface" />
-                </div>
+  return (
+    <section className="mt-4 px-4">
+      <Link
+        href="/search"
+        aria-label="Search products"
+        className="flex h-12 items-center gap-3 rounded-xl bg-surface-low px-4 transition hover:bg-surface-container"
+      >
+        <Search size={18} className="text-on-surface-variant" />
 
-                {/* <button className="bg-primary text-on-primary w-12 h-12 flex items-center justify-center rounded-xl">
-                    <SlidersHorizontal size={18} />
-                </button> */}
-            </div>
-        </Link>
-    );
+        <span className="text-sm text-on-surface-variant">
+          Search curated collection...
+        </span>
+      </Link>
+    </section>
+  );
 }

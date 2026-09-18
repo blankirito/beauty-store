@@ -1,94 +1,56 @@
-interface Props {
-    id: number;
-    image: string;
-    name: string;
-    variant: string;
-    quantity: number;
-    price: number;
-}
+import Link from "next/link";
+
+type OrderItemProps = {
+  id: number;
+  image: string;
+  name: string;
+  quantity: number;
+  price: number;
+};
 
 export default function OrderItem({
-    id,
-    image,
-    name,
-    variant,
-    quantity,
-    price,
-}:Props) {
-    return (
-        <div className="
-            flex
-            gap-6
-            p-4
-            rounded-xl
-            transition
-        ">
+  id,
+  image,
+  name,
+  quantity,
+  price,
+}: OrderItemProps) {
+  const lineTotal = price * quantity;
 
-            <div className="
-                w-24
-                h-24
-                rounded-lg
-                overflow-hidden
-                bg-surface-container
-                shrink-0
-            ">
-                <img
-                    src={image}
-                    alt={name}
-                    className="
-                        w-full
-                        h-full
-                        object-cover
-                    "
-                />
-            </div>
+  return (
+    <div className="flex gap-6 rounded-xl p-4 transition">
+      <Link
+        href={`/product/${id}`}
+        className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg bg-surface-container"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={image}
+          alt={name}
+          className="h-full w-full object-cover transition hover:scale-105"
+        />
+      </Link>
 
-            <div className="
-                flex-1
-                flex
-                flex-col
-                justify-between
-                py-1
-                min-w-0
-            ">
-                <div>
-                    <h4 className="
-                        font-semibold
-                        text-on-surface
-                        truncate
-                    ">
-                        {name}
-                    </h4>
+      <div className="flex min-w-0 flex-1 flex-col justify-between py-1">
+        <div>
+          <Link href={`/product/${id}`}>
+            <h4 className="truncate font-semibold text-on-surface">
+              {name}
+            </h4>
+          </Link>
 
-                    <p className="
-                        mt-1
-                        text-sm
-                        text-on-surface-variant
-                    ">
-                        {variant}
-                    </p>
-                </div>
-                <div className="
-                    flex
-                    justify-between
-                    items-end
-                    mt-4
-                ">
-                    <span className="
-                        text-sm
-                        text-on-surface-variant
-                    ">
-                        Qty: {quantity}
-                    </span>
-
-                    <span className="
-                        font-semibold
-                        text-on-surface
-                    ">
-                        RM{price.toFixed(2)}
-                    </span>
-                </div>
-            </div>
+          <p className="mt-1 text-sm text-on-surface-variant">
+            Qty: {quantity}
+            {quantity > 1 && ` · RM${price.toFixed(2)} each`}
+          </p>
         </div>
-    )
+
+        <div className="mt-4 flex justify-end">
+          <span className="font-semibold text-on-surface">
+            RM{lineTotal.toFixed(2)}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
 }

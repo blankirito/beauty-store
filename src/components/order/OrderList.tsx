@@ -1,42 +1,45 @@
-import OrderItems from "./OrderCard";
+import type { CustomerOrder } from "@/data/customerOrders";
+import { products } from "@/data/products";
+import OrderCard from "./OrderCard";
 
-const orderItems = [
-    {
-        id: 1, 
-        name: "Abstract Silk Scarf", 
-        price: 185,
-        quantity: 1,
-        image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883"
-    },
-    {
-        id: 2, 
-        name: "Ceramic Vessel No.4", 
-        price: 240,
-        quantity: 2,
-        image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9"
-    },
-    {
-        id: 3, 
-        name: "Pebbled Leather Tote", 
-        price: 450,
-        quantity: 1,
-        image: "https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd"
-    },
-]
+type OrderListProps = {
+  items: CustomerOrder[];
+};
 
-export default function OrderList() {
+export default function OrderList({ items }: OrderListProps) {
+  const displayOrders = items.flatMap((order) => {
+    const firstItem = order.items[0];
+
+    const product = products.find(
+      (currentProduct) => currentProduct.id === firstItem.productId,
+    );
+
+    return product ? [{ order, product }] : [];
+  });
+
+  if (displayOrders.length === 0) {
     return (
-        <section className="
-            px-5
-            mt-6
-            space-y-4
-        "> 
-            {orderItems.map((item) => (
-                <OrderItems
-                    key={item.id}
-                    {...item}
-                />
-            ))}
-        </section>
-    )
+      <section className="mx-5 mt-8 rounded-2xl bg-surface-low p-8 text-center">
+        <h2 className="font-display text-2xl text-primary">
+          No orders found
+        </h2>
+
+        <p className="mt-2 text-sm text-on-surface-variant">
+          There are no orders in this category yet.
+        </p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="mt-6 space-y-4 px-5">
+      {displayOrders.map(({ order, product }) => (
+        <OrderCard
+          key={order.id}
+          order={order}
+          product={product}
+        />
+      ))}
+    </section>
+  );
 }

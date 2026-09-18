@@ -1,47 +1,32 @@
 import { Search } from "lucide-react";
 
 type Props = {
-    value: string,
-    onChange:(value: string) => void;
-}
+  value: string;
+  onChange: (value: string) => void;
+  onSubmit: () => void;
+};
 
-export default function SearchBar({
-    value,
-    onChange,
-}:Props ) {
-    return (
-        <div className="
-            relative
-            px-5
-            mt-6
-        ">
-            <Search 
-                size={20}
-                className="
-                    absolute
-                    left-9
-                    top-1/2
-                    -translate-y-1/2
-                    text-outline
-                "
-            />
+export default function SearchBar({ value, onChange, onSubmit }: Props) {
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        onSubmit();
+      }}
+      className="relative mt-6 px-5"
+    >
+      <Search
+        size={20}
+        className="absolute left-9 top-1/2 -translate-y-1/2 text-outline"
+      />
 
-            <input
-                value={value}
-                onChange={(e)=>onChange(e.target.value)}
-                placeholder="Search Products..."
-                className="
-                    w-full
-                    h-14
-                    pl-12
-                    pr-4
-                    rounded-full
-                    bg-surface-low
-                    outline-none
-                    focus:ring-2
-                    focus:ring-primary-container
-                "
-            />
-        </div>
-    )
+      <input
+        type="search"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder="Search products..."
+        className="h-14 w-full rounded-full bg-surface-low pl-12 pr-4 outline-none transition focus:ring-2 focus:ring-primary-container"
+      />
+    </form>
+  );
 }

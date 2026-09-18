@@ -16,7 +16,7 @@ const menu: {
     href: string;
 }[] = [
     {
-        name: "Order",
+        name: "Orders",
         icon: ReceiptText,
         href: "/orders",
         

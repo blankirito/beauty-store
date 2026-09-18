@@ -1,60 +1,46 @@
+type RecentSearchProps = {
+  searches: string[];
+  onSelect: (search: string) => void;
+  onClear: () => void;
+};
 
-const searches = [
-    "Vitamin C Serum",
-    "Moisturizer",
-    "Cleanser",
-];
+export default function RecentSearch({
+  searches,
+  onSelect,
+  onClear,
+}: RecentSearchProps) {
+  if (searches.length === 0) {
+    return null;
+  }
 
-export default function RecentSearch(){
-    return (
+  return (
+    <section className="mt-8 px-5">
+      <div className="mb-4 flex justify-between">
+        <h2 className="text-sm font-semibold tracking-widest text-primary">
+          RECENT SEARCHES
+        </h2>
 
-        <section className="
-            px-5
-            mt-8
-        ">
-            <div className="
-                flex
-                justify-between
-                mb-4
-            ">
-                <h2 className="
-                    text-sm
-                    font-semibold
-                    tracking-widest
-                    text-primary
-                ">RECENT SEARCH</h2>
+        <button
+          type="button"
+          onClick={onClear}
+          className="text-sm text-outline transition hover:text-primary"
+        >
+          Clear
+        </button>
+      </div>
 
-                <button className="
-                    text-sm
-                    text-outline
-                ">Clear</button>
-            </div>
-
-            <div className="
-                flex
-                flex-wrap
-                gap-3
-            ">
-                {
-                    searches.map(item=>(
-                        <button 
-                            key={item}
-                            className="
-                                px-5
-                                py-2
-                                rounded-full
-                                bg-surface
-                                border
-                                border-outline
-                                text-sm
-                                text-on-surface
-                            "
-                        >
-                            {item}
-                        </button>
-                    ))
-                }
-            </div>
-        </section>
-    )
+      <div className="flex flex-wrap gap-3">
+        {searches.map((search) => (
+          <button
+            key={search}
+            type="button"
+            onClick={() => onSelect(search)}
+            className="rounded-full border border-outline/30 bg-surface px-5 py-2 text-sm text-on-surface transition hover:border-primary hover:text-primary"
+          >
+            {search}
+          </button>
+        ))}
+      </div>
+    </section>
+  );
 }

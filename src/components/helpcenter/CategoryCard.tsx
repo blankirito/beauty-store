@@ -1,61 +1,50 @@
-import { LucideIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-interface Props {
-    title: string;
-    description: string;
-    icon: LucideIcon;
-}
+type Props = {
+  title: string;
+  description: string;
+  icon: LucideIcon;
+  selected: boolean;
+  onClick: () => void;
+};
 
 export default function CategoryCard({
-    title, 
-    description,
-    icon: Icon,
+  title,
+  description,
+  icon: Icon,
+  selected,
+  onClick,
 }: Props) {
-    return (
-        <button className="
-            bg-surface-container-lowest
-            rounded-xl
-            border
-            border-outline/20
-            p-6
-            flex
-            flex-col
-            items-center
-            text-center
-            hover:shadow-lg
-            transition
-        ">
-            <div className="
-                w-16
-                h-16
-                rounded-full
-                bg-secondary-container
-                flex
-                items-center
-                justify-center
-                mb-5
-            ">
-                <Icon 
-                    size={30}
-                    className="text-secondary"
-                />
-            </div>
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={selected}
+      className={`
+        flex flex-col items-center rounded-xl border p-6 text-center transition
+        ${
+          selected
+            ? "border-primary bg-primary-container/20 shadow-md"
+            : "border-outline/20 bg-surface-container-lowest hover:shadow-lg"
+        }
+      `}
+    >
+      <div
+        className={`
+          mb-5 flex h-16 w-16 items-center justify-center rounded-full transition
+          ${
+            selected
+              ? "bg-primary text-on-primary"
+              : "bg-secondary-container text-secondary"
+          }
+        `}
+      >
+        <Icon size={30} />
+      </div>
 
-            <h3 className="
-                font-display
-                text-xl
-                text-primary
-            ">
-                {title}
-            </h3>
+      <h3 className="font-display text-xl text-primary">{title}</h3>
 
-            <p className="
-                text-sm
-                text-outline
-                mt-2
-            ">
-                {description}
-            </p>
-        </button>
-    )
+      <p className="mt-2 text-sm text-outline">{description}</p>
+    </button>
+  );
 }

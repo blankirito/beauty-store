@@ -1,73 +1,89 @@
 "use client";
 
-import { Mail, Lock } from "lucide-react";
+import { Lock, Mail } from "lucide-react";
+import { useState } from "react";
+import AuthButton from "../auth/AuthButton";
 import AuthInput from "../auth/AuthInput";
-import AuthButton from "../auth/AuthButton"; 
-import {
-    useState
-} from "react";
 
 export default function LoginForm() {
-    
-    const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [notice, setNotice] = useState("");
 
-    return (
-        <form className="
-            flex
-            flex-col
-            gap-5
-        ">
-            <div>
-                <AuthInput
-                    label="Email or Phone"
-                    placeholder="alex@gmail.com"
-                    icon={Mail}
-                />
-            </div>
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoading(true);
+    setNotice("");
 
-            <div>
-                <div className="relative">
-                    <AuthInput
-                        label="Password"
-                        placeholder="······"
-                        icon={Lock}
-                        type="password"
-                    />
-                </div>
+    window.setTimeout(() => {
+      setLoading(false);
+      setNotice(
+        "Sign in will be connected when authentication is added during the backend phase.",
+      );
+    }, 500);
+  }
 
-                <div className="
-                    text-right
-                    mt-2
-                ">
-                    <span className="
-                        text-primary
-                        text-sm
-                        cursor-pointer
-                    ">Forgot Password?</span>
-                </div>
-            </div>
-{/* 
-            <button className="
-                h-14
-                bg-primary
-                text-white
-                rounded-lg
-                flex
-                items-center
-                justify-center
-                gap-2
-                mt-2
-            ">
-                Login
-                <ArrowRight size={20} />
-            </button> */}
-            <AuthButton
-                type="submit"
-                loading={loading}
-                loadingtext="Logging In..."
-            >
-                Login
-            </AuthButton>
-        </form>
-    )
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+      <AuthInput
+        id="login-email"
+        name="email"
+        label="Email Address"
+        placeholder="alex@example.com"
+        icon={Mail}
+        type="email"
+        value={email}
+        onChange={(event) => setEmail(event.target.value)}
+        autoComplete="email"
+        required
+      />
+
+      <div>
+        <AuthInput
+          id="login-password"
+          name="password"
+          label="Password"
+          placeholder="••••••••"
+          icon={Lock}
+          type="password"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          autoComplete="current-password"
+          required
+        />
+
+        <div className="mt-2 text-right">
+          <button
+            type="button"
+            onClick={() =>
+              setNotice(
+                "Password reset will be available after authentication is connected.",
+              )
+            }
+            className="text-sm font-semibold text-primary transition hover:underline"
+          >
+            Forgot Password?
+          </button>
+        </div>
+      </div>
+
+      <AuthButton
+        type="submit"
+        loading={loading}
+        loadingtext="Logging In..."
+      >
+        Login
+      </AuthButton>
+
+      {notice && (
+        <p
+          role="status"
+          className="rounded-lg bg-primary-container/25 px-3 py-2 text-center text-xs leading-relaxed text-on-primary-container"
+        >
+          {notice}
+        </p>
+      )}
+    </form>
+  );
 }

@@ -1,104 +1,57 @@
-import {
-    Mail,
-} from "lucide-react";
+"use client";
+
+import { Mail } from "lucide-react";
+import { useState } from "react";
 
 export default function ContactInformation() {
-    return (
-        <section className="
-            bg-surface-container-lowest
-            rounded-xl
-            p-6
-            shadow-[0px_4px_12px_rgba(132, 81, 69, 0.05)]
-        ">
+  const [email, setEmail] = useState("alex.morgan@example.com");
+  const [phone, setPhone] = useState("+60 12-345 6789");
 
-            {/* header */}
-            <div className="
-                flex
-                justify-between
-                items-center
-                mb-5
-            ">
-                <h2 className="
-                    text-lg
-                    font-semibold
-                    text-on-surface
-                    font-display
-                ">
-                    Contact Information
-                </h2>
+  return (
+    <section className="rounded-xl bg-surface-container-lowest p-6 shadow-[0px_4px_12px_rgba(132,81,69,0.05)]">
+      <div className="mb-5 flex items-center justify-between">
+        <h2 className="font-display text-lg font-semibold text-on-surface">
+          Contact Information
+        </h2>
 
-                <Mail 
-                    size={20}
-                    className="text-outline"
-                />
-            </div>
-            
-            {/* email */}
-            <div className="
-                flex
-                flex-col
-                gap-1
-                mb-4
-            ">
-                <label className="
-                    text-xs
-                    font-semibold
-                    tracking-wide
-                    text-on-surface-variant
-                ">
-                    Email Address
-                </label>
+        <Mail size={20} className="text-outline" />
+      </div>
 
-                <input 
-                    type="email"
-                    value="alex@gmail.com"
-                    readOnly
-                    className="
-                        w-full
-                        bg-surface-container
-                        border-none
-                        rounded-lg
-                        px-4
-                        py-3
-                        text-on-surface
-                        focus:ring-2
-                        foxus:ring-primary
-                    "
-                />
-            </div>
+      <div className="mb-4 flex flex-col gap-2">
+        <label
+          htmlFor="checkout-email"
+          className="text-xs font-semibold tracking-wide text-on-surface-variant"
+        >
+          Email Address
+        </label>
 
-            {/* phone */}
-            <div className="
-                flex
-                flex-col
-                gap-1
-            ">
-                <label className="
-                    text-xs
-                    font-semibold
-                    tracking-wide
-                    text-on-surface-variant
-                ">
-                    Phone Number
-                </label>
+        <input
+          id="checkout-email"
+          type="email"
+          autoComplete="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          className="w-full rounded-lg bg-surface-container px-4 py-3 text-on-surface outline-none placeholder:text-on-surface-variant/70 focus:ring-2 focus:ring-primary"
+        />
+      </div>
 
-                <input 
-                    type="tel"
-                    value="+60 12-345 6789"
-                    readOnly
-                    className="
-                        w-full
-                        bg-surface-container
-                        border-none
-                        rounded-lg
-                        px-4
-                        py-3
-                        text-on-surface
-                        focus:ring-2
-                        focus:ring-primary
-                    "
-                />
-            </div>
-        </section>
-    )
+      <div className="flex flex-col gap-2">
+        <label
+          htmlFor="checkout-phone"
+          className="text-xs font-semibold tracking-wide text-on-surface-variant"
+        >
+          Phone Number
+        </label>
+
+        <input
+          id="checkout-phone"
+          type="tel"
+          autoComplete="tel"
+          value={phone}
+          onChange={(event) => setPhone(event.target.value)}
+          className="w-full rounded-lg bg-surface-container px-4 py-3 text-on-surface outline-none placeholder:text-on-surface-variant/70 focus:ring-2 focus:ring-primary"
+        />
+      </div>
+    </section>
+  );
 }

@@ -1,125 +1,83 @@
 import { Check, Truck } from "lucide-react";
 import TrackingCard from "./TrackingCard";
 
-
-interface Step{
-    title:string;
-    date:string;
-    status:"completed"|"current"|"pending";
-
-    courier?:string;
-    tracking?:string;
-    description?:string;
+interface Step {
+  title: string;
+  date: string;
+  status: "completed" | "current" | "pending";
+  courier?: string;
+  tracking?: string;
+  description?: string;
 }
 
-interface Props{
-    steps: readonly Step[];
+interface Props {
+  steps: readonly Step[];
 }
 
-export default function OrderTimeLine({
-    steps
-}:Props) {
-    return (
-        <div className="
-            bg-surface-container-lowest
-            rounded-xl
-            p-6
-            shadow-sm
-        ">
+export default function OrderTimeLine({ steps }: Props) {
+  return (
+    <section className="rounded-xl bg-surface-container-lowest p-6 shadow-sm">
+      <div className="space-y-0">
+        {steps.map((step, index) => {
+          const isLastStep = index === steps.length - 1;
+
+          return (
             <div
-                className="
-                    relative
-                    pl-8
-                    border-l-2
-                    border-surface-container-highest
-                    space-y-10
-                "
+              key={step.title}
+              className={
+                isLastStep
+                  ? "relative flex gap-4"
+                  : "relative flex gap-4 pb-8"
+              }
             >
-                {
-                    steps.map((step)=>(
-                        <div 
-                            key={step.title}
-                            className="relative"
-                        >
-                            <div className={`
-                                absolute
-                                -top-1
-                                -left-11
-                                w-6
-                                h-6
-                                rounded-full
-                                flex
-                                items-center
-                                justify-center
-                                ${
-                                    step.status==="current"
-                                    ?
-                                    "bg-primary text-white shadow-md"
-                                    :
-                                    step.status==="completed"
-                                    ?
-                                    "bg-primary-container text-primary"
-                                    :
-                                    "bg-surface-container-highest"
-                                }
-                            `}
-                            >
-                            
-                            {
-                                step.status==="current"
-                                ?
-                                <Truck size={16} />
-                                :
-                                step.status==="completed"
-                                ?
-                                <Check size={14} />
-                                : 
-                                null
-                            }
-                            </div>
+              {!isLastStep && (
+                <span className="absolute left-3 top-6 bottom-0 w-px bg-surface-container-highest" />
+              )}
 
-                            <div>
-                                <h4 className={`
-                                    font-medium
-                                    ${
-                                        step.status==="current"
-                                        ?
-                                        "text-primary"
-                                        :
-                                        "text-on-surface"
-                                    }
-                                `}>
-                                    {step.title}
-                                </h4>
-
-                                <p className="
-                                    text-sm
-                                    text-on-surface-variant
-                                    mt-1
-                                ">
-                                    {step.date}
-                                </p>
-
-                                {
-                                    step.status==="current"
-                                    &&
-                                    step.courier
-                                    &&
-                                    (
-                                        <TrackingCard
-
-                                        courier={step.courier}
-                                        tracking={step.tracking!}
-                                        description={step.description!}
-
-                                        />
-                                    )
-                                }
-                            </div>
-                        </div>
-                    ))
+              <div
+                className={
+                  step.status === "current"
+                    ? "relative z-10 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary text-on-primary shadow-md"
+                    : step.status === "completed"
+                      ? "relative z-10 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary-container text-on-primary-container"
+                      : "relative z-10 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border border-outline bg-surface text-outline"
                 }
+              >
+                {step.status === "current" && <Truck size={14} />}
+
+                {step.status === "completed" && <Check size={14} />}
+              </div>
+
+              <div className="min-w-0 flex-1 pb-0.5">
+                <h4
+                  className={
+                    step.status === "current"
+                      ? "font-semibold text-primary"
+                      : "font-semibold text-on-surface"
+                  }
+                >
+                  {step.title}
+                </h4>
+
+                <p className="mt-1 text-sm text-on-surface-variant">
+                  {step.date}
+                </p>
+
+                {step.status === "current" &&
+                  step.courier &&
+                  step.tracking &&
+                  step.description && (
+                    <TrackingCard
+                      courier={step.courier}
+                      tracking={step.tracking}
+                      description={step.description}
+                    />
+                  )}
+              </div>
             </div>
-        </div>
-    )
+          );
+        })}
+      </div>
+    </section>
+  );
 }
