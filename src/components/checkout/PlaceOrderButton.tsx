@@ -5,21 +5,38 @@ import { ShoppingBag } from "lucide-react";
 import { products } from "@/data/products";
 import { useCart } from "@/components/cart/CartProvider";
 
-export default function PlaceOrderButton() {
+type PlaceOrderButtonProps = {
+  buyNowProductId?: number;
+  buyNowQuantity: number;
+};
+
+export default function PlaceOrderButton({
+  buyNowProductId,
+  buyNowQuantity,
+}: PlaceOrderButtonProps) {
   const { items, isReady } = useCart();
+
+  const buyNowProduct = products.find(
+    (product) => product.id === buyNowProductId,
+  );
 
   const selectedItems = items.filter((item) => item.isSelected);
 
-  const subtotal = selectedItems.reduce((total, item) => {
-    const product = products.find(
-      (currentProduct) => currentProduct.id === item.productId,
-    );
+  const subtotal = buyNowProduct
+    ? buyNowProduct.price * buyNowQuantity
+    : selectedItems.reduce((total, item) => {
+        const product = products.find(
+          (currentProduct) => currentProduct.id === item.productId,
+        );
 
-    return product ? total + product.price * item.quantity : total;
-  }, 0);
+        return product ? total + product.price * item.quantity : total;
+      }, 0);
 
   const total = subtotal + subtotal * 0.08;
-  const canPlaceOrder = isReady && selectedItems.length > 0;
+
+  const canPlaceOrder = buyNowProduct
+    ? true
+    : isReady && selectedItems.length > 0;
 
   return (
     <div className="w-full px-5 py-4">

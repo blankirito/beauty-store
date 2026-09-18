@@ -32,7 +32,7 @@ export default function WishListList() {
 
           <Link
             href="/"
-            className="mt-6 inline-flex rounded-full bg-primary px-6 py-3 text-sm font-semibold text-on-primary"
+            className="mt-6 inline-flex rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white"
           >
             Explore products
           </Link>

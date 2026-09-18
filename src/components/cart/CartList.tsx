@@ -49,7 +49,7 @@ export default function CartList() {
 
         <Link
           href="/"
-          className="mt-5 inline-flex rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-on-primary transition hover:opacity-90"
+          className="mt-5 inline-flex rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90"
         >
           Continue Shopping
         </Link>

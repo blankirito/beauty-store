@@ -1,118 +1,121 @@
+"use client";
+
+import Link from "next/link";
 import OrderItem from "./OrderItem";
 import { products } from "@/data/products";
+import { useCart } from "@/components/cart/CartProvider";
 
-const orderItems = [
-    {
-        productId: 1,
-        quantity: 1,
-    },
-    {
-        productId: 3,
-        quantity: 3,
-    },
-]
+type OrderSummaryProps = {
+  buyNowProductId?: number;
+  buyNowQuantity: number;
+};
 
-export default function OrderSummary() {
+export default function OrderSummary({
+  buyNowProductId,
+  buyNowQuantity,
+}: OrderSummaryProps) {
+  const { items, isReady } = useCart();
+
+  const buyNowProduct = products.find(
+    (product) => product.id === buyNowProductId,
+  );
+
+  const checkoutItems = buyNowProduct
+    ? [{ product: buyNowProduct, quantity: buyNowQuantity }]
+    : items
+        .filter((item) => item.isSelected)
+        .map((item) => ({
+          product: products.find(
+            (product) => product.id === item.productId,
+          ),
+          quantity: item.quantity,
+        }))
+        .filter(
+          (
+            item,
+          ): item is {
+            product: (typeof products)[number];
+            quantity: number;
+          } => Boolean(item.product),
+        );
+
+  const subtotal = checkoutItems.reduce(
+    (total, item) => total + item.product.price * item.quantity,
+    0,
+  );
+
+  const tax = subtotal * 0.08;
+  const total = subtotal + tax;
+
+  if (!buyNowProduct && !isReady) {
     return (
-        <section className="
-            w-full
-            bg-surface-low
-            rounded-xl
-            p-6
-            border
-            border-outline/30
-        ">
-            <h2 className="
-                text-lg
-                font-display
-                font-semibold
-                mb-5
-            ">Order Summary</h2>
-
-            <div className="
-                space-y-4
-                mb-6
-            ">
-                {
-                    orderItems.map(item=>{
-                        const product = products.find(
-                            product => product.id === item.productId
-                        );
-
-                        if(!product) return null;
-
-                        return (
-                            <OrderItem
-                                key={product.id}
-                                image={product.image}
-                                title={product.name}
-                                price={product.price}
-                                quantity={item.quantity}
-                            />
-                        )
-                    })
-                }
-            </div>
-
-            <div className="
-                border-t
-                border-outline/30
-                pt-5
-                space-y-3
-            ">
-                <div className="
-                    flex
-                    justify-between
-                    text-sm
-                    text-on-surface-variant
-                ">
-                    <span>Subtotal</span>
-                    <span>RM210.00</span>
-                </div>
-
-                <div className="
-                    flex
-                    justify-between
-                    text-sm
-                    text-on-surface-variant
-                ">
-                    <span>Shipping</span>
-                    <span className="
-                        text-secondary
-                        font-semibold
-                    ">Free</span>
-                </div>
-
-                <div className="
-                    flex
-                    justify-between
-                    text-sm
-                    text-on-surface-variant
-                ">
-                    <span>Estimated Tax</span>
-                    <span>RM18.90</span>
-                </div>
-
-                <div className="
-                    flex
-                    justify-between
-                    border-t
-                    border-outline/30
-                    pt-4
-                ">
-                    <span className="
-                        text-lg
-                        font-display
-                        font-semibold
-                    ">Total</span>
-
-                    <span className="
-                        text-lg
-                        font-bold
-                        text-primary
-                    ">RM228.90</span>
-                </div>
-            </div>
-        </section>
+      <section className="w-full rounded-xl border border-outline/30 bg-surface-low p-6">
+        <p className="text-sm text-on-surface-variant">
+          Loading your order summary...
+        </p>
+      </section>
     );
+  }
+
+  if (checkoutItems.length === 0) {
+    return (
+      <section className="w-full rounded-xl border border-outline/30 bg-surface-low p-6 text-center">
+        <h2 className="font-display text-xl text-primary">
+          Your checkout is empty
+        </h2>
+
+        <Link
+          href="/cart"
+          className="mt-4 inline-flex rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white"
+        >
+          Return to Cart
+        </Link>
+      </section>
+    );
+  }
+
+  return (
+    <section className="w-full rounded-xl border border-outline/30 bg-surface-low p-6">
+      <h2 className="mb-5 font-display text-lg font-semibold">
+        Order Summary
+      </h2>
+
+      <div className="mb-6 space-y-4">
+        {checkoutItems.map((item) => (
+          <OrderItem
+            key={item.product.id}
+            image={item.product.image}
+            title={item.product.name}
+            price={item.product.price}
+            quantity={item.quantity}
+          />
+        ))}
+      </div>
+
+      <div className="space-y-3 border-t border-outline/30 pt-5">
+        <div className="flex justify-between text-sm text-on-surface-variant">
+          <span>Subtotal</span>
+          <span>RM{subtotal.toFixed(2)}</span>
+        </div>
+
+        <div className="flex justify-between text-sm text-on-surface-variant">
+          <span>Shipping</span>
+          <span className="font-semibold text-secondary">Free</span>
+        </div>
+
+        <div className="flex justify-between text-sm text-on-surface-variant">
+          <span>Estimated Tax</span>
+          <span>RM{tax.toFixed(2)}</span>
+        </div>
+
+        <div className="flex justify-between border-t border-outline/30 pt-4">
+          <span className="font-display text-lg font-semibold">Total</span>
+
+          <span className="text-lg font-bold text-primary">
+            RM{total.toFixed(2)}
+          </span>
+        </div>
+      </div>
+    </section>
+  );
 }

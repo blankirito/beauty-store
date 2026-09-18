@@ -6,50 +6,57 @@ import OrderSummary from "@/components/checkout/OrderSummary";
 import TrustElements from "@/components/checkout/TrustElement";
 import PlaceOrderButton from "@/components/checkout/PlaceOrderButton";
 
-export default function CheckoutPage() {
-    return (
-        <main className="
-            min-h-screen
-            bg-background
-        ">
-            <CheckoutHeader />
+type CheckoutPageProps = {
+  searchParams: Promise<{
+    product?: string;
+    quantity?: string;
+  }>;
+};
 
-            <div className="
-                px-5
-                py-6
-                max-w-6xl
-                mx-auto
-            ">
-                <div className="
-                    grid
-                    grid-cols-1
-                    lg:grid-cols-12
-                    gap-6
-                ">
+export default async function CheckoutPage({
+  searchParams,
+}: CheckoutPageProps) {
+  const { product, quantity } = await searchParams;
 
-                    {/* Left */}
-                    <div className="
-                        lg:col-span-7
-                        flex
-                        flex-col
-                        gap-6
-                    ">
-                        <ContactInformation />
-                        <DeliveryAddress />
-                        <PaymentMethod />
-                    </div>
+  const parsedProductId = Number(product);
+  const parsedQuantity = Number(quantity);
 
+  const buyNowProductId =
+    Number.isInteger(parsedProductId) && parsedProductId > 0
+      ? parsedProductId
+      : undefined;
 
-                    {/* Right */}
-                    <aside className="
-                        lg:col-span-5
-                    ">
-                        <OrderSummary />
-                        <TrustElements />
-                    </aside>
-                </div>
-            </div>
-            <PlaceOrderButton />
-        </main>
-    )
+  const buyNowQuantity =
+    Number.isInteger(parsedQuantity) && parsedQuantity > 0
+      ? parsedQuantity
+      : 1;
+
+  return (
+    <main className="min-h-screen bg-background">
+      <CheckoutHeader />
+
+      <div className="mx-auto max-w-6xl px-5 py-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+          <div className="flex flex-col gap-6 lg:col-span-7">
+            <ContactInformation />
+            <DeliveryAddress />
+            <PaymentMethod />
+          </div>
+
+          <aside className="lg:col-span-5">
+            <OrderSummary
+              buyNowProductId={buyNowProductId}
+              buyNowQuantity={buyNowQuantity}
+            />
+            <TrustElements />
+          </aside>
+        </div>
+      </div>
+
+      <PlaceOrderButton
+        buyNowProductId={buyNowProductId}
+        buyNowQuantity={buyNowQuantity}
+      />
+    </main>
+  );
 }
