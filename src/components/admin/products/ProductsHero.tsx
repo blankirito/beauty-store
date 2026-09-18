@@ -1,4 +1,5 @@
 import { Plus } from "lucide-react";
+import Link from "next/link";
 
 export default function ProductsHero() {
   return (
@@ -14,13 +15,13 @@ export default function ProductsHero() {
           </h1>
         </div>
 
-        <button
-          type="button"
+        <Link
+          href="/admin/products/new"
           className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-full bg-primary px-4 py-2.5 text-xs font-semibold tracking-wide text-on-primary shadow-sm transition-all hover:bg-on-primary-container active:scale-[0.98]"
         >
           <Plus size={16} strokeWidth={2.5} />
           Add Product
-        </button>
+        </Link>
       </div>
 
       <p className="max-w-2xl text-sm leading-relaxed text-on-surface-variant">

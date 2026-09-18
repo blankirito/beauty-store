@@ -7,6 +7,7 @@ export type OrderStatus =
 
 export type AdminOrder = {
   id: string;
+  customerId: string;
   status: OrderStatus;
   date: string;
   customerName: string;
@@ -20,6 +21,7 @@ export type AdminOrder = {
 export const adminOrders: AdminOrder[] = [
   {
     id: "ORD-9421",
+    customerId: "CUST-1051",
     status: "New",
     date: "24 Oct 2026 · 10:42 AM",
     customerName: "Alex Stone",
@@ -31,6 +33,7 @@ export const adminOrders: AdminOrder[] = [
   },
   {
     id: "ORD-9420",
+    customerId: "CUST-1039",
     status: "Processing",
     date: "23 Oct 2026 · 04:15 PM",
     customerName: "Maria Lopez",
@@ -42,6 +45,7 @@ export const adminOrders: AdminOrder[] = [
   },
   {
     id: "ORD-9418",
+    customerId: "CUST-1035",
     status: "Shipped",
     date: "23 Oct 2026 · 01:02 PM",
     customerName: "James Knight",
@@ -53,6 +57,7 @@ export const adminOrders: AdminOrder[] = [
   },
   {
     id: "ORD-9415",
+    customerId: "CUST-1050",
     status: "Delivered",
     date: "22 Oct 2026 · 11:30 AM",
     customerName: "Emma Miller",
@@ -64,6 +69,7 @@ export const adminOrders: AdminOrder[] = [
   },
   {
     id: "ORD-9412",
+    customerId: "CUST-1028",
     status: "Cancelled",
     date: "21 Oct 2026 · 09:15 AM",
     customerName: "Sarah White",

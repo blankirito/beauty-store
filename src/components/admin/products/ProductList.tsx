@@ -1,12 +1,23 @@
+"use client";
+
 import { Edit3, Trash2, TriangleAlert } from "lucide-react";
+import { useRouter } from "next/navigation";
 import type { Products } from "@/types/products";
 import { getInventoryDetails } from "@/data/adminInventory";
+import ConfirmationDialog from "@/components/shared/ConfirmationDialog";
+import { useState } from "react";
 
 type ProductListProps = {
   items: Products[];
 };
 
 export default function ProductList({ items }: ProductListProps) {
+  const router = useRouter();
+
+  const [productToDelete, setProductToDelete] = useState<Products | null>(
+    null,
+  );
+
   const productRows = items.slice(0, 5).map((product) => ({
     ...product,
     ...getInventoryDetails(product.id),
@@ -31,10 +42,23 @@ export default function ProductList({ items }: ProductListProps) {
         const isLowStock = product.stock <= 5;
         const isDraft = product.status === "Draft";
 
+        function openProductDetail() {
+          router.push(`/admin/products/${product.id}`);
+        }
+
         return (
           <article
             key={product.id}
-            className="flex flex-col space-y-3 rounded-2xl border border-outline/15 bg-surface-container-lowest p-3.5 shadow-sm"
+            role="link"
+            tabIndex={0}
+            onClick={openProductDetail}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                openProductDetail();
+              }
+            }}
+            className="flex cursor-pointer flex-col space-y-3 rounded-2xl border border-outline/15 bg-surface-container-lowest p-3.5 shadow-sm transition hover:border-primary/35 hover:bg-surface-container-low"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex min-w-0 items-start gap-3">
@@ -96,6 +120,10 @@ export default function ProductList({ items }: ProductListProps) {
               <div className="flex gap-1.5">
                 <button
                   type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    router.push(`/admin/products/${product.id}/edit`);
+                  }}
                   aria-label={`Edit ${product.name}`}
                   className="flex h-8 w-8 items-center justify-center rounded-full text-primary hover:bg-surface-container"
                 >
@@ -104,6 +132,10 @@ export default function ProductList({ items }: ProductListProps) {
 
                 <button
                   type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setProductToDelete(product);
+                  }}
                   aria-label={`Delete ${product.name}`}
                   className="flex h-8 w-8 items-center justify-center rounded-full text-error hover:bg-error-container"
                 >
@@ -114,6 +146,21 @@ export default function ProductList({ items }: ProductListProps) {
           </article>
         );
       })}
+            <ConfirmationDialog
+        isOpen={productToDelete !== null}
+        title="Delete product?"
+        description={
+          productToDelete
+            ? `Are you sure you want to delete "${productToDelete.name}"? This action cannot be undone.`
+            : ""
+        }
+        confirmLabel="Delete"
+        onCancel={() => setProductToDelete(null)}
+        onConfirm={() => {
+          // UI stage only — real deletion comes with backend.
+          setProductToDelete(null);
+        }}
+      />
     </section>
   );
 }

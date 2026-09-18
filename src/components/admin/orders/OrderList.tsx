@@ -1,4 +1,7 @@
+"use client";
+
 import { MoreHorizontal } from "lucide-react";
+import { useRouter } from "next/navigation";
 import type { AdminOrder } from "@/data/adminOrders";
 
 type OrderListProps = {
@@ -26,6 +29,8 @@ function getStatusClass(status: AdminOrder["status"]) {
 }
 
 export default function OrderList({ items }: OrderListProps) {
+  const router = useRouter();
+
   if (items.length === 0) {
     return (
       <section className="rounded-2xl border border-outline/15 bg-surface-container-lowest p-8 text-center shadow-sm">
@@ -42,10 +47,23 @@ export default function OrderList({ items }: OrderListProps) {
       {items.slice(0, 5).map((order) => {
         const actionLabel = getActionLabel(order.status);
 
+        function openOrderDetail() {
+          router.push(`/admin/orders/${order.id}`);
+        }
+
         return (
           <article
             key={order.id}
-            className="space-y-3 rounded-2xl border border-outline/15 bg-surface-container-lowest p-3.5 shadow-sm"
+            role="link"
+            tabIndex={0}
+            onClick={openOrderDetail}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                openOrderDetail();
+              }
+            }}
+            className="cursor-pointer space-y-3 rounded-2xl border border-outline/15 bg-surface-container-lowest p-3.5 shadow-sm transition hover:border-primary/35 hover:bg-surface-container-low"
           >
             <div className="flex items-center justify-between gap-2 border-b border-outline/10 pb-2">
               <div className="flex items-center gap-2">
@@ -53,7 +71,9 @@ export default function OrderList({ items }: OrderListProps) {
                   #{order.id}
                 </span>
 
-                <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${getStatusClass(order.status)}`}>
+                <span
+                  className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${getStatusClass(order.status)}`}
+                >
                   {order.status}
                 </span>
               </div>
@@ -73,6 +93,7 @@ export default function OrderList({ items }: OrderListProps) {
                   <h3 className="truncate text-sm font-semibold text-on-surface">
                     {order.customerName}
                   </h3>
+
                   <p className="truncate text-xs text-on-surface-variant">
                     {order.customerEmail}
                   </p>
@@ -83,6 +104,7 @@ export default function OrderList({ items }: OrderListProps) {
                 <p className="font-display text-lg font-bold text-on-surface">
                   RM{order.total.toFixed(2)}
                 </p>
+
                 <p className="text-[11px] text-on-surface-variant">
                   {order.itemCount} items · {order.payment}
                 </p>
@@ -93,6 +115,10 @@ export default function OrderList({ items }: OrderListProps) {
               {actionLabel ? (
                 <button
                   type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    router.push(`/admin/orders/${order.id}`);
+                  }}
                   className={
                     order.status === "New" || order.status === "Processing"
                       ? "rounded-xl bg-primary px-3.5 py-1.5 text-xs font-semibold text-on-primary"
@@ -107,6 +133,11 @@ export default function OrderList({ items }: OrderListProps) {
 
               <button
                 type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+
+                  // Overflow menu UI comes later.
+                }}
                 aria-label={`More options for ${order.id}`}
                 className="flex h-8 w-8 items-center justify-center rounded-full text-primary hover:bg-surface-container"
               >

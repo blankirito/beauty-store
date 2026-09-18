@@ -15,6 +15,30 @@ export type AdminCustomer = {
 
 export const adminCustomers: AdminCustomer[] = [
   {
+    id: "CUST-1051",
+    status: "New",
+    memberSince: "Oct 2026",
+    name: "Alex Stone",
+    email: "alex.stone@email.com",
+    initials: "AS",
+    location: "Kuala Lumpur, MY",
+    orderCount: 1,
+    totalSpent: 142,
+    lastOrder: "24 Oct 2026",
+  },
+  {
+    id: "CUST-1050",
+    status: "Active",
+    memberSince: "Sep 2025",
+    name: "Emma Miller",
+    email: "emma.m@example.com",
+    initials: "EM",
+    location: "Kuala Lumpur, MY",
+    orderCount: 6,
+    totalSpent: 684.5,
+    lastOrder: "22 Oct 2026",
+  },
+  {
     id: "CUST-1048",
     status: "VIP",
     memberSince: "Jan 2023",

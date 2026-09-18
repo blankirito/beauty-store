@@ -1,4 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 
 const topProducts = [
   {
@@ -41,13 +42,13 @@ export default function TopProducts() {
           </h2>
         </div>
 
-        <button
-          type="button"
-          className="flex items-center gap-1 text-xs font-semibold text-primary"
+        <Link
+          href="/admin/analytics/products"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-primary transition hover:opacity-75"
         >
           View all
           <ArrowUpRight size={15} />
-        </button>
+        </Link>
       </div>
 
       <div className="mt-5 space-y-3">
