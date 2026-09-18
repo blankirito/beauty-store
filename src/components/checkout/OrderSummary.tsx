@@ -5,12 +5,10 @@ const orderItems = [
     {
         productId: 1,
         quantity: 1,
-        variant: "Color: Charcoal",
     },
     {
         productId: 3,
         quantity: 3,
-        variant: "Size: OS",
     },
 ]
 
@@ -50,7 +48,6 @@ export default function OrderSummary() {
                                 title={product.name}
                                 price={product.price}
                                 quantity={item.quantity}
-                                variant={item.variant}
                             />
                         )
                     })
