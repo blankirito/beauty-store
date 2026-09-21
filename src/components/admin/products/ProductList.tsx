@@ -1,27 +1,28 @@
 "use client";
 
-import { Edit3, Trash2, TriangleAlert } from "lucide-react";
+import {
+  Edit3,
+  Package,
+  Trash2,
+  TriangleAlert,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
-import type { Products } from "@/types/products";
-import { getInventoryDetails } from "@/data/adminInventory";
-import ConfirmationDialog from "@/components/shared/ConfirmationDialog";
 import { useState } from "react";
+import ConfirmationDialog from "@/components/shared/ConfirmationDialog";
+import type { AdminProduct } from "@/lib/products/adminProduct";
+import { toDisplayProductStatus } from "@/lib/products/productStatus";
 
 type ProductListProps = {
-  items: Products[];
+  items: AdminProduct[];
 };
 
 export default function ProductList({ items }: ProductListProps) {
   const router = useRouter();
 
-  const [productToDelete, setProductToDelete] = useState<Products | null>(
-    null,
-  );
+  const [productToDelete, setProductToDelete] =
+    useState<AdminProduct | null>(null);
 
-  const productRows = items.slice(0, 5).map((product) => ({
-    ...product,
-    ...getInventoryDetails(product.id),
-  }));
+  const productRows = items.slice(0, 5);
 
   if (productRows.length === 0) {
     return (
@@ -39,8 +40,10 @@ export default function ProductList({ items }: ProductListProps) {
   return (
     <section className="space-y-3">
       {productRows.map((product) => {
-        const isLowStock = product.stock <= 5;
-        const isDraft = product.status === "Draft";
+        const isLowStock =
+          product.stock <= product.lowStockThreshold;
+        const isActive = product.status === "active";
+        const statusLabel = toDisplayProductStatus(product.status);
 
         function openProductDetail() {
           router.push(`/admin/products/${product.id}`);
@@ -62,12 +65,9 @@ export default function ProductList({ items }: ProductListProps) {
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex min-w-0 items-start gap-3">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="h-14 w-14 flex-shrink-0 rounded-xl border border-outline/15 bg-surface-container object-cover"
-                />
+                <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl border border-outline/15 bg-surface-container text-primary">
+                  <Package size={22} />
+                </div>
 
                 <div className="min-w-0 space-y-1">
                   <h3 className="truncate text-sm font-semibold text-on-surface">
@@ -75,7 +75,7 @@ export default function ProductList({ items }: ProductListProps) {
                   </h3>
 
                   <p className="text-xs text-on-surface-variant">
-                    SKU: LUM-{String(product.id).padStart(3, "0")}
+                    SKU: {product.sku}
                   </p>
 
                   <span className="inline-flex rounded-full bg-surface-container px-2 py-0.5 text-[10px] font-medium text-on-surface-variant">
@@ -91,12 +91,12 @@ export default function ProductList({ items }: ProductListProps) {
 
                 <span
                   className={
-                    isDraft
-                      ? "inline-block rounded-full bg-surface-container px-2 py-0.5 text-[10px] font-medium text-on-surface-variant"
-                      : "inline-block rounded-full bg-primary-container/40 px-2 py-0.5 text-[10px] font-medium text-on-primary-container"
+                    isActive
+                      ? "inline-block rounded-full bg-primary-container/40 px-2 py-0.5 text-[10px] font-medium text-on-primary-container"
+                      : "inline-block rounded-full bg-surface-container px-2 py-0.5 text-[10px] font-medium text-on-surface-variant"
                   }
                 >
-                  {product.status}
+                  {statusLabel}
                 </span>
               </div>
             </div>
@@ -146,7 +146,8 @@ export default function ProductList({ items }: ProductListProps) {
           </article>
         );
       })}
-            <ConfirmationDialog
+
+      <ConfirmationDialog
         isOpen={productToDelete !== null}
         title="Delete product?"
         description={
@@ -157,7 +158,6 @@ export default function ProductList({ items }: ProductListProps) {
         confirmLabel="Delete"
         onCancel={() => setProductToDelete(null)}
         onConfirm={() => {
-          // UI stage only — real deletion comes with backend.
           setProductToDelete(null);
         }}
       />

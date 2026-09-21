@@ -5,23 +5,66 @@ import { useState } from "react";
 import AuthButton from "../auth/AuthButton";
 import AuthInput from "../auth/AuthInput";
 
+import { useRouter } from "next/navigation";
+import { getSignInDestination } from "@/lib/auth/getSignInDestination";
+import { createClient } from "@/lib/supabase/client";
+
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [notice, setNotice] = useState("");
+  const router = useRouter();
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
     setNotice("");
 
-    window.setTimeout(() => {
+    const supabase = createClient();
+
+    const { data: signInData, error: signInError } =
+      await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+    if (signInError) {
       setLoading(false);
-      setNotice(
-        "Sign in will be connected when authentication is added during the backend phase.",
-      );
-    }, 500);
+      setNotice("Email or password is incorrect.");
+      return;
+    }
+
+    const [{ data: profile, error: profileError }, { data: storeMembership }] =
+      await Promise.all([
+        supabase
+          .from("profiles")
+          .select("is_platform_admin")
+          .eq("id", signInData.user.id)
+          .single(),
+
+        supabase
+          .from("store_members")
+          .select("id")
+          .eq("user_id", signInData.user.id)
+          .in("role", ["owner", "admin"])
+          .limit(1)
+          .maybeSingle(),
+      ]);
+
+    if (profileError) {
+      setLoading(false);
+      setNotice("We could not load your account access. Please try again.");
+      return;
+    }
+
+    router.replace(
+      getSignInDestination(
+        profile.is_platform_admin,
+        Boolean(storeMembership),
+      ),
+    );
+    router.refresh();
   }
 
   return (

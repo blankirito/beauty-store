@@ -1,19 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import {
-  getInventoryDetails,
-  type InventoryStatus,
-} from "@/data/adminInventory";
-import { products } from "@/data/products";
+import type { ProductStatusLabel } from "@/lib/products/productStatus";
+import { toDisplayProductStatus } from "@/lib/products/productStatus";
+import type { AdminProduct } from "@/lib/products/adminProduct";
 import ProductFilters from "./ProductFilters";
 import ProductList from "./ProductList";
 import ProductPagination from "./ProductPagination";
 import ProductsToolbar from "./ProductsToolbar";
 
-type StatusFilter = "All" | InventoryStatus;
+type StatusFilter = "All" | ProductStatusLabel;
 
-export default function ProductsClient() {
+type ProductsClientProps = {
+  products: AdminProduct[];
+};
+
+export default function ProductsClient({
+  products,
+}: ProductsClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] =
     useState("All Categories");
@@ -22,11 +26,14 @@ export default function ProductsClient() {
 
   const normalizedQuery = searchQuery.trim().toLowerCase();
 
-  const categories = [...new Set(products.map((product) => product.category))];
+  const categories = [
+    ...new Set(products.map((product) => product.category)),
+  ];
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch =
       product.name.toLowerCase().includes(normalizedQuery) ||
+      product.sku.toLowerCase().includes(normalizedQuery) ||
       product.category.toLowerCase().includes(normalizedQuery) ||
       product.description.toLowerCase().includes(normalizedQuery);
 
@@ -36,7 +43,7 @@ export default function ProductsClient() {
 
     const matchesStatus =
       selectedStatus === "All" ||
-      getInventoryDetails(product.id).status === selectedStatus;
+      toDisplayProductStatus(product.status) === selectedStatus;
 
     return matchesSearch && matchesCategory && matchesStatus;
   });

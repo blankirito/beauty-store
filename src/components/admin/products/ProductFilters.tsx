@@ -8,9 +8,9 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useState } from "react";
-import type { InventoryStatus } from "@/data/adminInventory";
+import type { ProductStatusLabel } from "@/lib/products/productStatus";
 
-type StatusFilter = "All" | InventoryStatus;
+type StatusFilter = "All" | ProductStatusLabel;
 
 type ProductFiltersProps = {
   categories: string[];
@@ -36,7 +36,12 @@ export default function ProductFilters({
   const displayedProducts = Math.min(totalProducts, productsPerPage);
 
   const categoryOptions = ["All Categories", ...categories];
-  const statusOptions: StatusFilter[] = ["All", "Active", "Draft"];
+  const statusOptions: StatusFilter[] = [
+    "All",
+    "Active",
+    "Draft",
+    "Archived",
+  ];
 
   function selectCategory(category: string) {
     onCategoryChange(category);

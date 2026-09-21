@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import AdminLogoutButton from "./AdminLogoutButton";
 
 type AdminSidebarProps = {
   isOpen: boolean;
@@ -37,7 +38,7 @@ function SidebarContent({
   const pathname = usePathname();
 
   return (
-    <>
+  <div className="flex h-full flex-col">
       <div className="flex items-center justify-between">
         <Link
           href="/admin"
@@ -92,7 +93,8 @@ function SidebarContent({
           );
         })}
       </nav>
-    </>
+    <AdminLogoutButton onLoggedOut={onNavigate} />
+    </div>
   );
 }
 

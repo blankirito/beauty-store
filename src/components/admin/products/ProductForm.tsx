@@ -13,20 +13,28 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRef, useState } from "react";
+import type { ProductStatusLabel } from "@/lib/products/productStatus";
+import { useRouter } from "next/navigation";
+import { createProduct } from "@/app/admin/products/new/actions";
+import { uploadProductImages } from "@/lib/products/uploadProductImages";
 
 type ProductFormProps = {
   mode: "create" | "edit";
   product?: Products;
   inventory?: {
     stock: number;
-    status: string;
+    status: ProductStatusLabel;
   };
   detail?: AdminProductDetail;
   backHref: string;
 };
 
 const categories = ["Skincare", "Hair", "Makeup", "body-care", "Beauty"];
-const statuses = ["Active", "Draft", "Inactive"];
+const statuses: ProductStatusLabel[] = [
+  "Active",
+  "Draft",
+  "Archived",
+];
 
 export default function ProductForm({
   mode,
@@ -36,6 +44,7 @@ export default function ProductForm({
   backHref,
 }: ProductFormProps) {
   const isEdit = mode === "edit";
+  const router = useRouter();
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
@@ -52,8 +61,18 @@ export default function ProductForm({
     status: inventory?.status ?? "Active",
   });
 
-  const [images, setImages] = useState<string[]>(product?.images ?? []);
+  type ProductImagePreview = {
+    file?: File;
+    previewUrl: string;
+  };
+
+  const [images, setImages] = useState<ProductImagePreview[]>(
+    product?.images.map((previewUrl) => ({ previewUrl })) ?? [],
+  );
   const [primaryImageIndex, setPrimaryImageIndex] = useState(0);
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   function updateField(field: keyof typeof form, value: string) {
     setForm((current) => ({
@@ -80,11 +99,15 @@ export default function ProductForm({
     const selectedFiles = Array.from(event.target.files ?? []);
     const availableSlots = 5 - images.length;
 
-    const newImages = selectedFiles
-      .slice(0, availableSlots)
-      .map((file) => URL.createObjectURL(file));
+    const newImages = selectedFiles.slice(0, availableSlots).map((file) => ({
+      file,
+      previewUrl: URL.createObjectURL(file),
+    }));
 
-    setImages((currentImages) => [...currentImages, ...newImages]);
+    setImages((currentImages) => [
+      ...currentImages,
+      ...newImages,
+    ]);
 
     event.target.value = "";
   }
@@ -101,10 +124,54 @@ export default function ProductForm({
     });
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(
+    event: React.FormEvent<HTMLFormElement>,
+  ) {
     event.preventDefault();
 
-    // UI stage only — saving will be connected during backend work.
+    if (isEdit) {
+      return;
+    }
+
+    setIsSaving(true);
+    setSubmitError("");
+
+    try {
+      const result = await createProduct(form);
+
+      if ("error" in result) {
+        setSubmitError(result.error);
+        setIsSaving(false);
+        return;
+      }
+
+      const imageFiles = images
+        .map((image) => image.file)
+        .filter((file): file is File => Boolean(file));
+
+      if (imageFiles.length > 0) {
+        const uploadResult = await uploadProductImages({
+          storeId: result.storeId,
+          productId: result.productId,
+          files: imageFiles,
+          primaryImageIndex,
+        });
+
+        if (uploadResult.error) {
+          setSubmitError(uploadResult.error);
+          setIsSaving(false);
+          return;
+        }
+      }
+
+      router.replace("/admin/products");
+      router.refresh();
+    } catch {
+      setSubmitError(
+        "We could not add this product. Please try again.",
+      );
+      setIsSaving(false);
+    }
   }
 
   return (
@@ -189,7 +256,7 @@ export default function ProductForm({
 
                   return (
                     <div
-                      key={image}
+                      key={image.previewUrl}
                       className={
                         isPrimary
                           ? "relative aspect-square overflow-hidden rounded-xl border-2 border-primary bg-surface-container"
@@ -197,7 +264,7 @@ export default function ProductForm({
                       }
                     >
                       <img
-                        src={image}
+                        src={image.previewUrl}
                         alt={`Product preview ${index + 1}`}
                         className="h-full w-full object-cover"
                       />
@@ -550,6 +617,14 @@ export default function ProductForm({
               </label>
             </div>
           </section>
+          {submitError && (
+            <p
+              role="alert"
+              className="rounded-xl bg-error-container px-3 py-2 text-sm text-error"
+            >
+              {submitError}
+            </p>
+          )}
         </form>
       </div>
 
@@ -565,10 +640,15 @@ export default function ProductForm({
           <button
             form="product-form"
             type="submit"
-            className="flex h-12 flex-[2] items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-on-primary shadow-sm transition hover:opacity-90"
+            disabled={isSaving}
+            className="flex h-12 flex-[2] items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-on-primary shadow-sm transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
           >
             <Save size={17} />
-            {isEdit ? "Save Changes" : "Add Product"}
+            {isEdit
+              ? "Save Changes"
+              : isSaving
+                ? "Adding Product..."
+                : "Add Product"}
           </button>
         </div>
       </aside>

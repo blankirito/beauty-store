@@ -3,11 +3,18 @@ import {
   Layers3,
   TriangleAlert,
 } from "lucide-react";
-import { products } from "@/data/products";
+import type { AdminProduct } from "@/lib/products/adminProduct";
+import { getAdminProductMetrics } from "@/lib/products/adminProductMetrics";
 
-export default function ProductMetrics() {
-  const categoryCount = new Set(products.map((product) => product.category))
-    .size;
+type ProductMetricsProps = {
+  products: AdminProduct[];
+};
+
+export default function ProductMetrics({
+  products,
+}: ProductMetricsProps) {
+
+  const metrics = getAdminProductMetrics(products);
 
   return (
     <section className="grid grid-cols-2 gap-3">
@@ -41,7 +48,7 @@ export default function ProductMetrics() {
         </div>
 
         <p className="font-display text-2xl font-bold tracking-tight text-on-surface">
-          10
+          {metrics.inStockCount}
         </p>
 
         <p className="text-[10px] text-on-surface-variant">
@@ -59,7 +66,7 @@ export default function ProductMetrics() {
         </div>
 
         <p className="font-display text-2xl font-bold tracking-tight text-error">
-          2
+          {metrics.lowStockCount}
         </p>
 
         <p className="text-[10px] font-medium text-error">
@@ -77,7 +84,7 @@ export default function ProductMetrics() {
         </div>
 
         <p className="font-display text-2xl font-bold tracking-tight text-on-surface">
-          {categoryCount}
+          {metrics.categoryCount}
         </p>
 
         <p className="text-[10px] text-on-surface-variant">
