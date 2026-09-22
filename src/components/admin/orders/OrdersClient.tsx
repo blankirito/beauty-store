@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import {
-  adminOrders,
-  type OrderStatus,
-} from "@/data/adminOrders";
-import { getAdminOrderDetail } from "@/data/adminOrderDetails";
+import type {
+  AdminOrder,
+  OrderStatus,
+} from "@/lib/orders/adminOrder";
 import OrderList from "./OrderList";
 import OrderStatusFilters from "./OrderStatusFilters";
 import OrdersToolbar from "./OrdersToolbar";
@@ -17,9 +16,11 @@ type OrderFilter = "All" | OrderStatus;
 type OrdersClientProps = {
   customerId?: string;
   customerName?: string;
+  orders: AdminOrder[];
 };
 
 export default function OrdersClient({
+  orders,
   customerId,
   customerName,
 }: OrdersClientProps) {
@@ -28,7 +29,7 @@ export default function OrdersClient({
 
   const normalizedQuery = searchQuery.trim().toLowerCase();
 
-  const filteredOrders = adminOrders.filter((order) => {
+  const filteredOrders = orders.filter((order) => {
     const matchesSearch =
       order.id.toLowerCase().includes(normalizedQuery) ||
       order.customerName.toLowerCase().includes(normalizedQuery) ||
@@ -39,7 +40,7 @@ export default function OrdersClient({
 
     const matchesCustomer =
       !customerId ||
-      getAdminOrderDetail(order.id).customerId === customerId;
+      order.customerId === customerId;
 
     return matchesSearch && matchesStatus && matchesCustomer;
   });

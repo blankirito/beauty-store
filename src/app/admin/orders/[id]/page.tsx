@@ -1,6 +1,5 @@
-import OrderDetailClient from "@/components/admin/orders/OrderDetailClient";
-import { adminOrders } from "@/data/adminOrders";
-import { getAdminOrderDetail } from "@/data/adminOrderDetails";
+import RealOrderDetail from "@/components/admin/orders/RealOrderDetail";
+import { getAdminOrderDetail } from "@/lib/orders/getAdminOrderDetail";
 import { notFound } from "next/navigation";
 
 type OrderDetailPageProps = {
@@ -13,17 +12,17 @@ export default async function OrderDetailPage({
   params,
 }: OrderDetailPageProps) {
   const { id } = await params;
+  const result = await getAdminOrderDetail(id);
 
-  const order = adminOrders.find((item) => item.id === id);
-
-  if (!order) {
+  if (!result) {
     notFound();
   }
 
   return (
-    <OrderDetailClient
-      order={order}
-      detail={getAdminOrderDetail(order.id)}
+    <RealOrderDetail
+      order={result.order}
+      detail={result.detail}
+      timeline={result.timeline}
     />
   );
 }

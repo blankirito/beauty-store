@@ -5,7 +5,26 @@ import {
   Truck,
 } from "lucide-react";
 
-export default function OrderMetrics() {
+type OrderMetricsProps = {
+  metrics: {
+    totalOrderCount: number;
+    actionRequiredCount: number;
+    shippedOrderCount: number;
+    paidRevenue: number;
+  };
+};
+
+function formatCurrency(value: number) {
+  return new Intl.NumberFormat("en-MY", {
+    style: "currency",
+    currency: "MYR",
+    minimumFractionDigits: 2,
+  }).format(value);
+}
+
+export default function OrderMetrics({
+  metrics,
+}: OrderMetricsProps) {
   return (
     <section className="grid grid-cols-2 gap-3">
       <article className="space-y-1 rounded-2xl border border-outline/15 bg-surface-container-lowest p-3.5 shadow-sm">
@@ -14,67 +33,69 @@ export default function OrderMetrics() {
             Total Orders
           </p>
 
-          <span className="rounded-full bg-primary-container/40 px-1.5 py-0.5 text-[10px] font-semibold text-on-primary-container">
-            +12%
-          </span>
+          <ShoppingBag size={17} className="text-primary" />
         </div>
 
         <p className="font-display text-2xl font-bold text-on-surface">
-          1,284
+          {metrics.totalOrderCount}
         </p>
 
         <p className="text-[10px] text-on-surface-variant">
-          Across 8 active channels
+          In your current store
         </p>
       </article>
 
       <article className="space-y-1 rounded-2xl border border-outline/15 bg-surface-container-lowest p-3.5 shadow-sm">
         <div className="flex items-center justify-between">
           <p className="text-xs font-semibold text-on-surface-variant">
-            Processing
+            Requires Action
           </p>
 
           <TriangleAlert size={17} className="text-error" />
         </div>
 
-        <p className="font-display text-2xl font-bold text-error">42</p>
+        <p className="font-display text-2xl font-bold text-error">
+          {metrics.actionRequiredCount}
+        </p>
 
         <p className="text-[10px] font-medium text-error">
-          Requiring action
+          New and processing orders
         </p>
       </article>
 
       <article className="space-y-1 rounded-2xl border border-outline/15 bg-surface-container-lowest p-3.5 shadow-sm">
         <div className="flex items-center justify-between">
           <p className="text-xs font-semibold text-on-surface-variant">
-            Shipped Today
+            Shipped
           </p>
 
           <Truck size={17} className="text-primary" />
         </div>
 
-        <p className="font-display text-2xl font-bold text-on-surface">18</p>
+        <p className="font-display text-2xl font-bold text-on-surface">
+          {metrics.shippedOrderCount}
+        </p>
 
         <p className="text-[10px] text-on-surface-variant">
-          Via FedEx &amp; UPS
+          Orders on their way
         </p>
       </article>
 
       <article className="space-y-1 rounded-2xl border border-outline/15 bg-surface-container-lowest p-3.5 shadow-sm">
         <div className="flex items-center justify-between">
           <p className="text-xs font-semibold text-on-surface-variant">
-            Total Revenue
+            Paid Revenue
           </p>
 
           <CircleDollarSign size={17} className="text-primary" />
         </div>
 
         <p className="font-display text-2xl font-bold text-on-surface">
-          RM24,502
+          {formatCurrency(metrics.paidRevenue)}
         </p>
 
         <p className="text-[10px] text-on-surface-variant">
-          Last 30 days
+          Paid orders only
         </p>
       </article>
     </section>

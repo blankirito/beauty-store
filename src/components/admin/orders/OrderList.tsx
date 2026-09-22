@@ -2,7 +2,7 @@
 
 import { MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
-import type { AdminOrder } from "@/data/adminOrders";
+import type { AdminOrder } from "@/lib/orders/adminOrder";
 
 type OrderListProps = {
   items: AdminOrder[];
@@ -26,6 +26,16 @@ function getStatusClass(status: AdminOrder["status"]) {
   }
 
   return "bg-primary-container/40 text-on-primary-container";
+}
+
+function formatOrderDate(value: string) {
+  return new Intl.DateTimeFormat("en-MY", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(value));
 }
 
 export default function OrderList({ items }: OrderListProps) {
@@ -79,7 +89,7 @@ export default function OrderList({ items }: OrderListProps) {
               </div>
 
               <span className="text-right text-[11px] text-on-surface-variant">
-                {order.date}
+                {formatOrderDate(order.createdAt)}
               </span>
             </div>
 
