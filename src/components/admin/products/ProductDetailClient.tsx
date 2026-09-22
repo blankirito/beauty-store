@@ -1,29 +1,29 @@
 "use client";
 
-import type { Products } from "@/types/products";
-import type { AdminProductDetail } from "@/data/adminProductDetails";
+import type { AdminProduct } from "@/lib/products/adminProduct";
+import { getPublicProductImageUrl } from "@/lib/products/productImageUrl";
+import { toDisplayProductStatus } from "@/lib/products/productStatus";
 import {
   ArrowLeft,
-  BarChart3,
   Check,
   Copy,
   ImagePlus,
   Package,
   Pencil,
   Trash2,
-} from "lucide-react"; 
+} from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import ConfirmationDialog from "@/components/shared/ConfirmationDialog";
+import { useRouter } from "next/navigation";
+import { archiveProduct } from "@/app/admin/products/[id]/actions";
+import { getInitialProductImagePath } from "@/lib/products/productImageSelection";
 
 type ProductDetailClientProps = {
-  product: Products;
-  inventory: {
-    stock: number;
-    status: string;
-  };
-  detail: AdminProductDetail;
+  product: AdminProduct;
 };
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("en-MY", {
@@ -33,26 +33,74 @@ function formatCurrency(value: number) {
   }).format(value);
 }
 
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat("en-MY", {
+    dateStyle: "medium",
+  }).format(new Date(value));
+}
+
 export default function ProductDetailClient({
   product,
-  inventory,
-  detail,
 }: ProductDetailClientProps) {
-  const [selectedImage, setSelectedImage] = useState(product.images[0] ?? product.image);
+  const router = useRouter();
+  const imageUrls = supabaseUrl
+    ? product.imagePaths.map((imagePath) =>
+        getPublicProductImageUrl(supabaseUrl, imagePath),
+      )
+    : [];
+
+  const initialImagePath = getInitialProductImagePath(
+    product.imagePaths,
+    product.primaryImagePath,
+  );
+
+  const initialImageUrl =
+    initialImagePath && supabaseUrl
+      ? getPublicProductImageUrl(supabaseUrl, initialImagePath)
+      : null;
+
+  const [selectedImage, setSelectedImage] = useState<string | null>(
+    initialImageUrl,
+  );
   const [isSkuCopied, setIsSkuCopied] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isArchiving, setIsArchiving] = useState(false);
+  const [archiveError, setArchiveError] = useState("");
 
-  const sku = `LUM-${String(product.id).padStart(3, "0")}`;
-  const isActive = inventory.status === "Active";
-  const isLowStock = inventory.stock <= detail.lowStockThreshold;
+  const isActive = product.status === "active";
+  const isLowStock = product.stock <= product.lowStockThreshold;
+  const statusLabel = toDisplayProductStatus(product.status);
 
   async function handleCopySku() {
-    await navigator.clipboard.writeText(sku);
+    await navigator.clipboard.writeText(product.sku);
     setIsSkuCopied(true);
 
     window.setTimeout(() => {
       setIsSkuCopied(false);
     }, 1800);
+  }
+
+  async function handleArchive() {
+    setIsArchiving(true);
+    setArchiveError("");
+
+    try {
+      const result = await archiveProduct(product.id);
+
+      if ("error" in result) {
+        setArchiveError(result.error);
+        setIsArchiving(false);
+        return;
+      }
+
+      router.replace("/admin/products");
+      router.refresh();
+    } catch {
+      setArchiveError(
+        "We could not archive this product. Please try again.",
+      );
+      setIsArchiving(false);
+    }
   }
 
   return (
@@ -72,39 +120,50 @@ export default function ProductDetailClient({
       </div>
 
       <section className="rounded-2xl bg-surface-container-low p-4 shadow-sm">
-        <div className="overflow-hidden rounded-xl bg-surface-container">
-          <img
-            src={selectedImage}
-            alt={product.name}
-            className="aspect-[4/3] w-full object-cover"
-          />
+        <div className="relative overflow-hidden rounded-xl bg-surface-container">
+          <div className="flex aspect-[4/3] items-center justify-center text-primary">
+            <Package size={42} />
+          </div>
+
+          {selectedImage ? (
+            <img
+              src={selectedImage}
+              alt={product.name}
+              onError={(event) => {
+                event.currentTarget.classList.add("hidden");
+              }}
+              className="absolute inset-0 aspect-[4/3] w-full object-cover"
+            />
+          ) : null}
         </div>
 
-        <div className="mt-3 grid grid-cols-3 gap-2">
-          {product.images.map((image, index) => {
-            const isSelected = image === selectedImage;
+        {imageUrls.length > 0 ? (
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            {imageUrls.map((imageUrl, index) => {
+              const isSelected = imageUrl === selectedImage;
 
-            return (
-              <button
-                key={image}
-                type="button"
-                onClick={() => setSelectedImage(image)}
-                aria-label={`View product image ${index + 1}`}
-                className={
-                  isSelected
-                    ? "overflow-hidden rounded-xl border-2 border-primary bg-surface-container"
-                    : "overflow-hidden rounded-xl border border-outline/25 bg-surface-container transition hover:border-primary"
-                }
-              >
-                <img
-                  src={image}
-                  alt={`${product.name} view ${index + 1}`}
-                  className="aspect-square w-full object-cover"
-                />
-              </button>
-            );
-          })}
-        </div>
+              return (
+                <button
+                  key={imageUrl}
+                  type="button"
+                  onClick={() => setSelectedImage(imageUrl)}
+                  aria-label={`View product image ${index + 1}`}
+                  className={
+                    isSelected
+                      ? "overflow-hidden rounded-xl border-2 border-primary bg-surface-container"
+                      : "overflow-hidden rounded-xl border border-outline/25 bg-surface-container transition hover:border-primary"
+                  }
+                >
+                  <img
+                    src={imageUrl}
+                    alt={`${product.name} view ${index + 1}`}
+                    className="aspect-square w-full object-cover"
+                  />
+                </button>
+              );
+            })}
+          </div>
+        ) : null}
 
         <div className="mt-5 border-t border-outline/20 pt-4">
           <div className="flex items-center justify-between gap-3">
@@ -126,7 +185,7 @@ export default function ProductDetailClient({
                     : "h-1.5 w-1.5 rounded-full bg-on-surface-variant"
                 }
               />
-              {inventory.status}
+              {statusLabel}
             </span>
           </div>
 
@@ -138,7 +197,7 @@ export default function ProductDetailClient({
             <span className="text-xs text-on-surface-variant">SKU:</span>
 
             <code className="rounded bg-surface-container px-1.5 py-0.5 text-xs font-semibold text-on-surface">
-              {sku}
+              {product.sku}
             </code>
 
             <button
@@ -150,9 +209,11 @@ export default function ProductDetailClient({
               {isSkuCopied ? <Check size={16} /> : <Copy size={16} />}
             </button>
 
-            {isSkuCopied && (
-              <span className="text-xs font-medium text-primary">Copied</span>
-            )}
+            {isSkuCopied ? (
+              <span className="text-xs font-medium text-primary">
+                Copied
+              </span>
+            ) : null}
           </div>
 
           <div className="mt-5 flex items-end justify-between border-t border-outline/20 pt-4">
@@ -167,7 +228,7 @@ export default function ProductDetailClient({
 
             <div className="flex items-center gap-1.5 text-xs text-on-surface-variant">
               <ImagePlus size={15} />
-              {product.images.length} images
+              {imageUrls.length} images
             </div>
           </div>
         </div>
@@ -206,7 +267,7 @@ export default function ProductDetailClient({
             </p>
 
             <p className="mt-1 font-display text-3xl font-semibold text-on-surface">
-              {inventory.stock}
+              {product.stock}
               <span className="ml-1 text-xs font-sans font-medium text-on-surface-variant">
                 units
               </span>
@@ -223,7 +284,7 @@ export default function ProductDetailClient({
             </p>
 
             <p className="mt-1 font-display text-3xl font-semibold text-on-surface">
-              {detail.lowStockThreshold}
+              {product.lowStockThreshold}
               <span className="ml-1 text-xs font-sans font-medium text-on-surface-variant">
                 units
               </span>
@@ -233,56 +294,21 @@ export default function ProductDetailClient({
 
         <p className="mt-3 text-xs text-on-surface-variant">
           {isLowStock
-            ? `Restock recommended. Stock is at or below ${detail.lowStockThreshold} units.`
-            : `Restock alert will appear once stock reaches ${detail.lowStockThreshold} units.`}
+            ? `Restock recommended. Stock is at or below ${product.lowStockThreshold} units.`
+            : `Restock alert will appear once stock reaches ${product.lowStockThreshold} units.`}
         </p>
       </section>
 
       <section className="rounded-2xl bg-surface-container-low p-4 shadow-sm">
-        <div className="flex items-center justify-between border-b border-outline/20 pb-3">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-              Sales Performance
-            </p>
-            <h2 className="mt-1 font-display text-2xl text-on-surface">
-              30-Day Performance
-            </h2>
-          </div>
-
-          <span className="text-xs text-on-surface-variant">Last 30 days</span>
-        </div>
-
-        <div className="mt-4 grid grid-cols-3 gap-2">
-          <article className="rounded-xl bg-surface-container-lowest p-3">
-            <BarChart3 size={18} className="text-primary" />
-            <p className="mt-3 text-[10px] font-semibold uppercase tracking-wider text-on-surface-variant">
-              Units Sold
-            </p>
-            <p className="mt-1 font-display text-xl font-semibold text-on-surface">
-              {detail.performance.unitsSold}
-            </p>
-          </article>
-
-          <article className="rounded-xl bg-surface-container-lowest p-3">
-            <BarChart3 size={18} className="text-primary" />
-            <p className="mt-3 text-[10px] font-semibold uppercase tracking-wider text-on-surface-variant">
-              Revenue
-            </p>
-            <p className="mt-1 font-display text-base font-semibold text-on-surface sm:text-xl">
-              {formatCurrency(detail.performance.revenue)}
-            </p>
-          </article>
-
-          <article className="rounded-xl bg-surface-container-lowest p-3">
-            <BarChart3 size={18} className="text-primary" />
-            <p className="mt-3 text-[10px] font-semibold uppercase tracking-wider text-on-surface-variant">
-              Orders
-            </p>
-            <p className="mt-1 font-display text-xl font-semibold text-on-surface">
-              {detail.performance.orders}
-            </p>
-          </article>
-        </div>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+          Sales Performance
+        </p>
+        <h2 className="mt-1 font-display text-2xl text-on-surface">
+          Sales data
+        </h2>
+        <p className="mt-3 text-sm leading-relaxed text-on-surface-variant">
+          Sales performance will appear once order tracking is connected.
+        </p>
       </section>
 
       <section className="rounded-2xl bg-surface-container-low p-4 shadow-sm">
@@ -310,7 +336,7 @@ export default function ProductDetailClient({
             <div>
               <p className="text-xs text-on-surface-variant">Collection</p>
               <p className="mt-1 font-semibold text-on-surface">
-                {detail.collection}
+                {product.collection ?? "Not specified"}
               </p>
             </div>
 
@@ -324,14 +350,14 @@ export default function ProductDetailClient({
             <div>
               <p className="text-xs text-on-surface-variant">Dimensions</p>
               <p className="mt-1 font-semibold text-on-surface">
-                {detail.dimensions}
+                {product.dimensions ?? "Not specified"}
               </p>
             </div>
 
             <div>
               <p className="text-xs text-on-surface-variant">Weight</p>
               <p className="mt-1 font-semibold text-on-surface">
-                {detail.weight}
+                {product.weight ?? "Not specified"}
               </p>
             </div>
           </div>
@@ -342,38 +368,58 @@ export default function ProductDetailClient({
             Product Highlights
           </p>
 
-          <ul className="mt-3 space-y-2">
-            {product.features.map((feature) => (
-              <li
-                key={feature}
-                className="flex items-start gap-2 text-sm text-on-surface"
-              >
-                <Check size={16} className="mt-0.5 shrink-0 text-primary" />
-                {feature}
-              </li>
-            ))}
-          </ul>
+          {product.features.length > 0 ? (
+            <ul className="mt-3 space-y-2">
+              {product.features.map((feature) => (
+                <li
+                  key={feature}
+                  className="flex items-start gap-2 text-sm text-on-surface"
+                >
+                  <Check size={16} className="mt-0.5 shrink-0 text-primary" />
+                  {feature}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-3 text-sm text-on-surface-variant">
+              No product highlights provided.
+            </p>
+          )}
         </div>
 
         <div className="mt-5 space-y-2 border-t border-outline/20 pt-4 text-xs">
           <div className="flex justify-between gap-4">
             <span className="text-on-surface-variant">Created in catalog</span>
-            <span className="font-medium text-on-surface">{detail.createdAt}</span>
+            <span className="font-medium text-on-surface">
+              {formatDate(product.createdAt)}
+            </span>
           </div>
 
           <div className="flex justify-between gap-4">
             <span className="text-on-surface-variant">Last updated</span>
-            <span className="font-medium text-on-surface">{detail.updatedAt}</span>
+            <span className="font-medium text-on-surface">
+              {formatDate(product.updatedAt)}
+            </span>
           </div>
         </div>
       </section>
+
+      {archiveError ? (
+        <p
+          role="alert"
+          className="rounded-xl bg-error-container px-3 py-2 text-sm text-error"
+        >
+          {archiveError}
+        </p>
+      ) : null}
 
       <aside className="fixed bottom-0 left-0 right-0 z-30 border-t border-outline/20 bg-surface/95 px-5 py-3 backdrop-blur-xl lg:left-64">
         <div className="mx-auto flex max-w-3xl items-center gap-2.5">
           <button
             type="button"
             onClick={() => setIsDeleteDialogOpen(true)}
-            title="Delete product"
+            title="Archive product"
+            aria-label="Archive product"
             className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-error/20 bg-error-container text-error transition hover:opacity-80"
           >
             <Trash2 size={19} />
@@ -388,16 +434,14 @@ export default function ProductDetailClient({
           </Link>
         </div>
       </aside>
+
       <ConfirmationDialog
         isOpen={isDeleteDialogOpen}
-        title="Delete product?"
-        description={`Are you sure you want to delete "${product.name}"? This action cannot be undone.`}
-        confirmLabel="Delete"
+        title="Archive product?"
+        description={`Archive "${product.name}"? It will be hidden from the normal product list, but you can restore it later by editing its status.`}
+        confirmLabel={isArchiving ? "Archiving..." : "Archive"}
         onCancel={() => setIsDeleteDialogOpen(false)}
-        onConfirm={() => {
-          // UI stage only — real deletion comes with backend.
-          setIsDeleteDialogOpen(false);
-        }}
+        onConfirm={handleArchive}
       />
     </main>
   );

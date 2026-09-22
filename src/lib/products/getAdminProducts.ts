@@ -53,9 +53,16 @@ export async function getAdminProducts() {
       low_stock_threshold,
       status,
       is_new,
+      collection,
+      dimensions,
+      weight,
+      features,
+      created_at,
+      updated_at,
       product_images (
         storage_path,
-        is_primary
+        is_primary,
+        sort_order
       )
     `)
     .eq("store_id", storeId)

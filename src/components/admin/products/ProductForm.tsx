@@ -1,7 +1,8 @@
 "use client";
 
-import type { AdminProductDetail } from "@/data/adminProductDetails";
-import type { Products } from "@/types/products";
+import type { AdminProduct } from "@/lib/products/adminProduct";
+import { updateProduct } from "@/app/admin/products/[id]/edit/actions";
+import type { NewProductFormValues } from "@/lib/products/newProduct";
 import {
   ArrowLeft,
   ImagePlus,
@@ -17,15 +18,12 @@ import type { ProductStatusLabel } from "@/lib/products/productStatus";
 import { useRouter } from "next/navigation";
 import { createProduct } from "@/app/admin/products/new/actions";
 import { uploadProductImages } from "@/lib/products/uploadProductImages";
+import { syncProductImages } from "@/app/admin/products/[id]/edit/imageActions";
+import { getPublicProductImageUrl } from "@/lib/products/productImageUrl";
 
 type ProductFormProps = {
   mode: "create" | "edit";
-  product?: Products;
-  inventory?: {
-    stock: number;
-    status: ProductStatusLabel;
-  };
-  detail?: AdminProductDetail;
+  product?: AdminProduct;
   backHref: string;
 };
 
@@ -35,41 +33,62 @@ const statuses: ProductStatusLabel[] = [
   "Draft",
   "Archived",
 ];
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
 export default function ProductForm({
   mode,
   product,
-  inventory,
-  detail,
   backHref,
 }: ProductFormProps) {
   const isEdit = mode === "edit";
   const router = useRouter();
   const imageInputRef = useRef<HTMLInputElement>(null);
 
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<NewProductFormValues>({
     name: product?.name ?? "",
-    sku: product ? `LUM-${String(product.id).padStart(3, "0")}` : "",
+    sku: product?.sku ?? "",
     category: product?.category ?? "Skincare",
     description: product?.description ?? "",
     price: product ? String(product.price) : "",
-    stock: inventory ? String(inventory.stock) : "0",
-    lowStockThreshold: detail ? String(detail.lowStockThreshold) : "10",
-    collection: detail?.collection ?? "",
-    dimensions: detail?.dimensions ?? "",
-    weight: detail?.weight ?? "",
-    status: inventory?.status ?? "Active",
+    stock: product ? String(product.stock) : "0",
+    lowStockThreshold: product
+      ? String(product.lowStockThreshold)
+      : "10",
+    collection: product?.collection ?? "",
+    dimensions: product?.dimensions ?? "",
+    weight: product?.weight ?? "",
+    status: product
+      ? product.status === "active"
+        ? "Active"
+        : product.status === "draft"
+          ? "Draft"
+          : "Archived"
+      : "Active",
   });
 
   type ProductImagePreview = {
     file?: File;
     previewUrl: string;
+    storagePath?: string;
   };
 
   const [images, setImages] = useState<ProductImagePreview[]>(
-    product?.images.map((previewUrl) => ({ previewUrl })) ?? [],
+    product?.imagePaths.map((storagePath) => ({
+      storagePath,
+      previewUrl: supabaseUrl
+        ? getPublicProductImageUrl(supabaseUrl, storagePath)
+        : storagePath,
+    })) ?? [],
   );
-  const [primaryImageIndex, setPrimaryImageIndex] = useState(0);
+
+  const [primaryImageIndex, setPrimaryImageIndex] = useState(
+    product?.primaryImagePath
+      ? Math.max(
+          0,
+          product.imagePaths.indexOf(product.primaryImagePath),
+        )
+      : 0,
+  );
 
   const [isSaving, setIsSaving] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -130,7 +149,101 @@ export default function ProductForm({
     event.preventDefault();
 
     if (isEdit) {
-      return;
+      if (!product) {
+        setSubmitError("We could not find this product.");
+        return;
+      }
+
+      setIsSaving(true);
+      setSubmitError("");
+
+      try {
+        const updateResult = await updateProduct(product.id, form);
+
+        if ("error" in updateResult) {
+          setSubmitError(updateResult.error);
+          setIsSaving(false);
+          return;
+        }
+
+        const existingImagePaths = images.flatMap((image) =>
+          image.storagePath ? [image.storagePath] : [],
+        );
+
+        const selectedPrimaryImage = images[primaryImageIndex];
+
+        const primaryExistingImagePath =
+          selectedPrimaryImage?.storagePath ??
+          existingImagePaths[0] ??
+          null;
+
+        const initialSyncResult = await syncProductImages({
+          productId: product.id,
+          desiredImagePaths: existingImagePaths,
+          primaryImagePath: primaryExistingImagePath,
+        });
+
+        if ("error" in initialSyncResult) {
+          setSubmitError(initialSyncResult.error);
+          setIsSaving(false);
+          return;
+        }
+
+        const newImageFiles = images
+          .map((image) => image.file)
+          .filter((file): file is File => Boolean(file));
+
+        let newImagePaths: string[] = [];
+
+        if (newImageFiles.length > 0) {
+          const uploadResult = await uploadProductImages({
+            storeId: updateResult.storeId,
+            productId: product.id,
+            files: newImageFiles,
+            primaryImageIndex: Math.max(
+              0,
+              primaryImageIndex - existingImagePaths.length,
+            ),
+            existingImageCount: existingImagePaths.length,
+          });
+
+          if (uploadResult.error) {
+            setSubmitError(uploadResult.error);
+            setIsSaving(false);
+            return;
+          }
+
+          newImagePaths = uploadResult.storagePaths ?? [];
+        }
+
+        const desiredImagePaths = [
+          ...existingImagePaths,
+          ...newImagePaths,
+        ];
+
+        const finalSyncResult = await syncProductImages({
+          productId: product.id,
+          desiredImagePaths,
+          primaryImagePath:
+            desiredImagePaths[primaryImageIndex] ?? null,
+        });
+
+        if ("error" in finalSyncResult) {
+          setSubmitError(finalSyncResult.error);
+          setIsSaving(false);
+          return;
+        }
+
+        router.replace(`/admin/products/${updateResult.productId}`);
+        router.refresh();
+        return;
+      } catch {
+        setSubmitError(
+          "We could not update this product. Please try again.",
+        );
+        setIsSaving(false);
+        return;
+      }
     }
 
     setIsSaving(true);

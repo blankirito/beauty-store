@@ -30,7 +30,7 @@ export default function ProductMetrics({
         </div>
 
         <p className="font-display text-2xl font-bold tracking-tight text-on-surface">
-          {products.length}
+          {metrics.catalogProductCount}
         </p>
 
         <p className="text-[10px] text-on-surface-variant">

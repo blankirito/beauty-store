@@ -42,8 +42,9 @@ export default function ProductsClient({
       product.category === selectedCategory;
 
     const matchesStatus =
-      selectedStatus === "All" ||
-      toDisplayProductStatus(product.status) === selectedStatus;
+      selectedStatus === "All"
+        ? product.status !== "archived"
+        : toDisplayProductStatus(product.status) === selectedStatus;
 
     return matchesSearch && matchesCategory && matchesStatus;
   });

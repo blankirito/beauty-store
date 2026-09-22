@@ -1,7 +1,5 @@
 import ProductForm from "@/components/admin/products/ProductForm";
-import { getAdminProductDetail } from "@/data/adminProductDetails";
-import { getInventoryDetails } from "@/data/adminInventory";
-import { products } from "@/data/products";
+import { getAdminProducts } from "@/lib/products/getAdminProducts";
 import { notFound } from "next/navigation";
 
 type EditProductPageProps = {
@@ -14,9 +12,10 @@ export default async function EditProductPage({
   params,
 }: EditProductPageProps) {
   const { id } = await params;
-  const productId = Number(id);
 
-  const product = products.find((item) => item.id === productId);
+  const product = (await getAdminProducts()).find(
+    (item) => item.id === id,
+  );
 
   if (!product) {
     notFound();
@@ -26,8 +25,6 @@ export default async function EditProductPage({
     <ProductForm
       mode="edit"
       product={product}
-      inventory={getInventoryDetails(product.id)}
-      detail={getAdminProductDetail(product.id)}
       backHref={`/admin/products/${product.id}`}
     />
   );

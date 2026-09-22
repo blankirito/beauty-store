@@ -3,6 +3,7 @@ import type { DatabaseProductStatus } from "./productStatus";
 type SupabaseProductImage = {
   storage_path: string;
   is_primary: boolean;
+  sort_order: number;
 };
 
 type SupabaseProductRow = {
@@ -16,6 +17,12 @@ type SupabaseProductRow = {
   low_stock_threshold: number;
   status: DatabaseProductStatus;
   is_new: boolean;
+  collection: string | null;
+  dimensions: string | null;
+  weight: string | null;
+  features: string[];
+  created_at: string;
+  updated_at: string;
   product_images: SupabaseProductImage[];
 };
 
@@ -30,6 +37,12 @@ export type AdminProduct = {
   lowStockThreshold: number;
   status: DatabaseProductStatus;
   isNew: boolean;
+  collection: string | null;
+  dimensions: string | null;
+  weight: string | null;
+  features: string[];
+  createdAt: string;
+  updatedAt: string;
   imagePaths: string[];
   primaryImagePath: string | null;
 };
@@ -37,9 +50,13 @@ export type AdminProduct = {
 export function toAdminProduct(
   row: SupabaseProductRow,
 ): AdminProduct {
+  const images = [...row.product_images].sort(
+    (firstImage, secondImage) =>
+      firstImage.sort_order - secondImage.sort_order,
+  );
+
   const primaryImage =
-    row.product_images.find((image) => image.is_primary) ??
-    row.product_images[0];
+    images.find((image) => image.is_primary) ?? images[0];
 
   return {
     id: row.id,
@@ -52,7 +69,13 @@ export function toAdminProduct(
     lowStockThreshold: row.low_stock_threshold,
     status: row.status,
     isNew: row.is_new,
-    imagePaths: row.product_images.map((image) => image.storage_path),
+    collection: row.collection,
+    dimensions: row.dimensions,
+    weight: row.weight,
+    features: row.features,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+    imagePaths: images.map((image) => image.storage_path),
     primaryImagePath: primaryImage?.storage_path ?? null,
   };
 }

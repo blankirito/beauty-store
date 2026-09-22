@@ -46,9 +46,24 @@ describe("admin product metrics", () => {
         imagePaths: [],
         primaryImagePath: null,
       },
+            {
+        id: "product-4",
+        sku: "OLD-001",
+        name: "Old Product",
+        description: "Archived product",
+        category: "Hair",
+        price: 20,
+        stock: 50,
+        lowStockThreshold: 5,
+        status: "archived",
+        isNew: false,
+        imagePaths: [],
+        primaryImagePath: null,
+      },
     ]);
 
     expect(metrics).toEqual({
+      catalogProductCount: 3,
       inStockCount: 1,
       lowStockCount: 2,
       categoryCount: 2,

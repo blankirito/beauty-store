@@ -1,17 +1,24 @@
 import { createClient } from "@/lib/supabase/client";
 import { buildProductImagePath } from "@/lib/products/productImagePath";
+import { getProductImageSortOrder } from "@/lib/products/productImageOrder";
 
 type UploadProductImagesInput = {
   storeId: string;
   productId: string;
   files: File[];
   primaryImageIndex: number;
+  existingImageCount?: number;
 };
 
 function getExtension(file: File) {
   const extension = file.name.split(".").pop()?.toLowerCase();
 
-  if (extension === "jpg" || extension === "jpeg" || extension === "png" || extension === "webp") {
+  if (
+    extension === "jpg" ||
+    extension === "jpeg" ||
+    extension === "png" ||
+    extension === "webp"
+  ) {
     return extension;
   }
 
@@ -23,8 +30,13 @@ export async function uploadProductImages({
   productId,
   files,
   primaryImageIndex,
-}: UploadProductImagesInput): Promise<{ error?: string }> {
+  existingImageCount = 0,
+}: UploadProductImagesInput): Promise<{
+  error?: string;
+  storagePaths?: string[];
+}> {
   const supabase = createClient();
+  const storagePaths: string[] = [];
 
   for (const [index, file] of files.entries()) {
     const storagePath = buildProductImagePath({
@@ -43,7 +55,8 @@ export async function uploadProductImages({
 
     if (storageError) {
       return {
-        error: "The product was created, but one or more images could not be uploaded.",
+        error:
+          "The product was created, but one or more images could not be uploaded.",
       };
     }
 
@@ -52,18 +65,30 @@ export async function uploadProductImages({
       .insert({
         product_id: productId,
         storage_path: storagePath,
-        sort_order: index,
-        is_primary: index === primaryImageIndex,
+        sort_order: getProductImageSortOrder(
+          existingImageCount,
+          index,
+        ),
+        is_primary:
+          existingImageCount === 0 &&
+          index === primaryImageIndex,
       });
 
     if (imageRecordError) {
-      await supabase.storage.from("product-images").remove([storagePath]);
+      await supabase.storage
+        .from("product-images")
+        .remove([storagePath]);
 
       return {
-        error: "The product was created, but one or more images could not be saved.",
+        error:
+          "The product was created, but one or more images could not be saved.",
       };
     }
+
+    storagePaths.push(storagePath);
   }
 
-  return {};
+  return {
+    storagePaths,
+  };
 }

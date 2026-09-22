@@ -11,6 +11,10 @@ import { useState } from "react";
 import ConfirmationDialog from "@/components/shared/ConfirmationDialog";
 import type { AdminProduct } from "@/lib/products/adminProduct";
 import { toDisplayProductStatus } from "@/lib/products/productStatus";
+import { getPublicProductImageUrl } from "@/lib/products/productImageUrl";
+import { archiveProduct } from "@/app/admin/products/[id]/actions";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
 type ProductListProps = {
   items: AdminProduct[];
@@ -21,6 +25,9 @@ export default function ProductList({ items }: ProductListProps) {
 
   const [productToDelete, setProductToDelete] =
     useState<AdminProduct | null>(null);
+
+  const [isArchiving, setIsArchiving] = useState(false);
+  const [archiveError, setArchiveError] = useState("");
 
   const productRows = items.slice(0, 5);
 
@@ -37,6 +44,33 @@ export default function ProductList({ items }: ProductListProps) {
     );
   }
 
+  async function handleArchive() {
+    if (!productToDelete) {
+      return;
+    }
+
+    setIsArchiving(true);
+    setArchiveError("");
+
+    try {
+      const result = await archiveProduct(productToDelete.id);
+
+      if ("error" in result) {
+        setArchiveError(result.error);
+        setIsArchiving(false);
+        return;
+      }
+
+      setProductToDelete(null);
+      router.refresh();
+    } catch {
+      setArchiveError(
+        "We could not archive this product. Please try again.",
+      );
+      setIsArchiving(false);
+    }
+  }
+
   return (
     <section className="space-y-3">
       {productRows.map((product) => {
@@ -44,6 +78,14 @@ export default function ProductList({ items }: ProductListProps) {
           product.stock <= product.lowStockThreshold;
         const isActive = product.status === "active";
         const statusLabel = toDisplayProductStatus(product.status);
+
+        const imageUrl =
+          product.primaryImagePath && supabaseUrl
+            ? getPublicProductImageUrl(
+                supabaseUrl,
+                product.primaryImagePath,
+              )
+            : null;
 
         function openProductDetail() {
           router.push(`/admin/products/${product.id}`);
@@ -65,8 +107,20 @@ export default function ProductList({ items }: ProductListProps) {
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex min-w-0 items-start gap-3">
-                <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl border border-outline/15 bg-surface-container text-primary">
+                <div className="relative flex h-14 w-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-outline/15 bg-surface-container text-primary">
                   <Package size={22} />
+
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt={`${product.name} product image`}
+                      loading="lazy"
+                      onError={(event) => {
+                        event.currentTarget.classList.add("hidden");
+                      }}
+                      className="absolute inset-0 h-full w-full object-cover"
+                    />
+                  ) : null}
                 </div>
 
                 <div className="min-w-0 space-y-1">
@@ -136,7 +190,7 @@ export default function ProductList({ items }: ProductListProps) {
                     event.stopPropagation();
                     setProductToDelete(product);
                   }}
-                  aria-label={`Delete ${product.name}`}
+                  aria-label={`Archive ${product.name}`}
                   className="flex h-8 w-8 items-center justify-center rounded-full text-error hover:bg-error-container"
                 >
                   <Trash2 size={16} />
@@ -147,19 +201,26 @@ export default function ProductList({ items }: ProductListProps) {
         );
       })}
 
+      {archiveError ? (
+        <p
+          role="alert"
+          className="rounded-xl bg-error-container px-3 py-2 text-sm text-error"
+        >
+          {archiveError}
+        </p>
+      ) : null}
+
       <ConfirmationDialog
         isOpen={productToDelete !== null}
-        title="Delete product?"
+        title="Archive product?"
         description={
           productToDelete
-            ? `Are you sure you want to delete "${productToDelete.name}"? This action cannot be undone.`
+            ? `Archive "${productToDelete.name}"? It will be hidden from the normal product list, but you can restore it later by editing its status.`
             : ""
         }
-        confirmLabel="Delete"
+        confirmLabel={isArchiving ? "Archiving..." : "Archive"}
         onCancel={() => setProductToDelete(null)}
-        onConfirm={() => {
-          setProductToDelete(null);
-        }}
+        onConfirm={handleArchive}
       />
     </section>
   );
