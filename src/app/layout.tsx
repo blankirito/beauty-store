@@ -3,6 +3,7 @@ import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { WishlistProvider } from "@/components/wishlist/WishlistProvider";
+import { StorefrontCartProvider } from "@/components/storefront/StorefrontCartProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -31,7 +32,9 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <CartProvider>
-          <WishlistProvider>{children}</WishlistProvider>
+          <StorefrontCartProvider>
+            <WishlistProvider>{children}</WishlistProvider>
+          </StorefrontCartProvider>
         </CartProvider>
       </body>
     </html>

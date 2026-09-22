@@ -1,6 +1,7 @@
 "use client";
 
 import { Bell, ChevronDown, Menu, User } from "lucide-react";
+import Link from "next/link";
 
 type AdminHeaderProps = {
   section?: string;
@@ -51,9 +52,13 @@ export default function AdminHeader({
             <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-primary ring-2 ring-surface" />
           </button>
 
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-on-primary">
+          <Link
+            href="/admin/profile"
+            aria-label="Open admin profile"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-on-primary transition-transform hover:scale-105"
+          >
             <User size={17} />
-          </div>
+          </Link>
         </div>
       </div>
     </header>
