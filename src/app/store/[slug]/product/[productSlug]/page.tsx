@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 import StorefrontProductClient from "@/components/storefront/StorefrontProductClient";
 import {
-  getPublicStorefront,
-  getPublicStorefrontProduct,
-} from "@/lib/storefront/getPublicStorefront";
+  getCachedPublicStorefront,
+  getCachedPublicStorefrontProduct,
+} from "@/lib/storefront/publicStorefrontCache";
 
 type StorefrontProductRouteProps = {
   params: Promise<{
@@ -17,13 +17,13 @@ export default async function StorefrontProductRoute({
 }: StorefrontProductRouteProps) {
   const { slug, productSlug } = await params;
 
-  const storefront = await getPublicStorefront(slug);
+  const storefront = await getCachedPublicStorefront(slug);
 
   if (!storefront) {
     notFound();
   }
 
-  const product = await getPublicStorefrontProduct(
+  const product = await getCachedPublicStorefrontProduct(
     storefront.id,
     productSlug,
   );

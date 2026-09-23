@@ -4,9 +4,9 @@ import { notFound } from "next/navigation";
 import StorefrontHeader from "@/components/storefront/StorefrontHeader";
 import StorefrontProductCard from "@/components/storefront/StorefrontProductCard";
 import {
-  getPublicStorefront,
-  getPublicStorefrontProducts,
-} from "@/lib/storefront/getPublicStorefront";
+  getCachedPublicStorefront,
+  getCachedPublicStorefrontProducts,
+} from "@/lib/storefront/publicStorefrontCache";
 
 type StorefrontPageProps = {
   params: Promise<{ slug: string }>;
@@ -16,13 +16,13 @@ export default async function StorefrontPage({
   params,
 }: StorefrontPageProps) {
   const { slug } = await params;
-  const storefront = await getPublicStorefront(slug);
+  const storefront = await getCachedPublicStorefront(slug);
 
   if (!storefront) {
     notFound();
   }
 
-  const products = await getPublicStorefrontProducts(storefront.id);
+  const products = await getCachedPublicStorefrontProducts(storefront.id);
   const categories = [...new Set(products.map((product) => product.category))];
   const categoryIcons = [Sparkles, Droplets, WandSparkles, Heart];
 
