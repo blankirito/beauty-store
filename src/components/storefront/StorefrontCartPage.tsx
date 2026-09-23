@@ -40,6 +40,14 @@ export default function StorefrontCartPage({
         [items, storeSlug],
     );
 
+    const cartProductIdsKey = useMemo(
+    () =>
+        [...new Set(cartItems.map((item) => item.productId))]
+        .sort()
+        .join("|"),
+    [cartItems],
+    );
+
     useEffect(() => {
         if (!isReady) return;
 
@@ -78,8 +86,8 @@ export default function StorefrontCartPage({
                 .eq("store_id", storeId)
                 .eq("is_active", true)
                 .in(
-                    "id",
-                    cartItems.map((item) => item.productId),
+                "id",
+                cartProductIdsKey.split("|").filter(Boolean),
                 );
 
             if (isCurrent) {
@@ -97,7 +105,7 @@ export default function StorefrontCartPage({
         return () => {
             isCurrent = false;
         };
-    }, [cartItems, isReady, storeId]);
+    }, [cartProductIdsKey, isReady, storeId]);
 
     const viewItems = toStorefrontCartView(cartItems, products);
 
