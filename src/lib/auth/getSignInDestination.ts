@@ -1,6 +1,7 @@
 export function getSignInDestination(
   isPlatformAdmin: boolean,
   hasStoreAdminAccess = false,
+  hasMerchantIntent = false,
 ) {
   if (isPlatformAdmin) {
     return "/platform";
@@ -8,6 +9,10 @@ export function getSignInDestination(
 
   if (hasStoreAdminAccess) {
     return "/admin";
+  }
+
+  if (hasMerchantIntent) {
+    return "/onboarding";
   }
 
   return "/";

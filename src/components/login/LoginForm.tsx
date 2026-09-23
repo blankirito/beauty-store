@@ -62,6 +62,7 @@ export default function LoginForm() {
       getSignInDestination(
         profile.is_platform_admin,
         Boolean(storeMembership),
+        Boolean(signInData.user.user_metadata.merchant_intent),
       ),
     );
     router.refresh();
