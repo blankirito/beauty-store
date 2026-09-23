@@ -37,5 +37,6 @@ export async function approveStoreApplication(storeId: string) {
 
   revalidatePath("/platform");
   revalidatePath("/platform/reviews");
+  revalidatePath("/store/[slug]", "page");
   redirect("/platform");
 }
