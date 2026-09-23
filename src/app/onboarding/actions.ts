@@ -9,6 +9,7 @@ import {
 import { getStoreApplicationMutation } from "@/lib/merchants/storeApplicationMutation";
 import type { StoreApplicationStatus } from "@/lib/merchants/storeLifecycle";
 import { createClient } from "@/lib/supabase/server";
+import { canAccessOnboarding } from "@/lib/merchants/canAccessOnboarding";
 
 type SaveStoreApplicationInput = StoreApplicationInput & {
   submit: boolean;
@@ -61,10 +62,20 @@ export async function saveStoreApplication(
     .eq("role", "owner")
     .maybeSingle();
 
-  if (membershipError) {
+    if (membershipError) {
     return {
       type: "error",
       error: "We could not confirm your store application.",
+    };
+  }
+
+  const hasMerchantIntent = user.user_metadata.merchant_intent === true;
+  const hasOwnerMembership = Boolean(ownerMembership);
+
+  if (!canAccessOnboarding({ hasMerchantIntent, hasOwnerMembership })) {
+    return {
+      type: "error",
+      error: "Start your merchant application before saving store details.",
     };
   }
 

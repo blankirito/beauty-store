@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import StoreApplicationForm from "@/components/onboarding/StoreApplicationForm";
+import { canAccessOnboarding } from "@/lib/merchants/canAccessOnboarding";
 import type { StoreApplicationStatus } from "@/lib/merchants/storeLifecycle";
 import { createClient } from "@/lib/supabase/server";
 
@@ -20,6 +21,13 @@ export default async function OnboardingPage() {
     .eq("user_id", user.id)
     .eq("role", "owner")
     .maybeSingle();
+
+  const hasMerchantIntent = user.user_metadata.merchant_intent === true;
+  const hasOwnerMembership = Boolean(ownerMembership);
+
+  if (!canAccessOnboarding({ hasMerchantIntent, hasOwnerMembership })) {
+    redirect("/");
+  }
 
   let initialData = {
     name: "",
@@ -58,10 +66,7 @@ export default async function OnboardingPage() {
 
     applicationStatus = application.status as StoreApplicationStatus;
 
-    if (
-      applicationStatus !== "draft" &&
-      applicationStatus !== "rejected"
-    ) {
+    if (applicationStatus !== "draft" && applicationStatus !== "rejected") {
       redirect("/admin");
     }
 
