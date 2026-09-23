@@ -6,7 +6,11 @@ import { useState } from "react";
 import { getSignOutDestination } from "@/lib/auth/getSignOutDestination";
 import { createClient } from "@/lib/supabase/client";
 
-export default function LogOut() {
+type LogOutProps = {
+  storeSlug?: string;
+};
+
+export default function LogOut({ storeSlug }: LogOutProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -24,7 +28,7 @@ export default function LogOut() {
       return;
     }
 
-    router.replace(getSignOutDestination());
+    router.replace(getSignOutDestination(storeSlug));
     router.refresh();
   }
 

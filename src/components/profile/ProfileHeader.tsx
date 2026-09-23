@@ -1,6 +1,12 @@
 import { Pencil, Star } from "lucide-react";
 
-export default function ProfileHeader() {
+type ProfileHeaderProps = {
+  name?: string;
+};
+
+export default function ProfileHeader({
+  name = "Alex Morgan",
+}: ProfileHeaderProps) {
     return (
         <section className="
             px-5
@@ -54,7 +60,7 @@ export default function ProfileHeader() {
                 text-3xl
                 font-display
                 text-foreground
-            ">Alex Morgan</h1>
+            ">{name}</h1>
 
             {/* <div className="
                 mt-4

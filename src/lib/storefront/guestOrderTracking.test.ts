@@ -1,10 +1,22 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import {
   toGuestOrderTracking,
   type GuestOrderTrackingRpcRow,
 } from "./guestOrderTracking";
 
 describe("guest order tracking", () => {
+  it("includes the product image path in the guest tracking database response", () => {
+    const migration = readFileSync(
+      resolve(process.cwd(), "supabase/migrations/018_guest_order_tracking_images.sql"),
+      "utf8",
+    );
+
+    expect(migration).toContain("'imagePath'");
+    expect(migration).toContain("product_images.storage_path");
+  });
+
   it("maps the exact camelCase JSON returned by the tracking function", () => {
     const row: GuestOrderTrackingRpcRow = {
       order_number: "ORD-001001",

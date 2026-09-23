@@ -9,8 +9,13 @@ import { useRouter } from "next/navigation";
 import { getSignInDestination } from "@/lib/auth/getSignInDestination";
 import { createClient } from "@/lib/supabase/client";
 
-export default function LoginForm() {
-  const [email, setEmail] = useState("");
+type LoginFormProps = {
+  storeSlug?: string;
+};
+
+export default function LoginForm({
+  storeSlug,
+}: LoginFormProps) {  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [notice, setNotice] = useState("");
@@ -63,6 +68,7 @@ export default function LoginForm() {
         profile.is_platform_admin,
         Boolean(storeMembership),
         Boolean(signInData.user.user_metadata.merchant_intent),
+        storeSlug,
       ),
     );
     router.refresh();

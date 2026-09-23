@@ -4,6 +4,7 @@ export type GuestOrderTrackingItem = {
   unitPrice: number;
   quantity: number;
   lineTotal: number;
+  imagePath?: string | null;
 };
 
 export type GuestOrderTrackingEvent = {

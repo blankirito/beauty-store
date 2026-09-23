@@ -1,6 +1,12 @@
+type ProfileStatsProps = {
+    orderCount?: number;
+    activeOrderCount?: number;
+};
 
-
-export default function ProfileStats() {
+export default function ProfileStats({
+    orderCount = 12,
+    activeOrderCount = 2,
+}: ProfileStatsProps) {
     return (
         <section className="
             px-5
@@ -9,12 +15,13 @@ export default function ProfileStats() {
             gap-4
             mb-6
         ">
-            <StatCard 
-                number="12"
+            <StatCard
+                number={String(orderCount)}
                 title="Orders"
             />
-            <StatCard 
-                number="2"
+
+            <StatCard
+                number={String(activeOrderCount)}
                 title="Active Orders"
             />
         </section>
@@ -22,12 +29,12 @@ export default function ProfileStats() {
 }
 
 function StatCard({
-    number, 
+    number,
     title,
 }: {
     number: string,
     title: string
-}){
+}) {
     return (
         <div className="
             bg-surface

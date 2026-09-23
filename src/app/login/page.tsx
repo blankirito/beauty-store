@@ -3,7 +3,20 @@ import LoginForm from "@/components/login/LoginForm";
 import SocialLogin from "@/components/login/SocialLogin";
 import Link from "next/link";
 
-export default function LoginPage() {
+type LoginPageProps = {
+    searchParams: Promise<{
+        store?: string;
+    }>;
+};
+
+export default async function LoginPage({
+    searchParams,
+}: LoginPageProps) {
+    const { store } = await searchParams;
+
+    const registerHref = store
+        ? `/register?store=${encodeURIComponent(store)}`
+        : "/register";
     return (
         <main className="
             min-h-screen
@@ -28,7 +41,7 @@ export default function LoginPage() {
                     p-6
                     shadow-[0px_4px_12px_rgba(132, 81, 69, 0.08)]
                 ">
-                    <LoginForm />
+                    <LoginForm storeSlug={store} />
 
                     <div className="
                         flex
@@ -63,8 +76,8 @@ export default function LoginPage() {
                 ">
                     Don&apos;t have an account?
 
-                    <Link 
-                        href="/register"
+                    <Link
+                        href={registerHref}
                         className="
                             ml-1
                             text-primary

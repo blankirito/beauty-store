@@ -14,7 +14,12 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { getSignUpDestination } from "@/lib/auth/getSignUpDestination";
 
-export default function RegisterForm() {
+type RegisterFormProps = {
+  storeSlug?: string;
+};
+export default function RegisterForm({
+  storeSlug,
+}: RegisterFormProps) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -37,7 +42,7 @@ export default function RegisterForm() {
     setLoading(true);
 
     const supabase = createClient();
-    const destination = getSignUpDestination(false);
+    const destination = getSignUpDestination(false, storeSlug);
 
     const { data, error } = await supabase.auth.signUp({
       email,

@@ -64,7 +64,7 @@ export default function StorefrontProductClient({
   }
 
   return (
-    <main className="min-h-screen bg-background pb-24">
+    <main className="min-h-screen pb-24">
       <header className="sticky top-0 z-50 flex h-16 items-center justify-between bg-surface/80 px-5 backdrop-blur-md">
         <button
           type="button"

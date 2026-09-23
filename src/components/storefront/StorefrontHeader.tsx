@@ -40,20 +40,20 @@ export default function StorefrontHeader({
 
   return (
     <>
-      <header className="sticky top-0 z-50 flex h-16 items-center justify-between bg-surface px-6 shadow-sm">
-        <div className="flex items-center gap-3">
+      <header className="sticky top-0 z-50 flex h-16 items-center justify-between border-b border-outline/40 bg-background px-5">
+        <div className="flex items-center gap-4">
           <button
             type="button"
             onClick={() => setMenuOpen((isOpen) => !isOpen)}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
-            className="text-primary md:hidden"
+            className="rounded-full p-2 text-primary hover:bg-surface-low md:hidden"
           >
             {menuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
 
           <Link
             href={navigation.homeHref}
-            className="font-display text-xl text-primary"
+            className="font-display text-2xl text-primary"
           >
             {storeName}
           </Link>

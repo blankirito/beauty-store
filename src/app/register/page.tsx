@@ -2,12 +2,26 @@ import Link from "next/link";
 import RegisterHeader from "@/components/register/RegisterHeader";
 import RegisterForm from "@/components/register/RegisterForm";
 
-export default function SignUpPage() {
+type SignUpPageProps = {
+  searchParams: Promise<{
+    store?: string;
+  }>;
+};
+
+export default async function SignUpPage({
+  searchParams,
+}: SignUpPageProps) {
+  const { store } = await searchParams;
+
+  const loginHref = store
+    ? `/login?store=${encodeURIComponent(store)}`
+    : "/login";
+
   return (
     <main className="min-h-screen bg-background px-5 py-8">
       <div className="mx-auto flex w-full max-w-md flex-col">
         <RegisterHeader />
-        <RegisterForm />
+        <RegisterForm storeSlug={store} />
 
         <p className="mt-6 text-center text-sm text-on-surface-variant">
           Want to sell with Lumina?{" "}
@@ -25,7 +39,7 @@ export default function SignUpPage() {
           </span>
 
           <Link
-            href="/login"
+            href={loginHref}
             className="font-semibold text-primary transition hover:underline"
           >
             Login

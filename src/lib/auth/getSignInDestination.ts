@@ -1,13 +1,14 @@
 export function getSignInDestination(
   isPlatformAdmin: boolean,
-  hasStoreAdminAccess = false,
-  hasMerchantIntent = false,
+  hasStoreMembership: boolean,
+  hasMerchantIntent: boolean,
+  storeSlug?: string,
 ) {
   if (isPlatformAdmin) {
     return "/platform";
   }
 
-  if (hasStoreAdminAccess) {
+  if (hasStoreMembership) {
     return "/admin";
   }
 
@@ -15,5 +16,7 @@ export function getSignInDestination(
     return "/onboarding";
   }
 
-  return "/";
+  const normalizedSlug = storeSlug?.trim().toLowerCase();
+
+  return normalizedSlug ? `/store/${normalizedSlug}` : "/";
 }
