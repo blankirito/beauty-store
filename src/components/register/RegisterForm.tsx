@@ -10,6 +10,8 @@ import {
 import { useState } from "react";
 import AuthButton from "../auth/AuthButton";
 import AuthInput from "../auth/AuthInput";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 export default function RegisterForm() {
   const [fullName, setFullName] = useState("");
@@ -20,8 +22,9 @@ export default function RegisterForm() {
   const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const router = useRouter();
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setMessage("");
 
@@ -32,12 +35,36 @@ export default function RegisterForm() {
 
     setLoading(true);
 
-    window.setTimeout(() => {
-      setLoading(false);
+    const supabase = createClient();
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+          phone,
+        },
+        emailRedirectTo: `${window.location.origin}/onboarding`,
+      },
+    });
+
+    setLoading(false);
+
+    if (error) {
+      setMessage(error.message);
+      return;
+    }
+
+    if (!data.session) {
       setMessage(
-        "Account registration will be connected when authentication is added during the backend phase.",
+        "Check your email to confirm your account, then continue setting up your store.",
       );
-    }, 500);
+      return;
+    }
+
+    router.replace("/onboarding");
+    router.refresh();
   }
 
   return (

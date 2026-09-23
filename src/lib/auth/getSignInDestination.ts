@@ -2,5 +2,13 @@ export function getSignInDestination(
   isPlatformAdmin: boolean,
   hasStoreAdminAccess = false,
 ) {
-  return isPlatformAdmin || hasStoreAdminAccess ? "/admin" : "/";
+  if (isPlatformAdmin) {
+    return "/platform";
+  }
+
+  if (hasStoreAdminAccess) {
+    return "/admin";
+  }
+
+  return "/";
 }
