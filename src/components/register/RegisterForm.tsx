@@ -12,6 +12,7 @@ import AuthButton from "../auth/AuthButton";
 import AuthInput from "../auth/AuthInput";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { getSignUpDestination } from "@/lib/auth/getSignUpDestination";
 
 export default function RegisterForm() {
   const [fullName, setFullName] = useState("");
@@ -36,6 +37,7 @@ export default function RegisterForm() {
     setLoading(true);
 
     const supabase = createClient();
+    const destination = getSignUpDestination(false);
 
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -45,7 +47,7 @@ export default function RegisterForm() {
           full_name: fullName,
           phone,
         },
-        emailRedirectTo: `${window.location.origin}/onboarding`,
+        emailRedirectTo: window.location.origin + destination,
       },
     });
 
@@ -63,7 +65,7 @@ export default function RegisterForm() {
       return;
     }
 
-    router.replace("/onboarding");
+    router.replace(destination);
     router.refresh();
   }
 
