@@ -3,10 +3,13 @@
 import { MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { AdminOrder } from "@/lib/orders/adminOrder";
+import { getPublicProductImageUrl } from "@/lib/products/productImageUrl";
 
 type OrderListProps = {
   items: AdminOrder[];
 };
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
 function getActionLabel(status: AdminOrder["status"]) {
   if (status === "New") return "Process Order";
@@ -55,6 +58,10 @@ export default function OrderList({ items }: OrderListProps) {
   return (
     <section className="space-y-3">
       {items.slice(0, 5).map((order) => {
+        const imageUrl =
+          order.firstItemImagePath && supabaseUrl
+            ? getPublicProductImageUrl(supabaseUrl, order.firstItemImagePath)
+            : null;
         const actionLabel = getActionLabel(order.status);
 
         function openOrderDetail() {
@@ -95,8 +102,19 @@ export default function OrderList({ items }: OrderListProps) {
 
             <div className="flex items-center justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
-                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-surface-container text-xs font-bold text-primary">
-                  {order.initials}
+                <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-xl bg-surface-container">
+                  {imageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={imageUrl}
+                      alt="Ordered product"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-xs font-bold text-primary">
+                      {order.initials}
+                    </div>
+                  )}
                 </div>
 
                 <div className="min-w-0">

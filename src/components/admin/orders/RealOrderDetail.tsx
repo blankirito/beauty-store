@@ -12,12 +12,15 @@ import type { AdminOrderDetail } from "@/lib/orders/adminOrderDetail";
 import type { AdminOrderTimelineEntry } from "@/lib/orders/adminOrderTimeline";
 import FulfillmentActionButton from "./FulfillmentActionButton";
 import ShipmentForm from "./ShipmentForm";
+import { getPublicProductImageUrl } from "@/lib/products/productImageUrl";
 
 type RealOrderDetailProps = {
     order: AdminOrder;
     detail: AdminOrderDetail;
     timeline: AdminOrderTimelineEntry[];
 };
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
 function formatCurrency(value: number) {
     return new Intl.NumberFormat("en-MY", {
@@ -47,6 +50,36 @@ function getStatusClass(status: AdminOrder["status"]) {
     }
 
     return "bg-primary-container/40 text-on-primary-container";
+}
+
+function OrderItemThumbnail({
+  imagePath,
+  productName,
+}: {
+  imagePath: string | null;
+  productName: string;
+}) {
+  const imageUrl =
+    imagePath && supabaseUrl
+      ? getPublicProductImageUrl(supabaseUrl, imagePath)
+      : null;
+
+  return (
+    <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-outline/15 bg-surface-container">
+      {imageUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={imageUrl}
+          alt={productName}
+          className="h-full w-full object-cover"
+        />
+      ) : (
+        <div className="flex h-full w-full items-center justify-center text-primary">
+          <Package size={22} />
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function RealOrderDetail({
@@ -136,9 +169,10 @@ export default function RealOrderDetail({
                 <div className="divide-y divide-outline/15">
                     {detail.items.map((item) => (
                         <article key={`${item.sku}-${item.productName}`} className="flex gap-3 py-3">
-                            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-outline/15 bg-surface-container text-primary">
-                                <Package size={22} />
-                            </div>
+                            <OrderItemThumbnail
+  imagePath={item.imagePath}
+  productName={item.productName}
+/>
 
                             <div className="min-w-0 flex-1">
                                 <h3 className="truncate text-sm font-semibold text-on-surface">

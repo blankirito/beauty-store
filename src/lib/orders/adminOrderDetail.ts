@@ -1,12 +1,23 @@
 import type { PaymentStatus } from "./adminOrder";
 
+type DatabaseProductImage = {
+  storage_path: string;
+  is_primary: boolean;
+  sort_order: number;
+};
+
+type DatabaseProduct = {
+  product_images?: DatabaseProductImage[] | null;
+};
+
 type DatabaseOrderItem = {
-    product_id: string | null;
-    product_name: string;
-    product_sku: string;
-    unit_price: number;
-    quantity: number;
-    line_total: number;
+  product_id: string | null;
+  product_name: string;
+  product_sku: string;
+  unit_price: number;
+  quantity: number;
+  line_total: number;
+  products?: DatabaseProduct | DatabaseProduct[] | null;
 };
 
 type DatabaseShippingAddress = {
@@ -25,6 +36,7 @@ type DatabaseOrderDetail = {
     customer_phone: string | null;
     payment_status: string;
     payment_method: string | null;
+    payment_method_label?: string | null;
     subtotal: number;
     shipping_fee: number;
     tracking_carrier: string | null;
@@ -54,6 +66,7 @@ export type AdminOrderDetail = {
         quantity: number;
         unitPrice: number;
         lineTotal: number;
+        imagePath: string | null;
     }>;
     shippingAddress: {
         recipientName: string;
@@ -74,6 +87,27 @@ const paymentStatusLabels: Record<string, PaymentStatus> = {
     failed: "Failed",
 };
 
+function getOrderItemImagePath(item: DatabaseOrderItem) {
+  const products = item.products;
+
+  const product = Array.isArray(products)
+    ? products[0]
+    : products;
+
+  const images = product?.product_images ?? [];
+
+  const primaryImage = images.find((image) => image.is_primary);
+
+  return (
+    primaryImage?.storage_path ??
+    images
+      .slice()
+      .sort((first, second) => first.sort_order - second.sort_order)[0]
+      ?.storage_path ??
+    null
+  );
+}
+
 export function toAdminOrderDetail(
     order: DatabaseOrderDetail,
 ): AdminOrderDetail {
@@ -87,7 +121,7 @@ export function toAdminOrderDetail(
         customerId: order.customer_id,
         customerPhone: order.customer_phone,
         paymentStatus: paymentStatusLabels[order.payment_status] ?? "Pending",
-        paymentMethod: order.payment_method,
+        paymentMethod: order.payment_method_label ?? order.payment_method,
         subtotal: order.subtotal,
         shippingFee: order.shipping_fee,
         trackingCarrier: order.tracking_carrier,
@@ -100,6 +134,7 @@ export function toAdminOrderDetail(
             quantity: item.quantity,
             unitPrice: item.unit_price,
             lineTotal: item.line_total,
+            imagePath: getOrderItemImagePath(item),
         })),
         shippingAddress: address
             ? {

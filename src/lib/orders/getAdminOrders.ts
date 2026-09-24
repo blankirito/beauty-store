@@ -54,11 +54,19 @@ export async function getAdminOrders() {
       payment_status,
       fulfillment_status,
       payment_method,
+      payment_method_label,
       total,
       created_at,
       order_items (
-        id
-      )
+  id,
+  products (
+    product_images (
+      storage_path,
+      is_primary,
+      sort_order
+    )
+  )
+)
     `)
     .eq("store_id", storeId)
     .order("created_at", { ascending: false });

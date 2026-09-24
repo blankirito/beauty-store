@@ -11,6 +11,21 @@ export type PaymentStatus =
   | "Refunded"
   | "Failed";
 
+type DatabaseProductImage = {
+  storage_path: string;
+  is_primary: boolean;
+  sort_order: number;
+};
+
+type DatabaseProduct = {
+  product_images?: DatabaseProductImage[] | null;
+};
+
+type DatabaseOrderItem = {
+  id: string;
+  products?: DatabaseProduct | DatabaseProduct[] | null;
+};
+
 type DatabaseOrder = {
   id: string;
   order_number: string;
@@ -20,9 +35,10 @@ type DatabaseOrder = {
   payment_status: string;
   fulfillment_status: string;
   payment_method: string | null;
+  payment_method_label?: string | null;
   total: number;
   created_at: string;
-  order_items?: { id: string }[] | null;
+  order_items?: DatabaseOrderItem[] | null;
 };
 
 export type AdminOrder = {
@@ -36,6 +52,7 @@ export type AdminOrder = {
   initials: string;
   total: number;
   itemCount: number;
+  firstItemImagePath: string | null;
   payment: string;
 };
 
@@ -64,6 +81,27 @@ function getInitials(name: string) {
     .join("");
 }
 
+function getOrderItemImagePath(item?: DatabaseOrderItem) {
+  const products = item?.products;
+
+  const product = Array.isArray(products)
+    ? products[0]
+    : products;
+
+  const images = product?.product_images ?? [];
+
+  const primaryImage = images.find((image) => image.is_primary);
+
+  return (
+    primaryImage?.storage_path ??
+    images
+      .slice()
+      .sort((first, second) => first.sort_order - second.sort_order)[0]
+      ?.storage_path ??
+    null
+  );
+}
+
 export function toAdminOrder(order: DatabaseOrder): AdminOrder {
   return {
     id: order.order_number,
@@ -76,6 +114,10 @@ export function toAdminOrder(order: DatabaseOrder): AdminOrder {
     initials: getInitials(order.customer_name),
     total: order.total,
     itemCount: order.order_items?.length ?? 0,
-    payment: order.payment_method ?? "Payment method unavailable",
+    firstItemImagePath: getOrderItemImagePath(order.order_items?.[0]),
+    payment:
+      order.payment_method_label ??
+      order.payment_method ??
+      "Payment method unavailable",
   };
 }

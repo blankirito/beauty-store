@@ -57,6 +57,7 @@ export async function getAdminOrderDetail(orderNumber: string) {
       payment_status,
       fulfillment_status,
       payment_method,
+      payment_method_label,
       subtotal,
       shipping_fee,
       total,
@@ -71,7 +72,14 @@ export async function getAdminOrderDetail(orderNumber: string) {
         product_sku,
         unit_price,
         quantity,
-        line_total
+        line_total,
+        products (
+  product_images (
+    storage_path,
+    is_primary,
+    sort_order
+  )
+)
       ),
       order_shipping_addresses (
         recipient_name,

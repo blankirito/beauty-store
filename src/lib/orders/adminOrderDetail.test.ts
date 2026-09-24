@@ -8,6 +8,7 @@ describe("admin order detail mapping", () => {
             customer_phone: "012-345 6789",
             payment_status: "paid",
             payment_method: "Manual test order",
+            payment_method_label: "Test Payment",
             subtotal: 1,
             shipping_fee: 0,
             tracking_carrier: null,
@@ -21,6 +22,15 @@ describe("admin order detail mapping", () => {
                     unit_price: 1,
                     quantity: 1,
                     line_total: 1,
+                    products: {
+  product_images: [
+    {
+      storage_path: "products/test.jpg",
+      is_primary: true,
+      sort_order: 0,
+    },
+  ],
+},
                 },
             ],
             order_shipping_addresses: [
@@ -41,7 +51,7 @@ describe("admin order detail mapping", () => {
             customerId: null,
             customerPhone: "012-345 6789",
             paymentStatus: "Paid",
-            paymentMethod: "Manual test order",
+            paymentMethod: "Test Payment",
             subtotal: 1,
             shippingFee: 0,
             trackingCarrier: null,
@@ -55,6 +65,7 @@ describe("admin order detail mapping", () => {
                     quantity: 1,
                     unitPrice: 1,
                     lineTotal: 1,
+                    imagePath: "products/test.jpg",
                 },
             ],
             shippingAddress: {
