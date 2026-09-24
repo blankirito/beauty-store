@@ -5,7 +5,6 @@ import {
 } from "./newProduct";
 
 export type ProductUpdateData = {
-  sku: string;
   name: string;
   slug: string;
   category: string;
@@ -40,7 +39,6 @@ export function prepareProductUpdate(
 
   return {
     data: {
-      sku: sourceData.sku,
       name: sourceData.name,
       slug: sourceData.slug,
       category: sourceData.category,

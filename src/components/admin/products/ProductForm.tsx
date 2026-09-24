@@ -5,6 +5,8 @@ import { updateProduct } from "@/app/admin/products/[id]/edit/actions";
 import type { NewProductFormValues } from "@/lib/products/newProduct";
 import {
   ArrowLeft,
+  Check,
+  ChevronDown,
   ImagePlus,
   Minus,
   Plus,
@@ -46,7 +48,6 @@ export default function ProductForm({
 
   const [form, setForm] = useState<NewProductFormValues>({
     name: product?.name ?? "",
-    sku: product?.sku ?? "",
     category: product?.category ?? "Skincare",
     description: product?.description ?? "",
     price: product ? String(product.price) : "",
@@ -65,6 +66,7 @@ export default function ProductForm({
           : "Archived"
       : "Active",
   });
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
 
   type ProductImagePreview = {
     file?: File;
@@ -84,9 +86,9 @@ export default function ProductForm({
   const [primaryImageIndex, setPrimaryImageIndex] = useState(
     product?.primaryImagePath
       ? Math.max(
-          0,
-          product.imagePaths.indexOf(product.primaryImagePath),
-        )
+        0,
+        product.imagePaths.indexOf(product.primaryImagePath),
+      )
       : 0,
   );
 
@@ -444,39 +446,70 @@ export default function ProductForm({
                 />
               </label>
 
-              <div className="grid grid-cols-2 gap-3">
-                <label className="block">
-                  <span className="text-sm font-semibold text-on-surface">
-                    SKU
-                  </span>
-
-                  <input
-                    value={form.sku}
-                    onChange={(event) => updateField("sku", event.target.value)}
-                    placeholder="e.g. LUM-013"
-                    className="mt-2 w-full rounded-xl border border-outline/25 bg-surface-container-lowest px-3 py-3 font-mono text-xs text-on-surface outline-none transition placeholder:text-on-surface-variant/70 focus:border-primary focus:ring-2 focus:ring-primary/15"
-                  />
-                </label>
-
-                <label className="block">
+              <div>
+                <div className="relative">
                   <span className="text-sm font-semibold text-on-surface">
                     Category
                   </span>
 
-                  <select
-                    value={form.category}
-                    onChange={(event) =>
-                      updateField("category", event.target.value)
-                    }
-                    className="mt-2 w-full rounded-xl border border-outline/25 bg-surface-container-lowest px-3 py-3 text-sm text-on-surface outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15"
+                  <button
+                    type="button"
+                    onClick={() => setIsCategoryOpen((current) => !current)}
+                    className="mt-2 flex w-full items-center justify-between rounded-xl border border-outline/25 bg-surface-container-lowest px-3.5 py-3 text-left text-sm text-on-surface outline-none transition hover:border-primary/50 focus:border-primary focus:ring-2 focus:ring-primary/15"
+                    aria-haspopup="listbox"
+                    aria-expanded={isCategoryOpen}
                   >
-                    {categories.map((category) => (
-                      <option key={category} value={category}>
-                        {category}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                    <span>{form.category}</span>
+
+                    <ChevronDown
+                      size={18}
+                      className={`text-primary transition ${isCategoryOpen ? "rotate-180" : ""
+                        }`}
+                    />
+                  </button>
+
+                  {isCategoryOpen && (
+                    <>
+                      <button
+                        type="button"
+                        aria-label="Close category menu"
+                        onClick={() => setIsCategoryOpen(false)}
+                        className="fixed inset-0 z-10 cursor-default"
+                      />
+
+                      <div
+                        role="listbox"
+                        aria-label="Product category"
+                        className="absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-outline/20 bg-surface p-1.5 shadow-lg"
+                      >
+                        {categories.map((category) => {
+                          const isSelected = form.category === category;
+
+                          return (
+                            <button
+                              key={category}
+                              type="button"
+                              role="option"
+                              aria-selected={isSelected}
+                              onClick={() => {
+                                updateField("category", category);
+                                setIsCategoryOpen(false);
+                              }}
+                              className={
+                                isSelected
+                                  ? "flex w-full items-center justify-between rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-white"
+                                  : "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm text-on-surface transition hover:bg-surface-low"
+                              }
+                            >
+                              {category}
+                              {isSelected && <Check size={17} />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
 
               <label className="block">

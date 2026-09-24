@@ -3,6 +3,7 @@ import { ChevronRight, Truck } from "lucide-react";
 import { getPublicProductImageUrl } from "@/lib/products/productImageUrl";
 import type { StorefrontOrderViewInput } from "@/lib/storefront/storefrontOrderView";
 import { toStorefrontOrderView } from "@/lib/storefront/storefrontOrderView";
+import { formatStorefrontOrderDate } from "@/lib/storefront/formatStorefrontOrderDate";
 
 type StorefrontOrderCardProps = {
   order: StorefrontOrderViewInput;
@@ -38,7 +39,7 @@ export default function StorefrontOrderCard({
             Order #{view.orderNumber}
           </p>
           <p className="mt-1 text-sm text-outline">
-            Placed on {new Date(view.createdAt).toLocaleDateString()}
+            Placed on {formatStorefrontOrderDate(view.createdAt)}
           </p>
         </div>
         <span className={`rounded-full px-3 py-1 text-xs font-semibold ${getStatusClass(view.status)}`}>

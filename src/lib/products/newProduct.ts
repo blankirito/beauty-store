@@ -5,7 +5,6 @@ import {
 
 export type NewProductFormValues = {
     name: string;
-    sku: string;
     category: string;
     description: string;
     price: string;
@@ -35,11 +34,10 @@ export function prepareNewProduct(
     values: NewProductFormValues,
 ) {
     const name = values.name.trim();
-    const sku = values.sku.trim();
 
-    if (!name || !sku) {
+    if (!name) {
         return {
-            error: "Product name and SKU are required.",
+            error: "Product name is required.",
         };
     }
 
@@ -68,7 +66,6 @@ export function prepareNewProduct(
 
     return {
         data: {
-            sku,
             name,
             slug: createSlug(name),
             category: values.category.trim(),

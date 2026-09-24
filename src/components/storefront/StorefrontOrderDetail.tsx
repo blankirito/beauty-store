@@ -2,6 +2,10 @@ import { CreditCard, Truck } from "lucide-react";
 import type { GuestOrderTracking } from "@/lib/storefront/guestOrderTracking";
 import { getPublicProductImageUrl } from "@/lib/products/productImageUrl";
 import { getStorefrontOrderStatus } from "@/lib/storefront/storefrontOrders";
+import {
+  formatStorefrontOrderDate,
+  formatStorefrontOrderDateTime,
+} from "@/lib/storefront/formatStorefrontOrderDate";
 
 type Props = { order: GuestOrderTracking };
 
@@ -37,7 +41,9 @@ export default function StorefrontOrderDetail({ order }: Props) {
       <header className="text-center">
         <h1 className="font-display text-3xl text-on-surface">Order #{order.orderNumber}</h1>
         <div className="mt-3 flex items-center justify-center gap-3">
-          <p className="text-sm text-on-surface-variant">Placed on {new Date(order.createdAt).toLocaleDateString()}</p>
+          <p className="text-sm text-on-surface-variant">
+            Placed on {formatStorefrontOrderDate(order.createdAt)}
+          </p>
           <span className={`rounded-full px-3 py-1 text-xs font-semibold ${getStatusClass(status)}`}>{status}</span>
         </div>
       </header>
@@ -56,7 +62,9 @@ export default function StorefrontOrderDetail({ order }: Props) {
                 )}
               </div>
               {event.note && <p className="mt-1 text-sm text-on-surface-variant">{event.note}</p>}
-              <p className="mt-1 text-xs text-outline">{new Date(event.createdAt).toLocaleString()}</p>
+              <p className="mt-1 text-xs text-outline">
+                {formatStorefrontOrderDateTime(event.createdAt)}
+              </p>
             </article>
           ))}
         </div>

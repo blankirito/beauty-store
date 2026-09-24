@@ -6,7 +6,6 @@ describe("product update preparation", () => {
     expect(
       prepareProductUpdate({
         name: "  Glow Serum  ",
-        sku: "  SER-001  ",
         category: "Skincare",
         description: "Updated product description",
         price: "89.00",
@@ -19,7 +18,6 @@ describe("product update preparation", () => {
       }),
     ).toEqual({
       data: {
-        sku: "SER-001",
         name: "Glow Serum",
         slug: "glow-serum",
         category: "Skincare",
