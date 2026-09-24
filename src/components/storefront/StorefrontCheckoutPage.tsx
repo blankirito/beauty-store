@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, MapPin } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import {
   toStorefrontProduct,
@@ -16,12 +16,17 @@ import {
 import type { StorefrontPaymentMethod } from "@/lib/storefront/getPublicStorefront";
 import { toStorefrontCartView } from "@/lib/storefront/storefrontCartView";
 import { useStorefrontCart } from "./StorefrontCartProvider";
+import type { StorefrontSavedAddress } from "@/lib/storefront/storefrontAddresses";
 
 type StorefrontCheckoutPageProps = {
   storeId: string;
   storeName: string;
   storeSlug: string;
+  customerEmail: string;
   paymentMethods: StorefrontPaymentMethod[];
+  preferredPaymentMethodId: string | null;
+  savedAddresses: StorefrontSavedAddress[];
+  defaultAddressId: string | null;
 };
 
 type CheckoutSuccess = {
@@ -36,7 +41,11 @@ export default function StorefrontCheckoutPage({
   storeId,
   storeName,
   storeSlug,
+  customerEmail,
   paymentMethods,
+  preferredPaymentMethodId,
+  savedAddresses,
+  defaultAddressId,
 }: StorefrontCheckoutPageProps) {
   const { items, isReady, updateQuantity } = useStorefrontCart();
 
@@ -45,20 +54,40 @@ export default function StorefrontCheckoutPage({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [success, setSuccess] = useState<CheckoutSuccess | null>(null);
+  const initialPaymentMethodId =
+    preferredPaymentMethodId &&
+      paymentMethods.some(
+        (paymentMethod) =>
+          paymentMethod.id === preferredPaymentMethodId,
+      )
+      ? preferredPaymentMethodId
+      : paymentMethods[0]?.id ?? "";
+
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState(
-    paymentMethods[0]?.id ?? "",
+    initialPaymentMethodId,
+  );
+  const initialAddress =
+    savedAddresses.find((address) => address.id === defaultAddressId) ?? null;
+
+  const [selectedAddressId, setSelectedAddressId] = useState(
+    initialAddress?.id ?? "",
   );
 
+  const [isAddressPickerOpen, setIsAddressPickerOpen] = useState(false);
+
+  const selectedAddress =
+    savedAddresses.find((address) => address.id === selectedAddressId) ?? null;
+
   const [form, setForm] = useState({
-    customerName: "",
-    customerEmail: "",
-    customerPhone: "",
-    addressLine1: "",
-    addressLine2: "",
-    city: "",
-    state: "",
-    postalCode: "",
-    country: "Malaysia",
+    customerName: initialAddress?.recipientName ?? "",
+    customerEmail,
+    customerPhone: initialAddress?.phone ?? "",
+    addressLine1: initialAddress?.addressLine1 ?? "",
+    addressLine2: initialAddress?.addressLine2 ?? "",
+    city: initialAddress?.city ?? "",
+    state: initialAddress?.state ?? "",
+    postalCode: initialAddress?.postalCode ?? "",
+    country: initialAddress?.country ?? "Malaysia",
   });
 
   const cartItems = useMemo(
@@ -142,6 +171,24 @@ export default function StorefrontCheckoutPage({
       ...currentForm,
       [field]: value,
     }));
+  }
+
+  function applySavedAddress(address: StorefrontSavedAddress) {
+    setSelectedAddressId(address.id);
+
+    setForm((current) => ({
+      ...current,
+      customerName: address.recipientName,
+      customerPhone: address.phone,
+      addressLine1: address.addressLine1,
+      addressLine2: address.addressLine2 ?? "",
+      city: address.city,
+      state: address.state,
+      postalCode: address.postalCode,
+      country: address.country,
+    }));
+
+    setIsAddressPickerOpen(false);
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -347,9 +394,77 @@ export default function StorefrontCheckoutPage({
         </section>
 
         <section className="rounded-2xl bg-surface p-6 shadow-sm">
-          <h2 className="font-display text-xl text-primary">
-            Delivery address
-          </h2>
+          <div className="flex items-center justify-between gap-4">
+            <h2 className="font-display text-xl text-primary">
+              Delivery address
+            </h2>
+
+            {savedAddresses.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setIsAddressPickerOpen((current) => !current)}
+                className="text-sm font-semibold text-primary"
+              >
+                {isAddressPickerOpen ? "Done" : "Change"}
+              </button>
+            )}
+          </div>
+
+          {selectedAddress && (
+            <div className="mt-4 rounded-xl bg-primary-fixed/50 p-4">
+              <div className="flex items-start gap-3">
+                <MapPin size={18} className="mt-0.5 shrink-0 text-primary" />
+
+                <div className="text-sm leading-6 text-on-surface-variant">
+                  <p className="font-semibold text-primary">
+                    {selectedAddress.label}
+                    {selectedAddress.isDefault ? " · Default" : ""}
+                  </p>
+                  <p>
+                    {selectedAddress.recipientName} · {selectedAddress.phone}
+                  </p>
+                  <p>{selectedAddress.addressLine1}</p>
+                  <p>
+                    {selectedAddress.city}, {selectedAddress.state}{" "}
+                    {selectedAddress.postalCode}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {isAddressPickerOpen && (
+            <div className="mt-4 space-y-2">
+              {savedAddresses.map((address) => (
+                <button
+                  key={address.id}
+                  type="button"
+                  onClick={() => applySavedAddress(address)}
+                  className={`w-full rounded-xl border p-4 text-left transition ${selectedAddressId === address.id
+                      ? "border-primary bg-primary/5"
+                      : "border-outline/30 bg-surface-low hover:border-primary/50"
+                    }`}
+                >
+                  <p className="font-semibold text-primary">
+                    {address.label}
+                    {address.isDefault ? " · Default" : ""}
+                  </p>
+
+                  <p className="mt-1 text-sm text-on-surface-variant">
+                    {address.recipientName} · {address.phone}
+                  </p>
+
+                  <p className="mt-1 text-sm text-on-surface-variant">
+                    {address.addressLine1}, {address.city}
+                  </p>
+                </button>
+              ))}
+
+              <p className="px-1 text-xs leading-5 text-on-surface-variant">
+                You can still edit the fields below for this order only.
+              </p>
+            </div>
+          )}
 
           <div className="mt-4 grid gap-3">
             <input

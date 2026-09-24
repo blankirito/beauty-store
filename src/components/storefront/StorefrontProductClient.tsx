@@ -2,33 +2,41 @@
 
 import { Check, Heart, Share2, ShoppingBag, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { getPublicProductImageUrl } from "@/lib/products/productImageUrl";
 import type { StorefrontProduct } from "@/lib/storefront/storefrontProduct";
 import { useStorefrontCart } from "./StorefrontCartProvider";
+import { toggleStorefrontWishlistItem } from "@/app/store/[slug]/product/[productSlug]/actions";
 
 type StorefrontProductClientProps = {
   storeName: string;
   storeSlug: string;
   product: StorefrontProduct;
+  initialIsWishlisted: boolean;
 };
 
 export default function StorefrontProductClient({
   storeName,
   storeSlug,
   product,
+  initialIsWishlisted,
 }: StorefrontProductClientProps) {
   const router = useRouter();
   const { addItem } = useStorefrontCart();
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
+  const [isWishlisted, setIsWishlisted] = useState(
+    initialIsWishlisted,
+  );
+  const [wishlistError, setWishlistError] = useState("");
+  const [isUpdatingWishlist, startWishlistTransition] = useTransition();
 
   const imageUrl =
     product.imagePath && process.env.NEXT_PUBLIC_SUPABASE_URL
       ? getPublicProductImageUrl(
-          process.env.NEXT_PUBLIC_SUPABASE_URL,
-          product.imagePath,
-        )
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        product.imagePath,
+      )
       : null;
 
   function addToCart() {
@@ -43,6 +51,30 @@ export default function StorefrontProductClient({
   function buyNow() {
     addItem(storeSlug, product.id, quantity, product.stock);
     router.push(`/store/${storeSlug}/cart`);
+  }
+
+  function handleWishlist() {
+    setWishlistError("");
+
+    startWishlistTransition(async () => {
+      const result = await toggleStorefrontWishlistItem({
+        storeSlug,
+        productSlug: product.slug,
+        productId: product.id,
+      });
+
+      if (result.status === "requires-sign-in") {
+        router.push(`/login?store=${encodeURIComponent(storeSlug)}`);
+        return;
+      }
+
+      if (result.status === "error") {
+        setWishlistError(result.message);
+        return;
+      }
+
+      setIsWishlisted(result.isWishlisted);
+    });
   }
 
   async function shareProduct() {
@@ -125,11 +157,33 @@ export default function StorefrontProductClient({
               RM{product.price.toFixed(2)}
             </p>
 
-            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-outline/30 bg-surface text-primary">
-              <Heart size={19} />
-            </div>
+            <button
+              type="button"
+              disabled={isUpdatingWishlist}
+              onClick={handleWishlist}
+              aria-label={
+                isWishlisted
+                  ? `Remove ${product.name} from wishlist`
+                  : `Add ${product.name} to wishlist`
+              }
+              aria-pressed={isWishlisted}
+              className={`flex h-10 w-10 items-center justify-center rounded-full border transition disabled:cursor-not-allowed ${isWishlisted
+                  ? "border-primary bg-primary text-white"
+                  : "border-outline/30 bg-surface text-primary hover:bg-surface-low"
+                }`}
+            >
+              <Heart size={19} fill={isWishlisted ? "currentColor" : "none"} />
+            </button>
           </div>
         </div>
+        {wishlistError && (
+          <p
+            role="alert"
+            className="mt-4 text-sm text-error"
+          >
+            {wishlistError}
+          </p>
+        )}
       </section>
 
       <section className="mt-7 flex items-center justify-between border-y border-surface-low px-5 py-5">

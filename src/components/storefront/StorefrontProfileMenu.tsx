@@ -30,11 +30,31 @@ export default function StorefrontProfileMenu({
   const items: StorefrontMenuItem[] = [
     { name: "Start your store", icon: Store },
     { name: "Orders", icon: ReceiptText, href: navigation.ordersHref },
-    { name: "Payment Method", icon: CreditCard },
-    { name: "Wishlist", icon: Heart },
-    { name: "Saved Addresses", icon: MapPin },
-    { name: "Settings", icon: Settings },
-    { name: "Help Center", icon: Info },
+    {
+      name: "Payment Method",
+      icon: CreditCard,
+      href: `/store/${storeSlug}/payment-method`,
+    },
+    {
+      name: "Wishlist",
+      icon: Heart,
+      href: `/store/${storeSlug}/wishlist`,
+    },
+    {
+      name: "Saved Addresses",
+      icon: MapPin,
+      href: `/store/${storeSlug}/saved-addresses`,
+    },
+    {
+      name: "Settings",
+      icon: Settings,
+      href: `/store/${storeSlug}/settings`,
+    },
+    {
+      name: "Help Center",
+      icon: Info,
+      href: `/store/${storeSlug}/help`,
+    },
   ];
 
   const className =

@@ -4,6 +4,7 @@ import {
   getCachedPublicStorefront,
   getCachedPublicStorefrontProduct,
 } from "@/lib/storefront/publicStorefrontCache";
+import { createClient } from "@/lib/supabase/server";
 
 type StorefrontProductRouteProps = {
   params: Promise<{
@@ -32,11 +33,35 @@ export default async function StorefrontProductRoute({
     notFound();
   }
 
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let initialIsWishlisted = false;
+
+  if (user) {
+    const { data, error } = await supabase
+      .from("customer_wishlist_items")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("product_id", product.id)
+      .maybeSingle();
+
+    if (error) {
+      throw new Error("Could not load your wishlist.");
+    }
+
+    initialIsWishlisted = Boolean(data);
+  }
+
   return (
     <StorefrontProductClient
       storeName={storefront.name}
       storeSlug={storefront.slug}
       product={product}
+      initialIsWishlisted={initialIsWishlisted}
     />
   );
 }

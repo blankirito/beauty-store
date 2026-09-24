@@ -8,6 +8,7 @@ import {
   getCachedPublicStorefrontProducts,
 } from "@/lib/storefront/publicStorefrontCache";
 import { getStorefrontNavigation } from "@/lib/storefront/storefrontNavigation";
+import { createClient } from "@/lib/supabase/server";
 
 type StorefrontPageProps = {
   params: Promise<{ slug: string }>;
@@ -24,6 +25,27 @@ export default async function StorefrontPage({
   }
 
   const products = await getCachedPublicStorefrontProducts(storefront.id);
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let wishlistedProductIds = new Set<string>();
+
+  if (user) {
+    const { data, error } = await supabase
+      .from("customer_wishlist_items")
+      .select("product_id")
+      .eq("user_id", user.id);
+
+    if (error) {
+      throw new Error("Could not load your wishlist.");
+    }
+
+    wishlistedProductIds = new Set(
+      (data ?? []).map((item) => item.product_id),
+    );
+  }
   const navigation = getStorefrontNavigation(storefront.slug);
   const categories = [...new Set(products.map((product) => product.category))];
   const categoryIcons = [Sparkles, Droplets, WandSparkles, Heart];
@@ -92,18 +114,18 @@ export default async function StorefrontPage({
               const Icon = categoryIcons[index % categoryIcons.length];
 
               return (
-              <a
-                key={category}
-                href="#products"
-                className="group flex min-w-0 flex-col items-center gap-2"
-              >
-                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-low text-on-surface transition group-hover:bg-primary group-hover:text-white">
-                  <Icon size={22} strokeWidth={1.7} />
-                </span>
-                <span className="min-h-8 text-center text-xs leading-4 text-on-surface-variant">
-                  {category}
-                </span>
-              </a>
+                <a
+                  key={category}
+                  href="#products"
+                  className="group flex min-w-0 flex-col items-center gap-2"
+                >
+                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-low text-on-surface transition group-hover:bg-primary group-hover:text-white">
+                    <Icon size={22} strokeWidth={1.7} />
+                  </span>
+                  <span className="min-h-8 text-center text-xs leading-4 text-on-surface-variant">
+                    {category}
+                  </span>
+                </a>
               );
             })}
           </div>
@@ -126,6 +148,7 @@ export default async function StorefrontPage({
                 key={product.id}
                 storeSlug={storefront.slug}
                 product={product}
+                initialIsWishlisted={wishlistedProductIds.has(product.id)}
               />
             ))}
           </div>

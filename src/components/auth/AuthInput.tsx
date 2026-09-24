@@ -14,6 +14,7 @@ type AuthInputProps = {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   autoComplete?: string;
   required?: boolean;
+  readOnly?: boolean;
 };
 
 export default function AuthInput({
@@ -27,6 +28,7 @@ export default function AuthInput({
   onChange,
   autoComplete,
   required = false,
+  readOnly = false,
 }: AuthInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -42,11 +44,11 @@ export default function AuthInput({
         {label}
       </label>
 
-      <div className="group flex items-center overflow-hidden rounded-xl border-2 border-transparent bg-surface-low transition focus-within:border-primary focus-within:bg-surface">
+      <div className="group flex h-14 items-center overflow-hidden rounded-xl border-2 border-transparent bg-surface-low transition focus-within:border-primary focus-within:bg-surface">
         {Icon && (
           <Icon
             size={20}
-            className="ml-4 text-outline transition group-focus-within:text-primary"
+            className="ml-4 shrink-0 text-outline transition group-focus-within:text-primary"
           />
         )}
 
@@ -59,7 +61,8 @@ export default function AuthInput({
           placeholder={placeholder}
           autoComplete={autoComplete}
           required={required}
-          className="flex-1 bg-transparent px-4 py-4 text-on-surface outline-none placeholder:text-outline focus:ring-0"
+          readOnly={readOnly}
+          className="min-w-0 flex-1 self-stretch bg-transparent px-4 py-0 text-on-surface outline-none placeholder:text-outline focus:ring-0 read-only:cursor-not-allowed read-only:opacity-70"
         />
 
         {type === "password" && (
@@ -67,7 +70,7 @@ export default function AuthInput({
             type="button"
             onClick={() => setShowPassword((current) => !current)}
             aria-label={showPassword ? "Hide password" : "Show password"}
-            className="mr-4 text-outline transition hover:text-primary"
+            className="mr-4 flex h-full shrink-0 items-center text-outline transition hover:text-primary"
           >
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
