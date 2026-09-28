@@ -1,36 +1,24 @@
+import type { getTopReportingProducts } from "@/lib/admin/adminReporting";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
-const topProducts = [
-  {
-    name: "Radiance Renewal Serum",
-    category: "Skincare",
-    sales: "RM8,420",
-    units: "182 sold",
-  },
-  {
-    name: "Velvet Matte Lip Set",
-    category: "Makeup",
-    sales: "RM6,780",
-    units: "156 sold",
-  },
-  {
-    name: "Botanical Repair Shampoo",
-    category: "Hair Care",
-    sales: "RM5,960",
-    units: "149 sold",
-  },
-  {
-    name: "Silk Body Lotion",
-    category: "Body Care",
-    sales: "RM4,830",
-    units: "128 sold",
-  },
-];
+type TopProductsProps = {
+  products: ReturnType<typeof getTopReportingProducts>;
+};
 
-export default function TopProducts() {
+function formatCurrency(value: number) {
+  return new Intl.NumberFormat("en-MY", {
+    style: "currency",
+    currency: "MYR",
+    minimumFractionDigits: 2,
+  }).format(value);
+}
+
+export default function TopProducts({
+  products,
+}: TopProductsProps) {
   return (
-    <section className="rounded-2xl bg-surface-container-low p-4 shadow-sm">
+    <section className="rounded-2xl border border-outline/10 bg-white p-4 shadow-sm">
       <div className="flex items-end justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
@@ -51,31 +39,37 @@ export default function TopProducts() {
         </Link>
       </div>
 
-      <div className="mt-5 space-y-3">
-        {topProducts.map((product, index) => (
-          <article
-            key={product.name}
-            className="flex items-center gap-3 rounded-xl bg-surface-container-lowest p-3"
-          >
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary-container text-sm font-semibold text-on-primary-container">
-              {index + 1}
-            </span>
+      {products.length === 0 ? (
+        <div className="mt-5 rounded-xl bg-surface-container-lowest p-4 text-sm text-on-surface-variant">
+          No paid product sales are available yet.
+        </div>
+      ) : (
+        <div className="mt-5 space-y-3">
+          {products.slice(0, 4).map((product, index) => (
+            <article
+              key={product.productId}
+              className="flex items-center gap-3 rounded-xl bg-surface-container-lowest p-3"
+            >
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary-container text-sm font-semibold text-on-primary-container">
+                {index + 1}
+              </span>
 
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-on-surface">
-                {product.name}
-              </p>
-              <p className="mt-0.5 text-xs text-on-surface-variant">
-                {product.category} · {product.units}
-              </p>
-            </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold text-on-surface">
+                  {product.productName}
+                </p>
+                <p className="mt-0.5 truncate text-xs text-on-surface-variant">
+                  {product.category} · {product.unitsSold} sold
+                </p>
+              </div>
 
-            <p className="shrink-0 font-display text-lg font-semibold text-on-surface">
-              {product.sales}
-            </p>
-          </article>
-        ))}
-      </div>
+              <p className="shrink-0 font-display text-lg font-semibold text-on-surface">
+                {formatCurrency(product.revenue)}
+              </p>
+            </article>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

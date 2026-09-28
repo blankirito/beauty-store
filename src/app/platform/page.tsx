@@ -11,12 +11,14 @@ import {
   Store,
   Users,
   Wallet,
+  CreditCard
 } from "lucide-react";
 import { getPlatformAccessDestination } from "@/lib/auth/getPlatformAccessDestination";
 import { getPlatformOverviewMetrics } from "@/lib/platform/platformOverview";
 import type { StoreApplicationStatus } from "@/lib/merchants/storeLifecycle";
 import { createClient } from "@/lib/supabase/server";
 import type { ReactNode } from "react";
+import { getPlatformSubscriptionMetrics } from "@/lib/platform/platformSubscriptions";
 
 type PlatformApplication = {
   storeId: string;
@@ -28,6 +30,8 @@ type PlatformApplication = {
   submittedAt: string | null;
   reviewedAt: string | null;
   trialEndsAt: string | null;
+  planCode: string;
+subscriptionStatus: string;
   createdAt: string;
 };
 
@@ -69,9 +73,13 @@ export default async function PlatformPage() {
       trial_ends_at,
       created_at,
       stores (
-        name,
-        slug
-      )
+  name,
+  slug,
+  store_subscriptions (
+    plan_code,
+    status
+  )
+)
     `)
     .order("submitted_at", { ascending: false });
 
@@ -85,6 +93,10 @@ export default async function PlatformPage() {
         ? application.stores[0]
         : application.stores;
 
+      const subscription = Array.isArray(store?.store_subscriptions)
+  ? store.store_subscriptions[0]
+  : store?.store_subscriptions;
+
       return {
         storeId: application.store_id,
         name: store?.name ?? "Unnamed store",
@@ -95,6 +107,8 @@ export default async function PlatformPage() {
         submittedAt: application.submitted_at,
         reviewedAt: application.reviewed_at,
         trialEndsAt: application.trial_ends_at,
+        planCode: subscription?.plan_code ?? "lumina-monthly",
+subscriptionStatus: subscription?.status ?? "not_started",
         createdAt: application.created_at,
       };
     },
@@ -106,6 +120,14 @@ export default async function PlatformPage() {
       trialEndsAt: application.trialEndsAt,
     })),
   );
+
+  const subscriptionMetrics = getPlatformSubscriptionMetrics(
+  platformApplications.map((application) => ({
+    applicationStatus: application.status,
+    planCode: application.planCode,
+    subscriptionStatus: application.subscriptionStatus,
+  })),
+);
 
   const pendingApplications = platformApplications.filter(
     (application) => application.status === "pending_review",
@@ -229,12 +251,11 @@ export default async function PlatformPage() {
               icon={<Clock3 className="h-4 w-4" />}
             />
             <MetricCard
-              label="Subscription"
-              value="RM0.00"
-              detail="Billing not connected yet"
-              icon={<Wallet className="h-4 w-4" />}
-              compact
-            />
+  label="Subscriptions"
+  value={`${subscriptionMetrics.trialing} trial`}
+  detail={`${subscriptionMetrics.standard} standard · ${subscriptionMetrics.founding} founding`}
+  icon={<CreditCard size={18} />}
+/>
           </div>
         </section>
 
@@ -385,7 +406,7 @@ export default async function PlatformPage() {
             icon={<Store className="h-5 w-5" />}
           />
           <BottomNavItem
-            href="#billing"
+            href="/platform/subscriptions"
             label="Billing"
             icon={<Wallet className="h-5 w-5" />}
           />

@@ -8,6 +8,7 @@ import {
   Store,
   Users,
   X,
+  CreditCard,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -24,6 +25,7 @@ const navigationItems = [
   { label: "Orders", href: "/admin/orders", icon: ReceiptText },
   { label: "Customers", href: "/admin/customers", icon: Users },
   { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
+  { label: "Billing", href: "/admin/billing", icon: CreditCard },
 ];
 
 type SidebarContentProps = {

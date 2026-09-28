@@ -2,8 +2,9 @@
 
 import { ChevronDown } from "lucide-react";
 import type { CustomerStatus } from "@/data/adminCustomers";
+import type { AdminCustomerStatus } from "@/lib/admin/adminCustomerReporting";
 
-type CustomerFilter = "All" | CustomerStatus;
+type CustomerFilter = "All" | AdminCustomerStatus;
 
 type CustomerFiltersProps = {
   selectedStatus: CustomerFilter;

@@ -1,42 +1,46 @@
+import type { getReportingMetrics } from "@/lib/admin/adminReporting";
 import {
-  ChartNoAxesCombined,
   CircleDollarSign,
   ShoppingBag,
   TrendingUp,
 } from "lucide-react";
 
-const metrics = [
-  {
-    label: "Revenue",
-    value: "RM48,290",
-    change: "+18.4%",
-    description: "vs previous period",
-    icon: CircleDollarSign,
-  },
-  {
-    label: "Total Orders",
-    value: "1,412",
-    change: "+11.2%",
-    description: "vs previous period",
-    icon: ShoppingBag,
-  },
-  {
-    label: "Avg. Order Value",
-    value: "RM82.40",
-    change: "+6.5%",
-    description: "vs previous period",
-    icon: TrendingUp,
-  },
-  {
-    label: "Conversion Rate",
-    value: "3.82%",
-    change: "+0.6%",
-    description: "vs previous period",
-    icon: ChartNoAxesCombined,
-  },
-];
+type AnalyticsMetricsProps = {
+  metrics: ReturnType<typeof getReportingMetrics>;
+};
 
-export default function AnalyticsMetrics() {
+function formatCurrency(value: number) {
+  return new Intl.NumberFormat("en-MY", {
+    style: "currency",
+    currency: "MYR",
+    minimumFractionDigits: 2,
+  }).format(value);
+}
+
+export default function AnalyticsMetrics({
+  metrics,
+}: AnalyticsMetricsProps) {
+  const cards = [
+    {
+      label: "Revenue",
+      value: formatCurrency(metrics.revenue),
+      description: "Paid, non-cancelled orders",
+      icon: CircleDollarSign,
+    },
+    {
+      label: "Paid Orders",
+      value: metrics.paidOrderCount.toString(),
+      description: "Completed payment records",
+      icon: ShoppingBag,
+    },
+    {
+      label: "Avg. Order Value",
+      value: formatCurrency(metrics.averageOrderValue),
+      description: "Across paid orders",
+      icon: TrendingUp,
+    },
+  ];
+
   return (
     <section>
       <div className="mb-3">
@@ -49,22 +53,16 @@ export default function AnalyticsMetrics() {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        {metrics.map((metric) => {
+        {cards.map((metric) => {
           const Icon = metric.icon;
 
           return (
             <article
               key={metric.label}
-              className="rounded-2xl bg-surface-container-low p-3.5 shadow-sm"
+              className="rounded-2xl border border-outline/10 bg-white p-3.5 shadow-sm"
             >
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-surface-container text-primary">
-                  <Icon size={19} />
-                </div>
-
-                <span className="rounded-full bg-primary-container px-2 py-1 text-[11px] font-semibold text-on-primary-container">
-                  {metric.change}
-                </span>
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-surface-container text-primary">
+                <Icon size={19} />
               </div>
 
               <p className="mt-4 text-xs text-on-surface-variant">

@@ -1,6 +1,17 @@
-import { CircleDot, Star, Users } from "lucide-react";
+import { CircleDot, Sparkles, Star, Users } from "lucide-react";
 
-export default function CustomerMetrics() {
+type CustomerMetricsProps = {
+  metrics: {
+    totalCustomers: number;
+    activeCustomers: number;
+    newCustomers: number;
+    vipCustomers: number;
+  };
+};
+
+export default function CustomerMetrics({
+  metrics,
+}: CustomerMetricsProps) {
   return (
     <section className="grid grid-cols-2 gap-3">
       <article className="space-y-1 rounded-2xl border border-outline/15 bg-surface-container-lowest p-3.5 shadow-sm">
@@ -8,17 +19,15 @@ export default function CustomerMetrics() {
           <p className="text-xs font-medium text-on-surface-variant">
             Total Customers
           </p>
-          <span className="rounded-full bg-primary-container/40 px-1.5 py-0.5 text-[10px] font-bold text-on-primary-container">
-            +14%
-          </span>
+          <Users size={17} className="text-primary" />
         </div>
 
         <p className="font-display text-2xl font-bold text-on-surface">
-          3,428
+          {metrics.totalCustomers.toLocaleString("en-MY")}
         </p>
 
         <p className="text-[10px] text-on-surface-variant">
-          Lifetime registered
+          Customers with paid orders
         </p>
       </article>
 
@@ -31,7 +40,7 @@ export default function CustomerMetrics() {
         </div>
 
         <p className="font-display text-2xl font-bold text-on-surface">
-          2,180
+          {metrics.activeCustomers.toLocaleString("en-MY")}
         </p>
 
         <p className="text-[10px] text-on-surface-variant">
@@ -44,32 +53,32 @@ export default function CustomerMetrics() {
           <p className="text-xs font-medium text-on-surface-variant">
             New Customers
           </p>
-          <span className="rounded-full bg-primary-container/40 px-1.5 py-0.5 text-[10px] font-bold text-on-primary-container">
-            +8%
-          </span>
+          <Sparkles size={17} className="text-primary" />
         </div>
 
         <p className="font-display text-2xl font-bold text-on-surface">
-          184
+          {metrics.newCustomers.toLocaleString("en-MY")}
         </p>
 
         <p className="text-[10px] text-on-surface-variant">
-          Joined this month
+          First order this month
         </p>
       </article>
 
       <article className="space-y-1 rounded-2xl border border-outline/15 bg-surface-container-lowest p-3.5 shadow-sm">
         <div className="flex items-center justify-between">
           <p className="text-xs font-medium text-on-surface-variant">
-            VIP / Returning
+            VIP Customers
           </p>
           <Star size={17} className="fill-primary text-primary" />
         </div>
 
-        <p className="font-display text-2xl font-bold text-on-surface">642</p>
+        <p className="font-display text-2xl font-bold text-on-surface">
+          {metrics.vipCustomers.toLocaleString("en-MY")}
+        </p>
 
         <p className="text-[10px] text-on-surface-variant">
-          High-value tier
+          Lifetime spend of RM1,000+
         </p>
       </article>
     </section>

@@ -1,52 +1,50 @@
 "use client";
 
-import { getProductPerformance } from "@/data/adminProductPerformance";
-import { products } from "@/data/products";
+import type { getTopReportingProducts } from "@/lib/admin/adminReporting";
 import {
   ArrowLeft,
-  CalendarDays,
   ChevronRight,
   Package,
-  TrendingUp,
   WalletCards,
 } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+type ProductPerformanceClientProps = {
+  products: ReturnType<typeof getTopReportingProducts>;
+};
+
 type SortBy = "revenue" | "units";
 
-const timeRanges = ["7 Days", "30 Days", "90 Days", "This Year"];
-
 function formatCurrency(value: number) {
-  return `RM${value.toLocaleString("en-MY", {
+  return new Intl.NumberFormat("en-MY", {
+    style: "currency",
+    currency: "MYR",
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`;
+  }).format(value);
 }
 
-export default function ProductPerformanceClient() {
-  const [selectedRange, setSelectedRange] = useState("30 Days");
+export default function ProductPerformanceClient({
+  products,
+}: ProductPerformanceClientProps) {
   const [sortBy, setSortBy] = useState<SortBy>("revenue");
 
-  const rankedProducts = useMemo(() => {
-    return products
-      .map((product) => ({
-        ...product,
-        ...getProductPerformance(product.id),
-      }))
-      .sort((first, second) =>
+  const rankedProducts = useMemo(
+    () =>
+      [...products].sort((first, second) =>
         sortBy === "revenue"
           ? second.revenue - first.revenue
           : second.unitsSold - first.unitsSold,
-      );
-  }, [sortBy]);
+      ),
+    [products, sortBy],
+  );
 
-  const totalRevenue = rankedProducts.reduce(
+  const totalRevenue = products.reduce(
     (total, product) => total + product.revenue,
     0,
   );
 
-  const totalUnits = rankedProducts.reduce(
+  const totalUnits = products.reduce(
     (total, product) => total + product.unitsSold,
     0,
   );
@@ -72,50 +70,14 @@ export default function ProductPerformanceClient() {
           </h1>
 
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-on-surface-variant">
-            Compare sales performance across your boutique catalog and identify
-            the products driving revenue.
+            Compare paid sales performance across your boutique catalog.
           </p>
         </section>
 
-        <section className="mt-6 rounded-2xl border border-outline/15 bg-surface-container-lowest p-3 shadow-sm">
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
-            <CalendarDays
-              size={18}
-              className="ml-1 flex-shrink-0 text-primary"
-            />
-
-            {timeRanges.map((range) => {
-              const isSelected = selectedRange === range;
-
-              return (
-                <button
-                  key={range}
-                  type="button"
-                  onClick={() => setSelectedRange(range)}
-                  className={
-                    isSelected
-                      ? "whitespace-nowrap rounded-xl bg-primary px-3 py-2 text-xs font-semibold text-on-primary"
-                      : "whitespace-nowrap rounded-xl px-3 py-2 text-xs font-semibold text-on-surface-variant transition hover:bg-surface-container"
-                  }
-                >
-                  {range}
-                </button>
-              );
-            })}
-          </div>
-        </section>
-
         <section className="mt-5 grid gap-3 sm:grid-cols-2">
-          <article className="rounded-2xl border border-outline/15 bg-surface-container-lowest p-4 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-container/35 text-primary">
-                <WalletCards size={20} />
-              </div>
-
-              <span className="inline-flex items-center gap-1 rounded-full bg-primary-container/35 px-2 py-1 text-xs font-semibold text-on-primary-container">
-                <TrendingUp size={13} />
-                +12.8%
-              </span>
+          <article className="rounded-2xl border border-outline/10 bg-white p-4 shadow-sm">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-container/35 text-primary">
+              <WalletCards size={20} />
             </div>
 
             <p className="mt-4 text-xs font-semibold uppercase tracking-[0.14em] text-on-surface-variant">
@@ -127,11 +89,11 @@ export default function ProductPerformanceClient() {
             </p>
 
             <p className="mt-1 text-xs text-on-surface-variant">
-              Across all products · {selectedRange}
+              Across all paid product sales
             </p>
           </article>
 
-          <article className="rounded-2xl border border-outline/15 bg-surface-container-lowest p-4 shadow-sm">
+          <article className="rounded-2xl border border-outline/10 bg-white p-4 shadow-sm">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary-container text-on-secondary-container">
               <Package size={20} />
             </div>
@@ -145,7 +107,7 @@ export default function ProductPerformanceClient() {
             </p>
 
             <p className="mt-1 text-xs text-on-surface-variant">
-              Total catalog items sold · {selectedRange}
+              Total items sold in paid orders
             </p>
           </article>
         </section>
@@ -189,64 +151,56 @@ export default function ProductPerformanceClient() {
             </div>
           </div>
 
-          <div className="mt-4 space-y-3">
-            {rankedProducts.map((product, index) => (
-              <Link
-                key={product.id}
-                href={`/admin/products/${product.id}`}
-                className="group flex items-center gap-3 rounded-2xl border border-outline/15 bg-surface-container-lowest p-3.5 shadow-sm transition hover:border-primary/30 hover:bg-surface-container-low"
-              >
-                <span className="w-5 text-center text-sm font-bold text-primary">
-                  {index + 1}
-                </span>
+          {rankedProducts.length === 0 ? (
+            <div className="mt-4 rounded-2xl border border-outline/10 bg-white p-5 text-sm text-on-surface-variant shadow-sm">
+              No paid product sales are available yet.
+            </div>
+          ) : (
+            <div className="mt-4 space-y-3">
+              {rankedProducts.map((product, index) => (
+                <Link
+                  key={product.productId}
+                  href={`/admin/products/${product.productId}`}
+                  className="group flex items-center gap-3 rounded-2xl border border-outline/10 bg-white p-3.5 shadow-sm transition hover:border-primary/30 hover:bg-surface-container-low"
+                >
+                  <span className="w-5 text-center text-sm font-bold text-primary">
+                    {index + 1}
+                  </span>
 
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="h-14 w-14 rounded-xl border border-outline/15 bg-surface-container object-cover"
-                />
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-outline/15 bg-surface-container text-primary">
+                    <Package size={22} />
+                  </div>
 
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className="min-w-0 flex-1">
                     <h3 className="truncate text-sm font-semibold text-on-surface">
-                      {product.name}
+                      {product.productName}
                     </h3>
 
-                    <span className="rounded-full bg-primary-container/35 px-2 py-0.5 text-[10px] font-semibold text-on-primary-container">
-                      +{product.changePercent}%
-                    </span>
-                  </div>
-
-                  <p className="mt-1 text-xs text-on-surface-variant">
-                    LUM-{String(product.id).padStart(3, "0")} ·{" "}
-                    {product.category}
-                  </p>
-
-                  <p className="mt-1 text-xs text-on-surface-variant">
-                    {product.unitsSold} units sold
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-1 text-right">
-                  <div>
-                    <p className="text-sm font-bold text-on-surface">
-                      {formatCurrency(product.revenue)}
-                    </p>
-
-                    <p className="mt-1 text-[11px] text-on-surface-variant">
-                      View product
+                    <p className="mt-1 truncate text-xs text-on-surface-variant">
+                      {product.category} · {product.unitsSold} units sold
                     </p>
                   </div>
 
-                  <ChevronRight
-                    size={18}
-                    className="text-on-surface-variant transition group-hover:translate-x-0.5 group-hover:text-primary"
-                  />
-                </div>
-              </Link>
-            ))}
-          </div>
+                  <div className="flex items-center gap-1 text-right">
+                    <div>
+                      <p className="text-sm font-bold text-on-surface">
+                        {formatCurrency(product.revenue)}
+                      </p>
+
+                      <p className="mt-1 text-[11px] text-on-surface-variant">
+                        View product
+                      </p>
+                    </div>
+
+                    <ChevronRight
+                      size={18}
+                      className="text-on-surface-variant transition group-hover:translate-x-0.5 group-hover:text-primary"
+                    />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </section>
       </div>
     </main>

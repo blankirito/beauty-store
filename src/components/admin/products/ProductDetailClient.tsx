@@ -119,7 +119,7 @@ export default function ProductDetailClient({
         </span>
       </div>
 
-      <section className="rounded-2xl bg-surface-container-low p-4 shadow-sm">
+      <section className="rounded-2xl border border-outline/10 bg-white p-4 shadow-sm">
         <div className="relative overflow-hidden rounded-xl bg-surface-container">
           <div className="flex aspect-[4/3] items-center justify-center text-primary">
             <Package size={42} />
@@ -234,7 +234,7 @@ export default function ProductDetailClient({
         </div>
       </section>
 
-      <section className="rounded-2xl bg-surface-container-low p-4 shadow-sm">
+      <section className="rounded-2xl border border-outline/10 bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between border-b border-outline/20 pb-3">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
@@ -299,7 +299,7 @@ export default function ProductDetailClient({
         </p>
       </section>
 
-      <section className="rounded-2xl bg-surface-container-low p-4 shadow-sm">
+      <section className="rounded-2xl border border-outline/10 bg-white p-4 shadow-sm">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
           Sales Performance
         </p>
@@ -311,7 +311,7 @@ export default function ProductDetailClient({
         </p>
       </section>
 
-      <section className="rounded-2xl bg-surface-container-low p-4 shadow-sm">
+      <section className="rounded-2xl border border-outline/10 bg-white p-4 shadow-sm">
         <div className="border-b border-outline/20 pb-3">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
             Product Information

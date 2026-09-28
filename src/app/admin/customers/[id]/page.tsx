@@ -1,7 +1,6 @@
 import CustomerDetailClient from "@/components/admin/customers/CustomerDetailClient";
-import { adminCustomerDetailsById } from "@/data/adminCustomerDetails";
-import { adminCustomers } from "@/data/adminCustomers";
-import { adminOrders } from "@/data/adminOrders";
+import { getAdminCustomers } from "@/lib/admin/getAdminCustomers";
+import { getAdminOrders } from "@/lib/orders/getAdminOrders";
 import { notFound } from "next/navigation";
 
 type CustomerDetailPageProps = {
@@ -14,22 +13,33 @@ export default async function CustomerDetailPage({
   params,
 }: CustomerDetailPageProps) {
   const { id } = await params;
+  const customerId = decodeURIComponent(id);
 
-  const customer = adminCustomers.find((item) => item.id === id);
-  const detail = adminCustomerDetailsById[id];
+  const [customers, orders] = await Promise.all([
+    getAdminCustomers(),
+    getAdminOrders(),
+  ]);
 
-  if (!customer || !detail) {
+  const customer = customers.find((item) => item.id === customerId);
+
+  if (!customer) {
     notFound();
   }
 
-  const recentOrders = adminOrders.filter(
-    (order) => order.customerEmail === customer.email,
-  );
+  const recentOrders = orders.filter((order) => {
+    if (customer.isGuest) {
+      return (
+        order.customerEmail.trim().toLowerCase() ===
+        customer.email.trim().toLowerCase()
+      );
+    }
+
+    return order.customerId === customer.id;
+  });
 
   return (
     <CustomerDetailClient
       customer={customer}
-      detail={detail}
       recentOrders={recentOrders}
     />
   );

@@ -17,6 +17,7 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import ShippingDetailsDialog from "./ShippingDetailsDialog";
+import { getAdminCustomerProfileId } from "@/lib/admin/adminCustomerReporting";
 
 type OrderDetailClientProps = {
     order: AdminOrder;
@@ -95,6 +96,11 @@ export default function OrderDetailClient({
             setIsOrderIdCopied(false);
         }, 1800);
     }
+
+    const customerProfileId = getAdminCustomerProfileId(
+        order.customerId,
+        order.customerEmail,
+    );
 
     return (
         <main className="min-h-screen space-y-5 bg-surface px-5 py-6 pb-28">
@@ -181,10 +187,10 @@ export default function OrderDetailClient({
                 </div>
 
                 <Link
-                href={`/admin/customers/${detail.customerId}`}
-                className="mt-4 ml-auto flex w-fit text-xs font-semibold text-primary transition hover:opacity-75"
+                    href={`/admin/customers/${encodeURIComponent(customerProfileId)}`}
+                    className="mt-4 ml-auto flex w-fit text-xs font-semibold text-primary transition hover:opacity-75"
                 >
-                View Customer Profile
+                    View Customer Profile
                 </Link>
             </section>
 
@@ -386,23 +392,23 @@ export default function OrderDetailClient({
                         <button
                             type="button"
                             onClick={() => {
-                            if (order.status === "Processing") {
-                                setIsShippingDialogOpen(true);
-                            }
+                                if (order.status === "Processing") {
+                                    setIsShippingDialogOpen(true);
+                                }
                             }}
                             className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-on-primary shadow-sm transition hover:opacity-90"
                         >
                             {order.status === "Delivered" ? (
-                            <FileText size={17} />
+                                <FileText size={17} />
                             ) : order.status === "New" ? (
-                            <CheckCircle2 size={17} />
+                                <CheckCircle2 size={17} />
                             ) : (
-                            <Truck size={17} />
+                                <Truck size={17} />
                             )}
 
                             {getActionLabel(order.status)}
                         </button>
-                        </div>
+                    </div>
                 </aside>
             )}
             <ShippingDetailsDialog

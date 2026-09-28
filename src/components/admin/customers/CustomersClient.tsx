@@ -1,29 +1,35 @@
 "use client";
 
 import { useState } from "react";
-import {
-  adminCustomers,
-  type CustomerStatus,
-} from "@/data/adminCustomers";
+import type {
+  AdminCustomerStatus,
+  AdminReportingCustomer,
+} from "@/lib/admin/adminCustomerReporting";
 import CustomerFilters from "./CustomerFilters";
 import CustomerList from "./CustomerList";
 import CustomersToolbar from "./CustomersToolbar";
-import CustomerPagination from "./CustomerPagination";
 
-type CustomerFilter = "All" | CustomerStatus;
+type CustomerFilter = "All" | AdminCustomerStatus;
 
-export default function CustomersClient() {
+type CustomersClientProps = {
+  customers: AdminReportingCustomer[];
+};
+
+export default function CustomersClient({
+  customers,
+}: CustomersClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] =
     useState<CustomerFilter>("All");
 
   const normalizedQuery = searchQuery.trim().toLowerCase();
 
-  const filteredCustomers = adminCustomers.filter((customer) => {
+  const filteredCustomers = customers.filter((customer) => {
     const matchesSearch =
       customer.id.toLowerCase().includes(normalizedQuery) ||
       customer.name.toLowerCase().includes(normalizedQuery) ||
-      customer.email.toLowerCase().includes(normalizedQuery);
+      customer.email.toLowerCase().includes(normalizedQuery) ||
+      customer.phone?.toLowerCase().includes(normalizedQuery) === true;
 
     const matchesStatus =
       selectedStatus === "All" || customer.status === selectedStatus;
@@ -45,7 +51,6 @@ export default function CustomersClient() {
       />
 
       <CustomerList items={filteredCustomers} />
-      <CustomerPagination totalCustomers={filteredCustomers.length} />
     </div>
   );
 }
