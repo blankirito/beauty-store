@@ -1,54 +1,63 @@
 export type FulfillmentStatus =
-  | "new"
-  | "processing"
-  | "shipped"
-  | "delivered"
-  | "cancelled";
+    | "new"
+    | "processing"
+    | "shipped"
+    | "delivered"
+    | "cancelled";
 
 type FulfillmentUpdateInput = {
-  currentStatus: FulfillmentStatus;
-  nextStatus: FulfillmentStatus;
+    currentStatus: FulfillmentStatus;
+    nextStatus: FulfillmentStatus;
+    paymentStatus: string;
 };
 
 const allowedNextStatuses: Record<
-  FulfillmentStatus,
-  FulfillmentStatus[]
+    FulfillmentStatus,
+    FulfillmentStatus[]
 > = {
-  new: ["processing", "cancelled"],
-  processing: ["shipped", "cancelled"],
-  shipped: ["delivered"],
-  delivered: [],
-  cancelled: [],
+    new: ["processing", "cancelled"],
+    processing: ["shipped", "cancelled"],
+    shipped: ["delivered"],
+    delivered: [],
+    cancelled: [],
 };
 
 const eventTitles: Record<FulfillmentStatus, string> = {
-  new: "Order placed",
-  processing: "Order is being processed",
-  shipped: "Order has been shipped",
-  delivered: "Order has been delivered",
-  cancelled: "Order has been cancelled",
+    new: "Order placed",
+    processing: "Order is being processed",
+    shipped: "Order has been shipped",
+    delivered: "Order has been delivered",
+    cancelled: "Order has been cancelled",
 };
 
 export function prepareFulfillmentUpdate(
-  input: FulfillmentUpdateInput,
+    input: FulfillmentUpdateInput,
 ) {
-  const isAllowed = allowedNextStatuses[input.currentStatus].includes(
-    input.nextStatus,
-  );
+    const isAllowed = allowedNextStatuses[input.currentStatus].includes(
+        input.nextStatus,
+    );
 
-  if (!isAllowed) {
+    if (!isAllowed) {
+        return {
+            error: "This order can no longer be moved to that status.",
+        };
+    }
+
+    const requiresConfirmedPayment = input.nextStatus !== "cancelled";
+
+    if (requiresConfirmedPayment && input.paymentStatus !== "paid") {
+        return {
+            error: "Confirm payment before processing this order.",
+        };
+    }
+
     return {
-      error: "This order can no longer be moved to that status.",
+        data: {
+            fulfillment_status: input.nextStatus,
+        },
+        event: {
+            fulfillmentStatus: input.nextStatus,
+            title: eventTitles[input.nextStatus],
+        },
     };
-  }
-
-  return {
-    data: {
-      fulfillment_status: input.nextStatus,
-    },
-    event: {
-      fulfillmentStatus: input.nextStatus,
-      title: eventTitles[input.nextStatus],
-    },
-  };
 }

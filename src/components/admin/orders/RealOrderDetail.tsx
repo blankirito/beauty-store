@@ -13,6 +13,7 @@ import type { AdminOrderTimelineEntry } from "@/lib/orders/adminOrderTimeline";
 import FulfillmentActionButton from "./FulfillmentActionButton";
 import ShipmentForm from "./ShipmentForm";
 import { getPublicProductImageUrl } from "@/lib/products/productImageUrl";
+import PaymentConfirmationButton from "./PaymentConfirmationButton";
 
 type RealOrderDetailProps = {
     order: AdminOrder;
@@ -53,33 +54,33 @@ function getStatusClass(status: AdminOrder["status"]) {
 }
 
 function OrderItemThumbnail({
-  imagePath,
-  productName,
+    imagePath,
+    productName,
 }: {
-  imagePath: string | null;
-  productName: string;
+    imagePath: string | null;
+    productName: string;
 }) {
-  const imageUrl =
-    imagePath && supabaseUrl
-      ? getPublicProductImageUrl(supabaseUrl, imagePath)
-      : null;
+    const imageUrl =
+        imagePath && supabaseUrl
+            ? getPublicProductImageUrl(supabaseUrl, imagePath)
+            : null;
 
-  return (
-    <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-outline/15 bg-surface-container">
-      {imageUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={imageUrl}
-          alt={productName}
-          className="h-full w-full object-cover"
-        />
-      ) : (
-        <div className="flex h-full w-full items-center justify-center text-primary">
-          <Package size={22} />
+    return (
+        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-outline/15 bg-surface-container">
+            {imageUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                    src={imageUrl}
+                    alt={productName}
+                    className="h-full w-full object-cover"
+                />
+            ) : (
+                <div className="flex h-full w-full items-center justify-center text-primary">
+                    <Package size={22} />
+                </div>
+            )}
         </div>
-      )}
-    </div>
-  );
+    );
 }
 
 export default function RealOrderDetail({
@@ -170,9 +171,9 @@ export default function RealOrderDetail({
                     {detail.items.map((item) => (
                         <article key={`${item.sku}-${item.productName}`} className="flex gap-3 py-3">
                             <OrderItemThumbnail
-  imagePath={item.imagePath}
-  productName={item.productName}
-/>
+                                imagePath={item.imagePath}
+                                productName={item.productName}
+                            />
 
                             <div className="min-w-0 flex-1">
                                 <h3 className="truncate text-sm font-semibold text-on-surface">
@@ -322,6 +323,11 @@ export default function RealOrderDetail({
                     </p>
                 )}
             </section>
+            <PaymentConfirmationButton
+                orderNumber={order.id}
+                paymentStatus={detail.paymentStatus}
+                orderStatus={order.status}
+            />
             <FulfillmentActionButton
                 orderNumber={order.id}
                 status={order.status}

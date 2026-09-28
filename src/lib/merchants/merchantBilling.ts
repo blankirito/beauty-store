@@ -39,13 +39,17 @@ export function getMerchantBillingStatus(
         new Date(foundingPriceLockedUntil).getTime() > now.getTime();
 
     return {
-        status: isTrialing ? "trialing" : input.subscriptionStatus,
+        status:
+            input.applicationStatus === "trialing" ||
+                input.applicationStatus === "suspended"
+                ? input.applicationStatus
+                : input.subscriptionStatus,
         planCode,
         monthlyPrice: isComplimentaryPlan
-    ? 0
-    : hasActiveFoundingPrice
-        ? 29
-        : 59,
+            ? 0
+            : hasActiveFoundingPrice
+                ? 29
+                : 59,
         foundingPriceLockedUntil,
         trialStartedAt: input.trialStartedAt ?? null,
         trialEndsAt: input.trialEndsAt,

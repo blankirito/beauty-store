@@ -46,6 +46,91 @@ describe("buildAdminCustomers", () => {
             isGuest: true,
         });
     });
+
+    it("shows a customer immediately for a pending order but does not count it as spending", () => {
+        const customers = buildAdminCustomers(
+            [
+                {
+                    customerId: null,
+                    customerName: "Pending Customer",
+                    customerEmail: "pending@example.com",
+                    customerPhone: "0123456789",
+                    total: 120,
+                    paymentStatus: "pending",
+                    fulfillmentStatus: "new",
+                    createdAt: "2026-09-27T10:00:00.000Z",
+                    location: "Johor Bahru, Malaysia",
+                },
+            ],
+            new Date("2026-09-28T00:00:00.000Z"),
+        );
+
+        expect(customers).toHaveLength(1);
+        expect(customers[0]).toMatchObject({
+            id: "guest:pending@example.com",
+            orderCount: 1,
+            totalSpent: 0,
+            status: "New",
+            isGuest: true,
+        });
+    });
+
+    it("does not show a customer whose only order was cancelled", () => {
+        const customers = buildAdminCustomers(
+            [
+                {
+                    customerId: null,
+                    customerName: "Cancelled Customer",
+                    customerEmail: "cancelled@example.com",
+                    customerPhone: null,
+                    total: 120,
+                    paymentStatus: "pending",
+                    fulfillmentStatus: "cancelled",
+                    createdAt: "2026-09-27T10:00:00.000Z",
+                    location: "Kuala Lumpur, Malaysia",
+                },
+            ],
+            new Date("2026-09-28T00:00:00.000Z"),
+        );
+
+        expect(customers).toHaveLength(0);
+    });
+
+    it("only adds paid orders to a customer's total spent", () => {
+        const customers = buildAdminCustomers(
+            [
+                {
+                    customerId: "customer-1",
+                    customerName: "Mixed Payments",
+                    customerEmail: "mixed@example.com",
+                    customerPhone: "0123456789",
+                    total: 120,
+                    paymentStatus: "paid",
+                    fulfillmentStatus: "delivered",
+                    createdAt: "2026-08-20T10:00:00.000Z",
+                    location: "Kuala Lumpur, Malaysia",
+                },
+                {
+                    customerId: "customer-1",
+                    customerName: "Mixed Payments",
+                    customerEmail: "mixed@example.com",
+                    customerPhone: "0123456789",
+                    total: 80,
+                    paymentStatus: "pending",
+                    fulfillmentStatus: "new",
+                    createdAt: "2026-09-22T10:00:00.000Z",
+                    location: "Kuala Lumpur, Malaysia",
+                },
+            ],
+            new Date("2026-09-28T00:00:00.000Z"),
+        );
+
+        expect(customers[0]).toMatchObject({
+            orderCount: 2,
+            totalSpent: 120,
+        });
+    });
+
     it("prioritizes New over VIP for a first-time high-value customer", () => {
         const customers = buildAdminCustomers(
             [
@@ -68,6 +153,7 @@ describe("buildAdminCustomers", () => {
             status: "New",
         });
     });
+
     it("maps the latest shipping address into a customer reporting order", () => {
         const order = toCustomerReportingOrder({
             customer_id: null,
@@ -96,6 +182,7 @@ describe("buildAdminCustomers", () => {
             location: "Kuala Lumpur, Malaysia",
         });
     });
+
     it("counts customer statuses for the customer metrics cards", () => {
         const metrics = buildAdminCustomerMetrics([
             {
@@ -146,6 +233,7 @@ describe("buildAdminCustomers", () => {
             vipCustomers: 1,
         });
     });
+
     it("creates a stable profile id for a guest order", () => {
         expect(
             getAdminCustomerProfileId(null, " Guest@example.com "),
@@ -155,6 +243,7 @@ describe("buildAdminCustomers", () => {
             getAdminCustomerProfileId("customer-123", "guest@example.com"),
         ).toBe("customer-123");
     });
+
     it("calculates returning customers and retention rate", () => {
         expect(
             getCustomerRetentionMetrics([

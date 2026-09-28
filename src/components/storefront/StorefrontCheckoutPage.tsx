@@ -17,6 +17,7 @@ import type { StorefrontPaymentMethod } from "@/lib/storefront/getPublicStorefro
 import { toStorefrontCartView } from "@/lib/storefront/storefrontCartView";
 import { useStorefrontCart } from "./StorefrontCartProvider";
 import type { StorefrontSavedAddress } from "@/lib/storefront/storefrontAddresses";
+import { submitGuestCheckout } from "@/app/store/[slug]/checkout/actions";
 
 type StorefrontCheckoutPageProps = {
   storeId: string;
@@ -208,35 +209,13 @@ export default function StorefrontCheckoutPage({
         })),
       });
 
-      const { data, error } = await createClient().rpc(
-        "create_guest_checkout_order",
-        {
-          p_store_slug: request.storeSlug,
-          p_customer_name: request.customerName,
-          p_customer_email: request.customerEmail,
-          p_customer_phone: request.customerPhone,
-          p_address_line_1: request.addressLine1,
-          p_address_line_2: request.addressLine2,
-          p_city: request.city,
-          p_state: request.state,
-          p_postal_code: request.postalCode,
-          p_country: request.country,
-          p_payment_method_id: request.paymentMethodId,
-          p_items: request.items,
-        },
-      );
+      const result = await submitGuestCheckout(request);
 
-      if (error) {
-        throw new Error(error.message);
+      if (result.status === "error") {
+        throw new Error(result.message);
       }
 
-      const order = (
-        data as unknown as CheckoutSuccess[] | null
-      )?.[0];
-
-      if (!order) {
-        throw new Error("Could not create your order.");
-      }
+      const order = result.order;
 
       cartItems.forEach((item) => {
         updateQuantity(storeSlug, item.productId, 0);
@@ -441,8 +420,8 @@ export default function StorefrontCheckoutPage({
                   type="button"
                   onClick={() => applySavedAddress(address)}
                   className={`w-full rounded-xl border p-4 text-left transition ${selectedAddressId === address.id
-                      ? "border-primary bg-primary/5"
-                      : "border-outline/30 bg-surface-low hover:border-primary/50"
+                    ? "border-primary bg-primary/5"
+                    : "border-outline/30 bg-surface-low hover:border-primary/50"
                     }`}
                 >
                   <p className="font-semibold text-primary">

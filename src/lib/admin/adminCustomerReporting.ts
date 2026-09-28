@@ -15,9 +15,9 @@ type DatabaseCustomerReportingOrder = {
     fulfillment_status: string;
     created_at: string;
     order_shipping_addresses?:
-    | DatabaseShippingAddress
-    | DatabaseShippingAddress[]
-    | null;
+        | DatabaseShippingAddress
+        | DatabaseShippingAddress[]
+        | null;
 };
 
 type CustomerReportingOrder = {
@@ -72,11 +72,12 @@ export function toCustomerReportingOrder(
     };
 }
 
-function isValidCustomerOrder(order: CustomerReportingOrder) {
-    return (
-        order.paymentStatus === "paid" &&
-        order.fulfillmentStatus !== "cancelled"
-    );
+function isCustomerOrder(order: CustomerReportingOrder) {
+    return order.fulfillmentStatus !== "cancelled";
+}
+
+function isPaidOrder(order: CustomerReportingOrder) {
+    return order.paymentStatus === "paid";
 }
 
 function getCustomerStatus(
@@ -119,13 +120,14 @@ export function buildAdminCustomers(
 ): AdminReportingCustomer[] {
     const customers = new Map<string, AdminReportingCustomer>();
 
-    orders.filter(isValidCustomerOrder).forEach((order) => {
+    orders.filter(isCustomerOrder).forEach((order) => {
         const normalizedEmail = order.customerEmail.trim().toLowerCase();
         const id = getAdminCustomerProfileId(
             order.customerId,
             normalizedEmail,
         );
         const existing = customers.get(id);
+        const paidAmount = isPaidOrder(order) ? order.total : 0;
 
         if (!existing) {
             customers.set(id, {
@@ -135,7 +137,7 @@ export function buildAdminCustomers(
                 phone: order.customerPhone,
                 location: order.location,
                 orderCount: 1,
-                totalSpent: order.total,
+                totalSpent: paidAmount,
                 isGuest: order.customerId === null,
                 firstOrderAt: order.createdAt,
                 lastOrderAt: order.createdAt,
@@ -154,10 +156,10 @@ export function buildAdminCustomers(
             phone: isNewerOrder ? order.customerPhone : existing.phone,
             location: isNewerOrder ? order.location : existing.location,
             orderCount: existing.orderCount + 1,
-            totalSpent: existing.totalSpent + order.total,
+            totalSpent: existing.totalSpent + paidAmount,
             firstOrderAt:
                 new Date(order.createdAt).getTime() <
-                    new Date(existing.firstOrderAt).getTime()
+                new Date(existing.firstOrderAt).getTime()
                     ? order.createdAt
                     : existing.firstOrderAt,
             lastOrderAt: isNewerOrder ? order.createdAt : existing.lastOrderAt,
@@ -194,19 +196,19 @@ export function buildAdminCustomerMetrics(
 }
 
 export function getCustomerRetentionMetrics(
-  customers: Array<Pick<AdminReportingCustomer, "orderCount">>,
+    customers: Array<Pick<AdminReportingCustomer, "orderCount">>,
 ) {
-  const totalCustomers = customers.length;
-  const returningCustomers = customers.filter(
-    (customer) => customer.orderCount >= 2,
-  ).length;
+    const totalCustomers = customers.length;
+    const returningCustomers = customers.filter(
+        (customer) => customer.orderCount >= 2,
+    ).length;
 
-  return {
-    totalCustomers,
-    returningCustomers,
-    retentionRate:
-      totalCustomers > 0
-        ? Math.round((returningCustomers / totalCustomers) * 100)
-        : 0,
-  };
+    return {
+        totalCustomers,
+        returningCustomers,
+        retentionRate:
+            totalCustomers > 0
+                ? Math.round((returningCustomers / totalCustomers) * 100)
+                : 0,
+    };
 }

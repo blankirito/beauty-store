@@ -5,8 +5,12 @@ import {
   CheckCircle2,
   Clock3,
   Store,
+  XCircle,
 } from "lucide-react";
-import { approveStoreApplication } from "./actions";
+import {
+  approveStoreApplication,
+  rejectStoreApplication,
+} from "./actions";
 import { getPlatformAccessDestination } from "@/lib/auth/getPlatformAccessDestination";
 import { createClient } from "@/lib/supabase/server";
 
@@ -163,6 +167,38 @@ export default async function PlatformReviewsPage() {
                   >
                     <CheckCircle2 className="h-5 w-5" />
                     Approve & start 14-day trial
+                  </button>
+                </form>
+                <form
+                  action={rejectStoreApplication.bind(
+                    null,
+                    application.store_id,
+                  )}
+                  className="mt-3 rounded-xl border border-error/20 bg-error-container/20 p-3"
+                >
+                  <label
+                    htmlFor={`reject-reason-${application.store_id}`}
+                    className="text-xs font-medium text-on-surface"
+                  >
+                    Rejection reason
+                  </label>
+
+                  <input
+                    id={`reject-reason-${application.store_id}`}
+                    name="reason"
+                    type="text"
+                    required
+                    maxLength={180}
+                    placeholder="e.g. Please provide a valid store description."
+                    className="mt-2 w-full rounded-lg border border-outline/20 bg-white px-3 py-2 text-sm text-on-surface outline-none placeholder:text-on-surface-variant/70 focus:border-primary"
+                  />
+
+                  <button
+                    type="submit"
+                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-error/30 bg-white px-4 py-3 text-sm font-semibold text-error transition hover:bg-error-container/40"
+                  >
+                    <XCircle className="h-5 w-5" />
+                    Reject application
                   </button>
                 </form>
               </article>
