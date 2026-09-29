@@ -52,6 +52,7 @@ export async function getAdminStorePaymentMethods() {
         code,
         label,
         instructions,
+        qr_image_path,
         is_enabled,
         sort_order
       `)

@@ -7,17 +7,27 @@ import {
   CircleCheck,
   CirclePlus,
   CircleX,
+  ImageIcon,
   LoaderCircle,
   Save,
+  Trash2,
+  Upload,
   X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { type FormEvent, useState, useTransition } from "react";
+import {
+  type FormEvent,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from "react";
 import {
   createStorePaymentMethod,
   updateStorePaymentMethod,
 } from "@/app/admin/settings/payments/actions";
 import { getNextExpandedPaymentMethodId } from "@/lib/payments/paymentMethodExpansion";
+import { getPublicPaymentQrUrl } from "@/lib/payments/paymentQrCode";
 import type { StorePaymentMethod } from "@/lib/payments/storePaymentMethod";
 
 type PaymentMethodEditorProps = {
@@ -150,27 +160,90 @@ function PaymentMethodCard({
     paymentMethod.instructions ?? "",
   );
   const [isEnabled, setIsEnabled] = useState(paymentMethod.isEnabled);
+  const [qrImage, setQrImage] = useState<File | null>(null);
+  const [removeQr, setRemoveQr] = useState(false);
+  const [qrInputKey, setQrInputKey] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const Icon = getPaymentMethodIcon(paymentMethod.code);
 
+  const existingQrImageUrl = useMemo(() => {
+    if (
+      !paymentMethod.qrImagePath ||
+      !process.env.NEXT_PUBLIC_SUPABASE_URL
+    ) {
+      return null;
+    }
+
+    return getPublicPaymentQrUrl(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      paymentMethod.qrImagePath,
+    );
+  }, [paymentMethod.qrImagePath]);
+
+  const [newQrPreviewUrl, setNewQrPreviewUrl] = useState<string | null>(
+    null,
+  );
+
+  useEffect(() => {
+    if (!qrImage) {
+      setNewQrPreviewUrl(null);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(qrImage);
+    setNewQrPreviewUrl(objectUrl);
+
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [qrImage]);
+
+  const qrPreviewUrl = removeQr
+    ? null
+    : newQrPreviewUrl ?? existingQrImageUrl;
+
+  function handleQrImageChange(event: FormEvent<HTMLInputElement>) {
+    const selectedImage = event.currentTarget.files?.[0] ?? null;
+
+    setQrImage(selectedImage);
+    setRemoveQr(false);
+  }
+
+  function handleRemoveQr() {
+    setQrImage(null);
+    setRemoveQr(true);
+    setQrInputKey((currentKey) => currentKey + 1);
+  }
+
+  function handleKeepQr() {
+    setRemoveQr(false);
+  }
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
 
+    const formData = new FormData(event.currentTarget);
+
+    formData.set("paymentMethodId", paymentMethod.id);
+    formData.set("label", label);
+    formData.set("instructions", instructions);
+    formData.set("isEnabled", String(isEnabled));
+    formData.set("removeQr", String(removeQr));
+
     startTransition(async () => {
-      const result = await updateStorePaymentMethod({
-        paymentMethodId: paymentMethod.id,
-        label,
-        instructions,
-        isEnabled,
-      });
+      const result = await updateStorePaymentMethod(formData);
 
       if ("error" in result) {
         setError(result.error);
         return;
       }
+
+      setQrImage(null);
+      setRemoveQr(false);
+      setQrInputKey((currentKey) => currentKey + 1);
 
       router.refresh();
       onCollapse();
@@ -231,12 +304,15 @@ function PaymentMethodCard({
           onSubmit={handleSubmit}
           className="space-y-4 border-t border-outline/15 px-4 pb-4 pt-5"
         >
+          <input type="hidden" name="paymentMethodId" value={paymentMethod.id} />
+
           <label className="block">
             <span className="text-xs font-medium text-on-surface">
               Customer-facing name
             </span>
 
             <input
+              name="label"
               value={label}
               onChange={(event) => setLabel(event.target.value)}
               className="mt-2 h-11 w-full rounded-xl border border-outline/20 bg-surface px-3 text-sm text-on-surface outline-none transition focus:border-primary"
@@ -249,6 +325,7 @@ function PaymentMethodCard({
             </span>
 
             <textarea
+              name="instructions"
               value={instructions}
               onChange={(event) => setInstructions(event.target.value)}
               rows={3}
@@ -256,6 +333,83 @@ function PaymentMethodCard({
               className="mt-2 w-full resize-none rounded-xl border border-outline/20 bg-surface px-3 py-3 text-sm text-on-surface outline-none transition placeholder:text-on-surface-variant/70 focus:border-primary"
             />
           </label>
+
+          <section className="rounded-xl border border-outline/20 bg-surface-container-low p-3">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-container/35 text-primary">
+                <ImageIcon size={20} />
+              </div>
+
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-on-surface">
+                  Payment QR code
+                </p>
+                <p className="mt-1 text-xs leading-5 text-on-surface-variant">
+                  Optional. Customers can scan this before placing their
+                  order. JPG, PNG, or WebP only, up to 2 MB.
+                </p>
+              </div>
+            </div>
+
+            {qrPreviewUrl && (
+              <div className="mt-4 overflow-hidden rounded-xl border border-outline/15 bg-surface p-3">
+                <img
+                  src={qrPreviewUrl}
+                  alt={`${paymentMethod.label} payment QR code`}
+                  className="mx-auto max-h-56 w-auto rounded-lg object-contain"
+                />
+
+                {qrImage && (
+                  <p className="mt-2 text-center text-xs text-on-surface-variant">
+                    New QR selected: {qrImage.name}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {removeQr && paymentMethod.qrImagePath ? (
+              <div className="mt-4 rounded-lg bg-error-container/40 p-3">
+                <p className="text-sm font-medium text-on-surface">
+                  The current QR code will be removed when you save.
+                </p>
+
+                <button
+                  type="button"
+                  onClick={handleKeepQr}
+                  className="mt-2 text-xs font-semibold text-primary"
+                >
+                  Keep current QR code
+                </button>
+              </div>
+            ) : (
+              <label className="mt-4 flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-primary/40 bg-surface px-3 py-3 text-sm font-semibold text-primary transition hover:bg-primary-container/20">
+                <Upload size={17} />
+                {paymentMethod.qrImagePath || qrImage
+                  ? "Replace QR code"
+                  : "Upload QR code"}
+
+                <input
+                  key={qrInputKey}
+                  type="file"
+                  name="qrImage"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handleQrImageChange}
+                  className="sr-only"
+                />
+              </label>
+            )}
+
+            {!removeQr && paymentMethod.qrImagePath && (
+              <button
+                type="button"
+                onClick={handleRemoveQr}
+                className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-error/30 bg-error-container/25 px-3 py-3 text-sm font-semibold text-error transition hover:bg-error-container/45"
+              >
+                <Trash2 size={16} />
+                Remove QR code
+              </button>
+            )}
+          </section>
 
           <label className="flex cursor-pointer items-center justify-between rounded-xl bg-surface-container-low px-3 py-3">
             <span>

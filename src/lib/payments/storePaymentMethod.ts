@@ -4,6 +4,7 @@ type DatabaseStorePaymentMethod = {
   code: string;
   label: string;
   instructions: string | null;
+  qr_image_path: string | null;
   is_enabled: boolean;
   sort_order: number;
 };
@@ -14,6 +15,7 @@ export type StorePaymentMethod = {
   code: string;
   label: string;
   instructions: string | null;
+  qrImagePath: string | null;
   isEnabled: boolean;
   sortOrder: number;
 };
@@ -27,6 +29,7 @@ export function toStorePaymentMethod(
     code: method.code,
     label: method.label,
     instructions: method.instructions,
+    qrImagePath: method.qr_image_path,
     isEnabled: method.is_enabled,
     sortOrder: method.sort_order,
   };

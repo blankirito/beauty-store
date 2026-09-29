@@ -5,9 +5,16 @@ import {
   getAdminStoreId,
   type StoreMembershipRole,
 } from "@/lib/products/adminStore";
-import { prepareStorePaymentMethodUpdate } from "@/lib/payments/storePaymentMethodUpdate";
-import { createClient } from "@/lib/supabase/server";
 import { prepareNewStorePaymentMethod } from "@/lib/payments/newStorePaymentMethod";
+import {
+  buildPaymentQrImagePath,
+  hasPaymentQrImageSignature,
+  preparePaymentQrUpload,
+} from "@/lib/payments/paymentQrCode";
+import { getPaymentQrImageChange } from "@/lib/payments/paymentQrChange";
+import { prepareStorePaymentMethodUpdate } from "@/lib/payments/storePaymentMethodUpdate";
+import { createServiceClient } from "@/lib/supabase/service";
+import { createClient } from "@/lib/supabase/server";
 
 type UpdateStorePaymentMethodInput = {
   paymentMethodId: string;
@@ -16,13 +23,92 @@ type UpdateStorePaymentMethodInput = {
   isEnabled: boolean;
 };
 
-export async function updateStorePaymentMethod(
-  input: UpdateStorePaymentMethodInput,
+type ParsedPaymentMethodUpdate = {
+  paymentMethodId: string;
+  label: string;
+  instructions: string;
+  isEnabled: boolean;
+  qrImage: File | null;
+  removeQr: boolean;
+};
+
+function parsePaymentMethodUpdate(
+  input: UpdateStorePaymentMethodInput | FormData,
+): ParsedPaymentMethodUpdate {
+  if (!(input instanceof FormData)) {
+    return {
+      paymentMethodId: input.paymentMethodId,
+      label: input.label,
+      instructions: input.instructions,
+      isEnabled: input.isEnabled,
+      qrImage: null,
+      removeQr: false,
+    };
+  }
+
+  const qrImageValue = input.get("qrImage");
+
+  return {
+    paymentMethodId: String(input.get("paymentMethodId") ?? ""),
+    label: String(input.get("label") ?? ""),
+    instructions: String(input.get("instructions") ?? ""),
+    isEnabled: input.get("isEnabled") === "true",
+    qrImage:
+      qrImageValue instanceof File && qrImageValue.size > 0
+        ? qrImageValue
+        : null,
+    removeQr: input.get("removeQr") === "true",
+  };
+}
+
+async function queuePaymentQrCleanup(
+  serviceClient: ReturnType<typeof createServiceClient>,
+  storagePath: string,
+  cleanupError: string,
 ) {
+  const { error } = await serviceClient
+    .from("payment_qr_cleanup_jobs")
+    .upsert(
+      {
+        storage_path: storagePath,
+        last_error: cleanupError,
+      },
+      {
+        onConflict: "storage_path",
+      },
+    );
+
+  if (error) {
+    console.error("Could not queue payment QR cleanup.", error);
+  }
+}
+
+async function removePaymentQrImage(
+  serviceClient: ReturnType<typeof createServiceClient>,
+  storagePath: string,
+) {
+  const { error } = await serviceClient.storage
+    .from("payment-qr-codes")
+    .remove([storagePath]);
+
+  if (error) {
+    await queuePaymentQrCleanup(
+      serviceClient,
+      storagePath,
+      error.message,
+    );
+  }
+}
+
+export async function updateStorePaymentMethod(
+  input: UpdateStorePaymentMethodInput | FormData,
+) {
+  const parsedInput = parsePaymentMethodUpdate(input);
+
   const preparedUpdate = prepareStorePaymentMethodUpdate({
-    label: input.label,
-    instructions: input.instructions,
-    isEnabled: input.isEnabled,
+    label: parsedInput.label,
+    instructions: parsedInput.instructions,
+    isEnabled: parsedInput.isEnabled,
   });
 
   if ("error" in preparedUpdate) {
@@ -66,23 +152,121 @@ export async function updateStorePaymentMethod(
     };
   }
 
+  const { data: currentPaymentMethod, error: currentPaymentMethodError } =
+    await supabase
+      .from("store_payment_methods")
+      .select("id, qr_image_path")
+      .eq("id", parsedInput.paymentMethodId)
+      .eq("store_id", storeId)
+      .maybeSingle();
+
+  if (currentPaymentMethodError || !currentPaymentMethod) {
+    return {
+      error:
+        "Payment method not found or you do not have permission to update it.",
+    };
+  }
+
+  let replacementQrImagePath: string | null = null;
+  let serviceClient: ReturnType<typeof createServiceClient> | null = null;
+
+  if (parsedInput.qrImage) {
+    const preparedQrUpload = preparePaymentQrUpload({
+      name: parsedInput.qrImage.name,
+      type: parsedInput.qrImage.type,
+      size: parsedInput.qrImage.size,
+    });
+
+    if ("error" in preparedQrUpload) {
+      return preparedQrUpload;
+    }
+
+    let qrImageBytes: Uint8Array;
+
+    try {
+      qrImageBytes = new Uint8Array(
+        await parsedInput.qrImage.arrayBuffer(),
+      );
+    } catch {
+      return {
+        error: "Could not read the QR image. Please choose another file.",
+      };
+    }
+
+    if (
+      !hasPaymentQrImageSignature(
+        qrImageBytes,
+        preparedQrUpload.data.extension,
+      )
+    ) {
+      return {
+        error: "The uploaded file does not match its image type.",
+      };
+    }
+
+    replacementQrImagePath = buildPaymentQrImagePath({
+      storeId,
+      paymentMethodId: currentPaymentMethod.id,
+      imageId: crypto.randomUUID(),
+      extension: preparedQrUpload.data.extension,
+    });
+
+    serviceClient = createServiceClient();
+
+    const { error: uploadError } = await serviceClient.storage
+      .from("payment-qr-codes")
+      .upload(replacementQrImagePath, parsedInput.qrImage, {
+        contentType: parsedInput.qrImage.type,
+        upsert: false,
+      });
+
+    if (uploadError) {
+      return {
+        error: "Could not upload the QR image. Please try again.",
+      };
+    }
+  }
+
+  const qrImageChange = getPaymentQrImageChange({
+    currentQrImagePath: currentPaymentMethod.qr_image_path,
+    replacementQrImagePath,
+    removeQr: parsedInput.removeQr,
+  });
+
   const { data: paymentMethod, error: paymentMethodError } = await supabase
     .from("store_payment_methods")
     .update({
       label: preparedUpdate.data.label,
       instructions: preparedUpdate.data.instructions,
+      qr_image_path: qrImageChange.qrImagePath,
       is_enabled: preparedUpdate.data.isEnabled,
     })
-    .eq("id", input.paymentMethodId)
+    .eq("id", currentPaymentMethod.id)
     .eq("store_id", storeId)
     .select("id")
     .maybeSingle();
 
   if (paymentMethodError || !paymentMethod) {
+    if (replacementQrImagePath && serviceClient) {
+      await removePaymentQrImage(
+        serviceClient,
+        replacementQrImagePath,
+      );
+    }
+
     return {
       error:
-        "Payment method not found or you do not have permission to update it.",
+        "Payment method could not be updated. Your existing QR image was not changed.",
     };
+  }
+
+  if (qrImageChange.obsoleteQrImagePath) {
+    const cleanupClient = serviceClient ?? createServiceClient();
+
+    await removePaymentQrImage(
+      cleanupClient,
+      qrImageChange.obsoleteQrImagePath,
+    );
   }
 
   revalidatePath("/admin/settings/payments");

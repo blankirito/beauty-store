@@ -18,6 +18,7 @@ import { toStorefrontCartView } from "@/lib/storefront/storefrontCartView";
 import { useStorefrontCart } from "./StorefrontCartProvider";
 import type { StorefrontSavedAddress } from "@/lib/storefront/storefrontAddresses";
 import { submitGuestCheckout } from "@/app/store/[slug]/checkout/actions";
+import { getStorefrontPaymentQrView } from "@/lib/storefront/storefrontPaymentQr";
 
 type StorefrontCheckoutPageProps = {
   storeId: string;
@@ -36,6 +37,8 @@ type CheckoutSuccess = {
   tracking_token: string;
   payment_method_label: string;
   payment_instructions: string;
+  paymentQrImageUrl: string | null;
+  paymentQrGuidance: string | null;
 };
 
 export default function StorefrontCheckoutPage({
@@ -78,6 +81,19 @@ export default function StorefrontCheckoutPage({
 
   const selectedAddress =
     savedAddresses.find((address) => address.id === selectedAddressId) ?? null;
+
+  const selectedPaymentMethod =
+    paymentMethods.find(
+      (paymentMethod) => paymentMethod.id === selectedPaymentMethodId,
+    ) ?? null;
+
+  const selectedPaymentQr =
+    selectedPaymentMethod && process.env.NEXT_PUBLIC_SUPABASE_URL
+      ? getStorefrontPaymentQrView({
+        supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+        qrImagePath: selectedPaymentMethod.qrImagePath,
+      })
+      : null;
 
   const [form, setForm] = useState({
     customerName: initialAddress?.recipientName ?? "",
@@ -221,7 +237,11 @@ export default function StorefrontCheckoutPage({
         updateQuantity(storeSlug, item.productId, 0);
       });
 
-      setSuccess(order);
+      setSuccess({
+        ...order,
+        paymentQrImageUrl: selectedPaymentQr?.imageUrl ?? null,
+        paymentQrGuidance: selectedPaymentQr?.guidance ?? null,
+      });
     } catch (error) {
       setErrorMessage(
         error instanceof Error
@@ -275,6 +295,23 @@ export default function StorefrontCheckoutPage({
                 "The store will contact you with payment instructions."}
             </p>
           </div>
+
+          {success.paymentQrImageUrl && (
+            <div className="mt-4 rounded-xl border border-outline/40 bg-surface-low p-4 text-left">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={success.paymentQrImageUrl}
+                alt={`${success.payment_method_label} payment QR code`}
+                className="mx-auto max-h-72 w-full rounded-lg object-contain"
+              />
+
+              {success.paymentQrGuidance && (
+                <p className="mt-3 text-sm leading-relaxed text-on-surface-variant">
+                  {success.paymentQrGuidance}
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="mt-6 flex flex-col gap-3">
             <a
@@ -536,6 +573,20 @@ export default function StorefrontCheckoutPage({
                   {paymentMethod.instructions && (
                     <span className="mt-1 block text-sm text-on-surface-variant">
                       {paymentMethod.instructions}
+                    </span>
+                  )}
+                  {selectedPaymentMethodId === paymentMethod.id && selectedPaymentQr && (
+                    <span className="mt-4 block rounded-xl border border-outline/40 bg-surface-low p-3">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={selectedPaymentQr.imageUrl}
+                        alt={`${paymentMethod.label} payment QR code`}
+                        className="mx-auto max-h-72 w-full rounded-lg object-contain"
+                      />
+
+                      <span className="mt-3 block text-sm leading-relaxed text-on-surface-variant">
+                        {selectedPaymentQr.guidance}
+                      </span>
                     </span>
                   )}
                 </span>

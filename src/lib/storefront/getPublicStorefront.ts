@@ -9,6 +9,11 @@ import {
   type DatabaseStorefrontProduct,
   type StorefrontProduct,
 } from "./storefrontProduct";
+import {
+  toStorefrontPaymentMethod,
+  type DatabaseStorefrontPaymentMethod,
+  type StorefrontPaymentMethod,
+} from "./storefrontPaymentMethod";
 
 export async function getPublicStorefront(
   storeSlug: string,
@@ -112,17 +117,7 @@ export async function getPublicStorefrontProduct(
     : null;
 }
 
-type DatabaseStorefrontPaymentMethod = {
-  id: string;
-  label: string;
-  instructions: string;
-};
-
-export type StorefrontPaymentMethod = {
-  id: string;
-  label: string;
-  instructions: string;
-};
+export type { StorefrontPaymentMethod };
 
 export async function getPublicStorefrontPaymentMethods(
   storeSlug: string,
@@ -142,9 +137,5 @@ export async function getPublicStorefrontPaymentMethods(
 
   return (
     (data ?? []) as DatabaseStorefrontPaymentMethod[]
-  ).map((paymentMethod) => ({
-    id: paymentMethod.id,
-    label: paymentMethod.label,
-    instructions: paymentMethod.instructions,
-  }));
+  ).map(toStorefrontPaymentMethod);
 }

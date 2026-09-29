@@ -1,0 +1,133 @@
+export type PaymentQrImageExtension = "jpg" | "png" | "webp";
+
+type PaymentQrUploadInput = {
+  name: string;
+  type: string;
+  size: number;
+};
+
+type PaymentQrUploadResult =
+  | {
+      data: {
+        extension: PaymentQrImageExtension;
+      };
+    }
+  | {
+      error: string;
+    };
+
+const MAX_PAYMENT_QR_IMAGE_SIZE = 2 * 1024 * 1024;
+
+function getPaymentQrImageExtension(
+  type: string,
+): PaymentQrImageExtension | null {
+  if (type === "image/jpeg") {
+    return "jpg";
+  }
+
+  if (type === "image/png") {
+    return "png";
+  }
+
+  if (type === "image/webp") {
+    return "webp";
+  }
+
+  return null;
+}
+
+export function preparePaymentQrUpload(
+  input: PaymentQrUploadInput,
+): PaymentQrUploadResult {
+  const extension = getPaymentQrImageExtension(input.type);
+
+  if (!extension) {
+    return {
+      error: "Upload a JPG, PNG, or WebP QR image.",
+    };
+  }
+
+  if (input.size > MAX_PAYMENT_QR_IMAGE_SIZE) {
+    return {
+      error: "QR image must be 2 MB or smaller.",
+    };
+  }
+
+  return {
+    data: {
+      extension,
+    },
+  };
+}
+
+export function hasPaymentQrImageSignature(
+  bytes: Uint8Array,
+  extension: PaymentQrImageExtension,
+) {
+  if (extension === "jpg") {
+    return (
+      bytes.length >= 3 &&
+      bytes[0] === 0xff &&
+      bytes[1] === 0xd8 &&
+      bytes[2] === 0xff
+    );
+  }
+
+  if (extension === "png") {
+    return (
+      bytes.length >= 8 &&
+      bytes[0] === 0x89 &&
+      bytes[1] === 0x50 &&
+      bytes[2] === 0x4e &&
+      bytes[3] === 0x47 &&
+      bytes[4] === 0x0d &&
+      bytes[5] === 0x0a &&
+      bytes[6] === 0x1a &&
+      bytes[7] === 0x0a
+    );
+  }
+
+  return (
+    bytes.length >= 12 &&
+    bytes[0] === 0x52 &&
+    bytes[1] === 0x49 &&
+    bytes[2] === 0x46 &&
+    bytes[3] === 0x46 &&
+    bytes[8] === 0x57 &&
+    bytes[9] === 0x45 &&
+    bytes[10] === 0x42 &&
+    bytes[11] === 0x50
+  );
+}
+
+type PaymentQrImagePathInput = {
+  storeId: string;
+  paymentMethodId: string;
+  imageId: string;
+  extension: PaymentQrImageExtension;
+};
+
+export function buildPaymentQrImagePath({
+  storeId,
+  paymentMethodId,
+  imageId,
+  extension,
+}: PaymentQrImagePathInput) {
+  return [
+    "stores",
+    storeId,
+    "payment-methods",
+    paymentMethodId,
+    `${imageId}.${extension}`,
+  ].join("/");
+}
+
+export function getPublicPaymentQrUrl(
+  supabaseUrl: string,
+  storagePath: string,
+) {
+  return `${supabaseUrl.replace(
+    /\/$/,
+    "",
+  )}/storage/v1/object/public/payment-qr-codes/${storagePath}`;
+}

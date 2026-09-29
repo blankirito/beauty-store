@@ -9,6 +9,7 @@ describe("store payment method mapping", () => {
       code: "bank_transfer",
       label: "Bank Transfer",
       instructions: "Transfer to Maybank account 1234.",
+      qr_image_path: "stores/store-1/payment-methods/method-1/qr.png",
       is_enabled: true,
       sort_order: 1,
     });
@@ -19,6 +20,7 @@ describe("store payment method mapping", () => {
       code: "bank_transfer",
       label: "Bank Transfer",
       instructions: "Transfer to Maybank account 1234.",
+      qrImagePath: "stores/store-1/payment-methods/method-1/qr.png",
       isEnabled: true,
       sortOrder: 1,
     });
