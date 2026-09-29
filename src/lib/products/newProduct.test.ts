@@ -75,4 +75,25 @@ describe("new product preparation", () => {
       error: "Price, stock, and alert level must be valid values.",
     });
   });
+    it("keeps Chinese product names as a valid storefront slug", () => {
+    expect(
+      prepareNewProduct({
+        name: "保湿精华",
+        category: "Skincare",
+        description: "适合日常保湿",
+        price: "89",
+        stock: "12",
+        lowStockThreshold: "5",
+        collection: "",
+        dimensions: "",
+        weight: "",
+        status: "Active",
+      }),
+    ).toMatchObject({
+      data: {
+        name: "保湿精华",
+        slug: "保湿精华",
+      },
+    });
+  });
 });

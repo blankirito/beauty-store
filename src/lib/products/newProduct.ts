@@ -25,8 +25,9 @@ function emptyStringToNull(value: string) {
 function createSlug(name: string) {
     return name
         .trim()
+        .normalize("NFKC")
         .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/[^\p{L}\p{N}]+/gu, "-")
         .replace(/(^-|-$)/g, "");
 }
 
@@ -38,6 +39,14 @@ export function prepareNewProduct(
     if (!name) {
         return {
             error: "Product name is required.",
+        };
+    }
+
+    const slug = createSlug(name);
+
+    if (!slug) {
+        return {
+            error: "Product name must contain at least one letter or number.",
         };
     }
 
@@ -67,7 +76,7 @@ export function prepareNewProduct(
     return {
         data: {
             name,
-            slug: createSlug(name),
+            slug,
             category: values.category.trim(),
             description: values.description.trim(),
             price,

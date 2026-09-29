@@ -27,10 +27,14 @@ export default function StorefrontProductCard({
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
-  const imageUrl =
+    const imageUrl =
     supabaseUrl && product.imagePath
       ? getPublicProductImageUrl(supabaseUrl, product.imagePath)
       : null;
+
+  const productHref = `/store/${encodeURIComponent(
+    storeSlug,
+  )}/product/${encodeURIComponent(product.slug)}`;
 
   function handleWishlist() {
     startWishlistTransition(async () => {
@@ -56,7 +60,7 @@ export default function StorefrontProductCard({
     <article className="overflow-hidden rounded-xl bg-surface shadow-sm transition hover:shadow-md">
       <div className="relative aspect-square overflow-hidden bg-surface-container-low">
         <Link
-          href={`/store/${storeSlug}/product/${product.slug}`}
+          href={productHref}
           className="block h-full"
         >
           {imageUrl ? (
@@ -93,7 +97,7 @@ export default function StorefrontProductCard({
       </div>
 
       <Link
-        href={`/store/${storeSlug}/product/${product.slug}`}
+        href={productHref}
         className="block p-4"
       >
         {/* <div className="flex items-center gap-1 text-sm text-secondary">

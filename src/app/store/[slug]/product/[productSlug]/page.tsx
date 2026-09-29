@@ -24,9 +24,11 @@ export default async function StorefrontProductRoute({
     notFound();
   }
 
+    const decodedProductSlug = decodeURIComponent(productSlug);
+
   const product = await getCachedPublicStorefrontProduct(
     storefront.id,
-    productSlug,
+    decodedProductSlug,
   );
 
   if (!product) {

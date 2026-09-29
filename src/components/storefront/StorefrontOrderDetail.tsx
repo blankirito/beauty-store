@@ -70,6 +70,37 @@ export default function StorefrontOrderDetail({ order }: Props) {
         </div>
       </section>
 
+            {order.trackingNumber && (
+        <section className="rounded-2xl border border-outline/40 bg-surface-container-lowest p-5 shadow-sm">
+          <h2 className="flex items-center gap-2 text-xs font-bold tracking-wide text-on-surface">
+            <Truck size={17} />
+            TRACKING DETAILS
+          </h2>
+
+          <dl className="mt-5 space-y-3 text-sm">
+            {order.trackingCarrier && (
+              <div className="flex items-start justify-between gap-5">
+                <dt className="shrink-0 text-on-surface-variant">
+                  Shipping carrier
+                </dt>
+                <dd className="text-right font-semibold text-on-surface">
+                  {order.trackingCarrier}
+                </dd>
+              </div>
+            )}
+
+            <div className="flex items-start justify-between gap-5">
+              <dt className="shrink-0 text-on-surface-variant">
+                Tracking number
+              </dt>
+              <dd className="break-all text-right font-semibold text-on-surface">
+                {order.trackingNumber}
+              </dd>
+            </div>
+          </dl>
+        </section>
+      )}
+
       <section>
         <h2 className="text-sm font-bold tracking-wide text-on-surface">PURCHASED ITEMS ({order.items.length})</h2>
         <div className="mt-5 space-y-5">
