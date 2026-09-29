@@ -96,10 +96,10 @@ export default function StorefrontProductCard({
         href={`/store/${storeSlug}/product/${product.slug}`}
         className="block p-4"
       >
-        <div className="flex items-center gap-1 text-sm text-secondary">
+        {/* <div className="flex items-center gap-1 text-sm text-secondary">
           <Star size={13} fill="currentColor" />
           <span>{product.rating.toFixed(1)}</span>
-        </div>
+        </div> */}
 
         <h2 className="mt-1 truncate font-display text-lg text-primary">
           {product.name}

@@ -18,6 +18,28 @@ export type SubmitGuestCheckoutResult =
     | { status: "success"; order: CheckoutSuccess }
     | { status: "error"; message: string };
 
+async function createNewOrderNotifications({
+  order,
+  customerName,
+}: {
+  order: CheckoutSuccess;
+  customerName: string;
+}) {
+  const supabase = createServiceClient();
+
+  const { error } = await supabase.rpc(
+    "create_new_order_notifications",
+    {
+      p_order_id: order.order_id,
+      p_customer_name: customerName,
+    },
+  );
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
 export async function submitGuestCheckout(
     input: GuestCheckoutRequest,
 ): Promise<SubmitGuestCheckoutResult> {
@@ -57,6 +79,18 @@ export async function submitGuestCheckout(
                 status: "error",
                 message: "Could not create your order.",
             };
+        }
+
+        try {
+            await createNewOrderNotifications({
+                order,
+                customerName: request.customerName,
+            });
+        } catch (notificationError) {
+            console.error(
+                "Could not create new-order notifications.",
+                notificationError,
+            );
         }
 
         return {

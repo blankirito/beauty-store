@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import type { ProductStatusLabel } from "@/lib/products/productStatus";
+import type { ProductSort } from "@/lib/admin/adminListControls";
 
 type StatusFilter = "All" | ProductStatusLabel;
 
@@ -18,6 +19,8 @@ type ProductFiltersProps = {
   onCategoryChange: (category: string) => void;
   selectedStatus: StatusFilter;
   onStatusChange: (status: StatusFilter) => void;
+  selectedSort: ProductSort;
+  onSortChange: (sort: ProductSort) => void;
   totalProducts: number;
 };
 
@@ -27,10 +30,13 @@ export default function ProductFilters({
   onCategoryChange,
   selectedStatus,
   onStatusChange,
+  selectedSort,
+  onSortChange,
   totalProducts,
 }: ProductFiltersProps) {
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [isStatusMenuOpen, setIsStatusMenuOpen] = useState(false);
+  const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
 
   const productsPerPage = 5;
   const displayedProducts = Math.min(totalProducts, productsPerPage);
@@ -42,6 +48,20 @@ export default function ProductFilters({
     "Draft",
     "Archived",
   ];
+
+  const sortOptions: ProductSort[] = [
+    "newest",
+    "oldest",
+    "name_asc",
+    "stock_asc",
+  ];
+
+  const sortLabels: Record<ProductSort, string> = {
+    newest: "Newest",
+    oldest: "Oldest",
+    name_asc: "Name A–Z",
+    stock_asc: "Stock low to high",
+  };
 
   function selectCategory(category: string) {
     onCategoryChange(category);
@@ -62,15 +82,15 @@ export default function ProductFilters({
             onClick={() => {
               setIsCategoryMenuOpen((isOpen) => !isOpen);
               setIsStatusMenuOpen(false);
+              setIsStatusMenuOpen(false);
             }}
             className="flex items-center gap-1.5 rounded-full border border-outline/30 bg-surface-container-lowest px-3.5 py-2 text-xs font-medium text-on-surface shadow-sm transition-colors hover:border-primary"
           >
             {selectedCategory}
             <ChevronDown
               size={15}
-              className={`text-on-surface-variant transition-transform ${
-                isCategoryMenuOpen ? "rotate-180" : ""
-              }`}
+              className={`text-on-surface-variant transition-transform ${isCategoryMenuOpen ? "rotate-180" : ""
+                }`}
             />
           </button>
 
@@ -105,15 +125,15 @@ export default function ProductFilters({
             onClick={() => {
               setIsStatusMenuOpen((isOpen) => !isOpen);
               setIsCategoryMenuOpen(false);
+              setIsCategoryMenuOpen(false);
             }}
             className="flex items-center gap-1.5 rounded-full border border-outline/30 bg-surface-container-lowest px-3.5 py-2 text-xs font-medium text-on-surface shadow-sm transition-colors hover:border-primary"
           >
             Status: {selectedStatus}
             <ChevronDown
               size={15}
-              className={`text-on-surface-variant transition-transform ${
-                isStatusMenuOpen ? "rotate-180" : ""
-              }`}
+              className={`text-on-surface-variant transition-transform ${isStatusMenuOpen ? "rotate-180" : ""
+                }`}
             />
           </button>
 
@@ -142,13 +162,47 @@ export default function ProductFilters({
           )}
         </div>
 
-        <button
-          type="button"
-          className="flex items-center gap-1.5 rounded-full border border-outline/30 bg-surface-container-lowest px-3.5 py-2 text-xs font-medium text-on-surface shadow-sm"
-        >
-          Sort: Newest
-          <ArrowDownUp size={15} className="text-on-surface-variant" />
-        </button>
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => {
+              setIsCategoryMenuOpen(false);
+              setIsStatusMenuOpen(false);
+              setIsSortMenuOpen((isOpen) => !isOpen);
+            }}
+            className="flex items-center gap-1.5 rounded-full border border-outline/30 bg-surface-container-lowest px-3.5 py-2 text-xs font-medium text-on-surface shadow-sm transition-colors hover:border-primary"
+          >
+            Sort: {sortLabels[selectedSort]}
+            <ArrowDownUp size={15} className="text-on-surface-variant" />
+          </button>
+
+          {isSortMenuOpen && (
+            <div className="absolute left-0 top-10 z-30 w-44 overflow-hidden rounded-xl border border-outline/20 bg-surface-container-lowest p-1.5 shadow-lg">
+              {sortOptions.map((sort) => {
+                const isSelected = sort === selectedSort;
+
+                return (
+                  <button
+                    key={sort}
+                    type="button"
+                    onClick={() => {
+                      onSortChange(sort);
+                      setIsSortMenuOpen(false);
+                    }}
+                    className={
+                      isSelected
+                        ? "flex w-full items-center justify-between rounded-lg bg-primary-container/40 px-3 py-2 text-left text-xs font-semibold text-primary"
+                        : "flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs text-on-surface hover:bg-surface-container"
+                    }
+                  >
+                    {sortLabels[sort]}
+                    {isSelected && <Check size={15} />}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex items-center justify-between px-1 text-xs text-on-surface-variant">

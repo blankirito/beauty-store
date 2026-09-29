@@ -1,6 +1,7 @@
 export type StorefrontNavigation = {
   homeHref: string;
   productsHref: string;
+  newArrivalsHref: string;
   searchHref: string;
   ordersHref: string;
   cartHref: string;
@@ -15,6 +16,7 @@ export function getStorefrontNavigation(
   return {
     homeHref: storePath,
     productsHref: `${storePath}#products`,
+    newArrivalsHref: `${storePath}/collection/new-arrivals`,
     searchHref: `${storePath}/search`,
     ordersHref: `${storePath}/orders`,
     cartHref: `${storePath}/cart`,

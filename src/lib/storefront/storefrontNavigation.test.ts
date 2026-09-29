@@ -6,6 +6,7 @@ describe("storefront navigation", () => {
     expect(getStorefrontNavigation("boutique-demo-store")).toEqual({
       homeHref: "/store/boutique-demo-store",
       productsHref: "/store/boutique-demo-store#products",
+      newArrivalsHref: "/store/boutique-demo-store/collection/new-arrivals",
       searchHref: "/store/boutique-demo-store/search",
       ordersHref: "/store/boutique-demo-store/orders",
       cartHref: "/store/boutique-demo-store/cart",

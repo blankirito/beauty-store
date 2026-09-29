@@ -81,9 +81,12 @@ export default async function StorefrontPage({
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/25 to-transparent" />
 
           <div className="absolute inset-0 flex flex-col justify-center px-8 text-white">
-            <span className="w-fit rounded-full bg-white/20 px-3 py-1 text-xs font-semibold tracking-[0.2em] backdrop-blur-sm">
+            <Link
+              href={navigation.newArrivalsHref}
+              className="w-fit rounded-full bg-white/20 px-3 py-1 text-xs font-semibold tracking-[0.2em] backdrop-blur-sm transition hover:bg-white/30"
+            >
               NEW ARRIVALS
-            </span>
+            </Link>
 
             <h1 className="mt-3 max-w-sm font-display text-4xl">
               {storefront.name}
@@ -94,7 +97,7 @@ export default async function StorefrontPage({
             </p>
 
             <Link
-              href="#products"
+              href={navigation.newArrivalsHref}
               className="mt-5 w-fit rounded-lg bg-white px-6 py-3 text-sm font-semibold text-primary"
             >
               Shop Now

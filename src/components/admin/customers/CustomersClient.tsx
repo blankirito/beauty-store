@@ -1,6 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import {
+  sortAdminCustomers,
+  type CustomerSort,
+} from "@/lib/admin/adminListControls";
 import type {
   AdminCustomerStatus,
   AdminReportingCustomer,
@@ -21,10 +25,12 @@ export default function CustomersClient({
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] =
     useState<CustomerFilter>("All");
+  const [selectedSort, setSelectedSort] =
+    useState<CustomerSort>("highest_spent");
 
   const normalizedQuery = searchQuery.trim().toLowerCase();
 
-  const filteredCustomers = customers.filter((customer) => {
+  const matchingCustomers = customers.filter((customer) => {
     const matchesSearch =
       customer.id.toLowerCase().includes(normalizedQuery) ||
       customer.name.toLowerCase().includes(normalizedQuery) ||
@@ -37,6 +43,11 @@ export default function CustomersClient({
     return matchesSearch && matchesStatus;
   });
 
+  const filteredCustomers = sortAdminCustomers(
+    matchingCustomers,
+    selectedSort,
+  );
+
   return (
     <div className="space-y-6">
       <CustomersToolbar
@@ -47,6 +58,8 @@ export default function CustomersClient({
       <CustomerFilters
         selectedStatus={selectedStatus}
         onStatusChange={setSelectedStatus}
+        selectedSort={selectedSort}
+        onSortChange={setSelectedSort}
         totalCustomers={filteredCustomers.length}
       />
 

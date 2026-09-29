@@ -45,8 +45,8 @@ export default function ProductDetailClient({
   const router = useRouter();
   const imageUrls = supabaseUrl
     ? product.imagePaths.map((imagePath) =>
-        getPublicProductImageUrl(supabaseUrl, imagePath),
-      )
+      getPublicProductImageUrl(supabaseUrl, imagePath),
+    )
     : [];
 
   const initialImagePath = getInitialProductImagePath(
@@ -252,7 +252,7 @@ export default function ProductDetailClient({
                 : "rounded-full bg-primary-container px-2.5 py-1 text-xs font-semibold text-on-primary-container"
             }
           >
-            {isLowStock ? "Low Stock" : "Healthy Level"}
+            {isLowStock ? "Needs restocking" : "Healthy level"}
           </span>
         </div>
 
@@ -280,7 +280,7 @@ export default function ProductDetailClient({
             </div>
 
             <p className="mt-3 text-xs text-on-surface-variant">
-              Low Stock Alert
+              Restock level
             </p>
 
             <p className="mt-1 font-display text-3xl font-semibold text-on-surface">
@@ -294,8 +294,8 @@ export default function ProductDetailClient({
 
         <p className="mt-3 text-xs text-on-surface-variant">
           {isLowStock
-            ? `Restock recommended. Stock is at or below ${product.lowStockThreshold} units.`
-            : `Restock alert will appear once stock reaches ${product.lowStockThreshold} units.`}
+            ? `Needs restocking. Stock is at or below its restock level of ${product.lowStockThreshold} units.`
+            : `Restock notice appears once stock reaches its restock level of ${product.lowStockThreshold} units.`}
         </p>
       </section>
 

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import AdminShell from "@/components/admin/shared/AdminShell";
 import { getAdminAccessDestination } from "@/lib/auth/getAdminAccessDestination";
 import { createClient } from "@/lib/supabase/server";
+import { getAdminNotifications } from "@/lib/admin/getAdminNotifications";
 
 type AdminLayoutProps = {
   children: React.ReactNode;
@@ -51,9 +52,13 @@ export default async function AdminLayout({
     redirect(destination);
   }
 
+  const notifications = await getAdminNotifications();
+
   return (
     <div className="admin-theme min-h-screen">
-      <AdminShell>{children}</AdminShell>
+      <AdminShell notifications={notifications}>
+        {children}
+      </AdminShell>
     </div>
   );
 }

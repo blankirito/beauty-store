@@ -1,6 +1,5 @@
 "use client";
 
-import { MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { AdminOrder } from "@/lib/orders/adminOrder";
 import { getPublicProductImageUrl } from "@/lib/products/productImageUrl";
@@ -139,7 +138,7 @@ export default function OrderList({ items }: OrderListProps) {
               </div>
             </div>
 
-            <div className="flex items-center justify-between border-t border-outline/10 pt-2">
+            <div className="flex items-center border-t border-outline/10 pt-2">
               {actionLabel ? (
                 <button
                   type="button"
@@ -158,19 +157,6 @@ export default function OrderList({ items }: OrderListProps) {
               ) : (
                 <span />
               )}
-
-              <button
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation();
-
-                  // Overflow menu UI comes later.
-                }}
-                aria-label={`More options for ${order.id}`}
-                className="flex h-8 w-8 items-center justify-center rounded-full text-primary hover:bg-surface-container"
-              >
-                <MoreHorizontal size={18} />
-              </button>
             </div>
           </article>
         );

@@ -1,6 +1,14 @@
+"use client";
+
 import { Download } from "lucide-react";
 
-export default function OrdersHero() {
+type OrdersHeroProps = {
+  onExport: () => void;
+};
+
+export default function OrdersHero({
+  onExport,
+}: OrdersHeroProps) {
   return (
     <section className="space-y-3.5">
       <div className="flex items-start justify-between gap-4">
@@ -16,6 +24,7 @@ export default function OrdersHero() {
 
         <button
           type="button"
+          onClick={onExport}
           className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-full bg-primary px-4 py-2.5 text-xs font-semibold tracking-wide text-on-primary shadow-sm transition-all hover:bg-on-primary-container active:scale-[0.98]"
         >
           <Download size={16} />

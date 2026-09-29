@@ -1,6 +1,4 @@
-import OrderMetrics from "@/components/admin/orders/OrderMetrics";
 import OrdersClient from "@/components/admin/orders/OrdersClient";
-import OrdersHero from "@/components/admin/orders/OrdersHero";
 import AdminOwnerCard from "@/components/admin/shared/AdminOwnerCard";
 import { getAdminOrderMetrics } from "@/lib/orders/adminOrderMetrics";
 import { getAdminOrders } from "@/lib/orders/getAdminOrders";
@@ -20,11 +18,9 @@ export default async function AdminOrdersPage({
 
   return (
     <main className="min-h-screen space-y-6 bg-surface px-5 py-6 pb-10">
-      <OrdersHero />
-      <OrderMetrics metrics={metrics} />
-
       <OrdersClient
         orders={orders}
+        metrics={metrics}
         customerId={customerId}
         customerName={customerId}
       />

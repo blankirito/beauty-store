@@ -159,7 +159,7 @@ export default function ProductList({ items }: ProductListProps) {
               {isLowStock ? (
                 <div className="flex items-center gap-1.5 rounded-full bg-error-container px-2 py-1 text-xs font-medium text-error">
                   <TriangleAlert size={14} />
-                  {product.stock} remaining · Low stock
+                  {product.stock} remaining · Needs restocking
                 </div>
               ) : (
                 <div className="flex items-center gap-1.5 text-xs text-on-surface-variant">

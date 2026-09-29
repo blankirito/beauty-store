@@ -59,7 +59,7 @@ export default function ProductMetrics({
       <article className="space-y-1 rounded-2xl border border-outline/15 bg-surface-container-lowest p-3.5 shadow-sm">
         <div className="flex items-center justify-between">
           <p className="text-xs font-semibold text-on-surface-variant">
-            Low Stock
+            Needs restocking
           </p>
 
           <TriangleAlert size={17} className="text-error" />
@@ -70,7 +70,7 @@ export default function ProductMetrics({
         </p>
 
         <p className="text-[10px] font-medium text-error">
-          Restock recommended
+          At or below its restock level
         </p>
       </article>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search } from "lucide-react";
 
 type OrdersToolbarProps = {
   searchQuery: string;
@@ -12,8 +12,8 @@ export default function OrdersToolbar({
   onSearchQueryChange,
 }: OrdersToolbarProps) {
   return (
-    <section className="flex items-center gap-2">
-      <label className="relative flex-1">
+    <section className="flex items-center">
+      <label className="relative w-full">
         <Search
           size={17}
           className="absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant"
@@ -27,14 +27,6 @@ export default function OrdersToolbar({
           className="h-11 w-full rounded-2xl bg-surface-container pl-10 pr-4 text-sm text-on-surface shadow-sm outline-none placeholder:text-on-surface-variant/70 focus:ring-2 focus:ring-primary/30"
         />
       </label>
-
-      <button
-        type="button"
-        aria-label="Open order filters"
-        className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-surface-container text-on-surface-variant shadow-sm"
-      >
-        <SlidersHorizontal size={18} />
-      </button>
     </section>
   );
 }

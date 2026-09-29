@@ -39,6 +39,7 @@ export type AdminReportingCustomer = {
     phone: string | null;
     location: string;
     orderCount: number;
+    paidOrderCount: number;
     totalSpent: number;
     isGuest: boolean;
     firstOrderAt: string;
@@ -137,6 +138,7 @@ export function buildAdminCustomers(
                 phone: order.customerPhone,
                 location: order.location,
                 orderCount: 1,
+                paidOrderCount: isPaidOrder(order) ? 1 : 0,
                 totalSpent: paidAmount,
                 isGuest: order.customerId === null,
                 firstOrderAt: order.createdAt,
@@ -156,6 +158,8 @@ export function buildAdminCustomers(
             phone: isNewerOrder ? order.customerPhone : existing.phone,
             location: isNewerOrder ? order.location : existing.location,
             orderCount: existing.orderCount + 1,
+            paidOrderCount:
+                existing.paidOrderCount + (isPaidOrder(order) ? 1 : 0),
             totalSpent: existing.totalSpent + paidAmount,
             firstOrderAt:
                 new Date(order.createdAt).getTime() <
@@ -196,11 +200,11 @@ export function buildAdminCustomerMetrics(
 }
 
 export function getCustomerRetentionMetrics(
-    customers: Array<Pick<AdminReportingCustomer, "orderCount">>,
+    customers: Array<Pick<AdminReportingCustomer, "paidOrderCount">>,
 ) {
     const totalCustomers = customers.length;
     const returningCustomers = customers.filter(
-        (customer) => customer.orderCount >= 2,
+        (customer) => customer.paidOrderCount >= 2,
     ).length;
 
     return {

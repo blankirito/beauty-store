@@ -4,6 +4,10 @@ import { useState } from "react";
 import type { ProductStatusLabel } from "@/lib/products/productStatus";
 import { toDisplayProductStatus } from "@/lib/products/productStatus";
 import type { AdminProduct } from "@/lib/products/adminProduct";
+import {
+  sortAdminProducts,
+  type ProductSort,
+} from "@/lib/admin/adminListControls";
 import ProductFilters from "./ProductFilters";
 import ProductList from "./ProductList";
 import ProductPagination from "./ProductPagination";
@@ -23,6 +27,8 @@ export default function ProductsClient({
     useState("All Categories");
   const [selectedStatus, setSelectedStatus] =
     useState<StatusFilter>("All");
+  const [selectedSort, setSelectedSort] =
+    useState<ProductSort>("newest");
 
   const normalizedQuery = searchQuery.trim().toLowerCase();
 
@@ -30,7 +36,7 @@ export default function ProductsClient({
     ...new Set(products.map((product) => product.category)),
   ];
 
-  const filteredProducts = products.filter((product) => {
+  const matchingProducts = products.filter((product) => {
     const matchesSearch =
       product.name.toLowerCase().includes(normalizedQuery) ||
       product.sku.toLowerCase().includes(normalizedQuery) ||
@@ -49,6 +55,11 @@ export default function ProductsClient({
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
+  const filteredProducts = sortAdminProducts(
+    matchingProducts,
+    selectedSort,
+  );
+
   return (
     <div className="space-y-6">
       <ProductsToolbar
@@ -62,6 +73,8 @@ export default function ProductsClient({
         onCategoryChange={setSelectedCategory}
         selectedStatus={selectedStatus}
         onStatusChange={setSelectedStatus}
+        selectedSort={selectedSort}
+        onSortChange={setSelectedSort}
         totalProducts={filteredProducts.length}
       />
 
