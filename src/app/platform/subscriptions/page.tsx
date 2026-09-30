@@ -9,6 +9,7 @@ import {
     grantComplimentaryAccess,
     removeComplimentaryAccess,
 } from "./actions";
+import PaymentRequestReviewForm from "@/components/platform/PaymentRequestReviewForm";
 
 function formatDate(value: string | null) {
     if (!value) {
@@ -88,6 +89,16 @@ export default async function PlatformSubscriptionsPage() {
                 current_period_ends_at,
                 complimentary_reason,
                 payment_grace_ends_at
+            ),
+            store_payment_requests (
+                id,
+                requested_months,
+                requested_total_amount,
+                payer_name,
+                tng_reference,
+                merchant_note,
+                status,
+                created_at
             )
         `)
         .order("created_at", { ascending: false });
@@ -120,6 +131,18 @@ export default async function PlatformSubscriptionsPage() {
             currentPeriodEndsAt: subscription?.current_period_ends_at ?? null,
             complimentaryReason: subscription?.complimentary_reason ?? null,
             paymentGraceEndsAt: subscription?.payment_grace_ends_at ?? null,
+            paymentRequests: (store.store_payment_requests ?? []).map(
+                (request) => ({
+                    id: request.id,
+                    requestedMonths: request.requested_months,
+                    requestedTotalAmount: request.requested_total_amount,
+                    payerName: request.payer_name,
+                    tngReference: request.tng_reference,
+                    merchantNote: request.merchant_note,
+                    status: request.status,
+                    createdAt: request.created_at,
+                }),
+            ),
         };
     });
 
@@ -192,8 +215,8 @@ export default async function PlatformSubscriptionsPage() {
                                 ? subscription.trialEndsAt
                                 : subscription.planCode ===
                                     "lumina-monthly-founding"
-                                  ? subscription.foundingPriceLockedUntil
-                                  : subscription.paymentGraceEndsAt ??
+                                    ? subscription.foundingPriceLockedUntil
+                                    : subscription.paymentGraceEndsAt ??
                                     subscription.currentPeriodEndsAt;
 
                         const dateLabel =
@@ -201,10 +224,10 @@ export default async function PlatformSubscriptionsPage() {
                                 ? "Trial ends"
                                 : subscription.planCode ===
                                     "lumina-monthly-founding"
-                                  ? "Founding price ends"
-                                  : subscription.paymentGraceEndsAt
-                                    ? "Payment grace ends"
-                                    : "Current period ends";
+                                    ? "Founding price ends"
+                                    : subscription.paymentGraceEndsAt
+                                        ? "Payment grace ends"
+                                        : "Current period ends";
 
                         return (
                             <article
@@ -225,8 +248,8 @@ export default async function PlatformSubscriptionsPage() {
                                         {isComplimentary
                                             ? "Complimentary"
                                             : getStatusLabel(
-                                                  subscription.applicationStatus,
-                                              )}
+                                                subscription.applicationStatus,
+                                            )}
                                     </span>
                                 </div>
 
@@ -257,8 +280,40 @@ export default async function PlatformSubscriptionsPage() {
                                     )}
                                 </div>
 
+                                {subscription.paymentRequests
+                                    .filter((request) => request.status === "pending")
+                                    .map((request) => (
+                                        <section
+                                            key={request.id}
+                                            className="mt-4 rounded-xl border border-secondary/20 bg-secondary-container/25 p-3"
+                                        >
+                                            <p className="text-sm font-semibold text-on-surface">
+                                                Pending TNG payment · RM {Number(request.requestedTotalAmount).toFixed(2)}
+                                            </p>
+
+                                            <p className="mt-2 text-xs text-on-surface-variant">
+                                                {request.requestedMonths} month(s) · Payer: {request.payerName}
+                                            </p>
+
+                                            <p className="mt-1 text-xs text-on-surface-variant">
+                                                Reference: {request.tngReference}
+                                            </p>
+
+                                            {request.merchantNote ? (
+                                                <p className="mt-1 text-xs text-on-surface-variant">
+                                                    Note: {request.merchantNote}
+                                                </p>
+                                            ) : null}
+
+                                            <PaymentRequestReviewForm
+                                                requestId={request.id}
+                                                requestedMonths={request.requestedMonths}
+                                            />
+                                        </section>
+                                    ))}
+
                                 {isComplimentary &&
-                                subscription.complimentaryReason ? (
+                                    subscription.complimentaryReason ? (
                                     <p className="mt-3 rounded-lg bg-primary-container/40 px-3 py-2 text-xs text-on-primary-container">
                                         Admin note:{" "}
                                         {subscription.complimentaryReason}

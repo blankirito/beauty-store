@@ -86,3 +86,32 @@ export function getUnreadNotificationCount(
 ) {
   return notifications.filter((notification) => !notification.isRead).length;
 }
+
+export function groupAdminNotifications(
+  notifications: AdminNotification[],
+) {
+  const sortNewestFirst = (
+    left: AdminNotification,
+    right: AdminNotification,
+  ) =>
+    new Date(right.createdAt).getTime() -
+    new Date(left.createdAt).getTime();
+
+  return {
+    unread: notifications
+      .filter((notification) => !notification.isRead)
+      .sort(sortNewestFirst),
+
+    read: notifications
+      .filter((notification) => notification.isRead)
+      .sort(sortNewestFirst),
+  };
+}
+
+export function getAdminNotificationDestination(
+  notification: Pick<AdminNotification, "orderNumber">,
+) {
+  return notification.orderNumber
+    ? `/admin/orders/${notification.orderNumber}`
+    : null;
+}

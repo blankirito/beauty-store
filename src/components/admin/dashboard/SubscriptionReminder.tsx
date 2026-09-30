@@ -20,6 +20,10 @@ export default function SubscriptionReminder({
 
   const reminder = getSubscriptionReminder(billing);
 
+  if (!reminder) {
+    return null;
+  }
+
   const presentation = {
     trial: {
       icon: Clock3,

@@ -7,6 +7,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import type { MerchantPlanCode } from "@/lib/merchants/merchantBilling";
+import ManualTngPaymentForm from "./ManualTngPaymentForm";
 
 type BillingStatusCardProps = {
   billing: {
@@ -20,6 +21,15 @@ type BillingStatusCardProps = {
     trialDaysRemaining: number | null;
     currentPeriodEndsAt: string | null;
     paymentGraceEndsAt: string | null;
+    tngPayment: {
+      recipientName: string;
+      recipientNumber: string;
+    } | null;
+    paymentRequests: Array<{
+      id: string;
+      status: "pending" | "approved" | "rejected";
+      review_note: string | null;
+    }>;
   };
 };
 
@@ -72,9 +82,9 @@ export default function BillingStatusCard({
     billing.trialDaysRemaining === null
       ? 0
       : Math.min(
-          100,
-          Math.max(0, ((14 - billing.trialDaysRemaining) / 14) * 100),
-        );
+        100,
+        Math.max(0, ((14 - billing.trialDaysRemaining) / 14) * 100),
+      );
 
   return (
     <div className="mt-6 space-y-6">
@@ -246,14 +256,22 @@ export default function BillingStatusCard({
           </div>
         ) : (
           <>
-            <button
-              type="button"
-              disabled
-              className="mt-6 flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl bg-surface-container px-4 py-3.5 text-sm font-semibold text-on-surface-variant"
-            >
-              <CreditCard size={18} />
-              Checkout will be available soon
-            </button>
+            {billing.tngPayment ? (
+              <ManualTngPaymentForm
+                planCode={billing.planCode}
+                foundingPriceLockedUntil={billing.foundingPriceLockedUntil}
+                recipientName={billing.tngPayment.recipientName}
+                recipientNumber={billing.tngPayment.recipientNumber}
+                hasPendingRequest={billing.paymentRequests.some(
+                  (request) => request.status === "pending",
+                )}
+              />
+            ) : (
+              <p className="mt-6 rounded-xl bg-error-container/35 px-4 py-3 text-sm text-error">
+                TNG payment instructions are not configured yet. Please contact Lumina
+                Admin.
+              </p>
+            )}
 
             <div className="mt-3 flex items-start justify-center gap-2 px-2 text-center text-xs leading-relaxed text-on-surface-variant">
               <LockKeyhole className="mt-0.5 shrink-0 text-secondary" size={15} />

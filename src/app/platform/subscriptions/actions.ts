@@ -95,3 +95,44 @@ export async function suspendStoreSubscription(
 
     return {};
 }
+
+export async function reviewManualPaymentRequest(
+  requestId: string,
+  formData: FormData,
+): Promise<{ error?: string }> {
+  const supabase = await getPlatformAdminClient();
+
+  const decision = String(formData.get("decision") ?? "");
+  const months = Number(formData.get("months"));
+  const reviewNote = String(formData.get("reviewNote") ?? "").trim();
+
+  if (decision !== "approve" && decision !== "reject") {
+    return { error: "Choose approve or reject." };
+  }
+
+  if (decision === "approve" && ![1, 3, 12].includes(months)) {
+    return { error: "Choose 1, 3, or 12 months." };
+  }
+
+  if (decision === "reject" && !reviewNote) {
+    return { error: "Enter a rejection reason." };
+  }
+
+  const { error } = await supabase.rpc(
+    "review_store_payment_request",
+    {
+      p_request_id: requestId,
+      p_decision: decision,
+      p_months: decision === "approve" ? months : null,
+      p_review_note: reviewNote || null,
+    },
+  );
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidateSubscriptionPages();
+
+  return {};
+}

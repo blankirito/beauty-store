@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   buildNewOrderNotifications,
   getUnreadNotificationCount,
+  groupAdminNotifications,
   toAdminNotification,
+  getAdminNotificationDestination,
 } from "./orderNotifications";
 
 describe("order notifications", () => {
@@ -69,5 +71,57 @@ describe("order notifications", () => {
         { isRead: false },
       ]),
     ).toBe(2);
+  });
+  it("keeps unread notifications above read notifications", () => {
+    expect(
+      groupAdminNotifications([
+        {
+          id: "read-newer",
+          orderId: "order-1",
+          orderNumber: "ORD-001",
+          title: "Read newer",
+          body: "Read notification",
+          isRead: true,
+          createdAt: "2026-09-30T10:00:00.000Z",
+        },
+        {
+          id: "unread-older",
+          orderId: "order-2",
+          orderNumber: "ORD-002",
+          title: "Unread older",
+          body: "Unread notification",
+          isRead: false,
+          createdAt: "2026-09-30T08:00:00.000Z",
+        },
+        {
+          id: "unread-newer",
+          orderId: "order-3",
+          orderNumber: "ORD-003",
+          title: "Unread newer",
+          body: "Unread notification",
+          isRead: false,
+          createdAt: "2026-09-30T09:00:00.000Z",
+        },
+      ]),
+    ).toEqual({
+      unread: [
+        expect.objectContaining({ id: "unread-newer" }),
+        expect.objectContaining({ id: "unread-older" }),
+      ],
+      read: [expect.objectContaining({ id: "read-newer" })],
+    });
+  });
+  it("returns an order route only when a notification has an order", () => {
+    expect(
+      getAdminNotificationDestination({
+        orderNumber: "ORD-001030",
+      }),
+    ).toBe("/admin/orders/ORD-001030");
+
+    expect(
+      getAdminNotificationDestination({
+        orderNumber: null,
+      }),
+    ).toBeNull();
   });
 });

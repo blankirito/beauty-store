@@ -1,3 +1,5 @@
+import { shouldShowDashboardBillingReminder } from "../manualSubscriptionPayment";
+
 type SubscriptionReminderInput = {
   status: string;
   trialDaysRemaining: number | null;
@@ -5,7 +7,7 @@ type SubscriptionReminderInput = {
   currentPeriodEndsAt: string | null;
 };
 
-type SubscriptionReminderTone = "trial" | "active" | "warning" | "neutral";
+type SubscriptionReminderTone = "trial" | "warning" | "neutral";
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-MY", {
@@ -18,12 +20,17 @@ function formatDate(value: string) {
 
 export function getSubscriptionReminder(
   input: SubscriptionReminderInput,
+  now = new Date(),
 ): {
   title: string;
   description: string;
   actionLabel: string;
   tone: SubscriptionReminderTone;
-} {
+} | null {
+  if (!shouldShowDashboardBillingReminder(input, now)) {
+    return null;
+  }
+
   if (input.status === "trialing") {
     const days = input.trialDaysRemaining ?? 0;
 
@@ -34,6 +41,17 @@ export function getSubscriptionReminder(
         : "Your free trial is currently active.",
       actionLabel: "View billing",
       tone: "trial",
+    };
+  }
+
+  if (input.status === "active") {
+    return {
+      title: "Subscription renewal is coming up",
+      description: input.currentPeriodEndsAt
+        ? `Your current period ends ${formatDate(input.currentPeriodEndsAt)}.`
+        : "Review your billing details to keep your store available.",
+      actionLabel: "View billing",
+      tone: "warning",
     };
   }
 
@@ -54,19 +72,6 @@ export function getSubscriptionReminder(
         "Review your billing details to restore your store access.",
       actionLabel: "View billing",
       tone: "warning",
-    };
-  }
-
-  if (input.status === "active") {
-    return {
-      title: "Your subscription is active",
-      description: input.currentPeriodEndsAt
-        ? `Current billing period ends ${formatDate(
-            input.currentPeriodEndsAt,
-          )}.`
-        : "Your store subscription is currently active.",
-      actionLabel: "View billing",
-      tone: "active",
     };
   }
 

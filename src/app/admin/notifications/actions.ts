@@ -32,4 +32,5 @@ export async function markAdminNotificationRead(
   }
 
   revalidatePath("/admin", "layout");
+    revalidatePath("/admin/settings/notifications");
 }

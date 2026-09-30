@@ -27,4 +27,33 @@ describe("admin settings navigation", () => {
       availability: "available",
     });
   });
+  it("keeps the agreed launch settings menu", () => {
+    expect(getStoreSettingsMenuItems()).toEqual([
+      {
+        label: "Store Profile",
+        href: "/admin/settings/profile",
+        availability: "available",
+      },
+      {
+        label: "Payment Methods",
+        href: "/admin/settings/payments",
+        availability: "available",
+      },
+      {
+        label: "Team & Permissions",
+        href: "/admin/settings",
+        availability: "coming_soon",
+      },
+      {
+        label: "Delivery & Shipping",
+        href: "/admin/settings",
+        availability: "coming_soon",
+      },
+      {
+        label: "Notifications",
+        href: "/admin/settings/notifications",
+        availability: "available",
+      },
+    ]);
+  });
 });

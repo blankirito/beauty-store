@@ -23,8 +23,8 @@ export function getStoreSettingsMenuItems(): AdminNavigationItem[] {
   return [
     {
       label: "Store Profile",
-      href: "/admin/settings",
-      availability: "coming_soon",
+      href: "/admin/settings/profile",
+      availability: "available",
     },
     {
       label: "Payment Methods",
@@ -43,8 +43,8 @@ export function getStoreSettingsMenuItems(): AdminNavigationItem[] {
     },
     {
       label: "Notifications",
-      href: "/admin/settings",
-      availability: "coming_soon",
+      href: "/admin/settings/notifications",
+      availability: "available",
     },
   ];
 }

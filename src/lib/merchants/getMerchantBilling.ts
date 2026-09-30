@@ -23,6 +23,24 @@ type DatabaseSubscription = {
   payment_grace_ends_at: string | null;
 };
 
+type DatabasePaymentRequest = {
+  id: string;
+  plan_code: string;
+  monthly_price: number;
+  requested_months: number;
+  requested_total_amount: number;
+  payer_name: string;
+  tng_reference: string;
+  merchant_note: string | null;
+  status: "pending" | "approved" | "rejected";
+  review_note: string | null;
+  reviewed_at: string | null;
+  approved_months: number | null;
+  approved_total_amount: number | null;
+  approved_access_ends_at: string | null;
+  created_at: string;
+};
+
 export async function getMerchantBilling() {
   const supabase = await createClient();
 
@@ -76,6 +94,23 @@ export async function getMerchantBilling() {
         plan_code,
         founding_price_locked_until,
         payment_grace_ends_at
+      ),
+      store_payment_requests (
+        id,
+        plan_code,
+        monthly_price,
+        requested_months,
+        requested_total_amount,
+        payer_name,
+        tng_reference,
+        merchant_note,
+        status,
+        review_note,
+        reviewed_at,
+        approved_months,
+        approved_total_amount,
+        approved_access_ends_at,
+        created_at
       )
     `)
     .eq("id", storeId)
@@ -97,8 +132,28 @@ export async function getMerchantBilling() {
     return null;
   }
 
+  const tngRecipientName = process.env.TNG_RECIPIENT_NAME?.trim() ?? "";
+  const tngRecipientNumber = process.env.TNG_RECIPIENT_NUMBER?.trim() ?? "";
+
+  const paymentRequests = (
+    (store.store_payment_requests ?? []) as DatabasePaymentRequest[]
+  ).sort(
+    (first, second) =>
+      new Date(second.created_at).getTime() -
+      new Date(first.created_at).getTime(),
+  );
+
   return {
+    storeId,
     storeName: store.name,
+    tngPayment:
+      tngRecipientName && tngRecipientNumber
+        ? {
+            recipientName: tngRecipientName,
+            recipientNumber: tngRecipientNumber,
+          }
+        : null,
+    paymentRequests,
     ...getMerchantBillingStatus({
       applicationStatus: application.status,
       trialStartedAt: application.trial_started_at,
