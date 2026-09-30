@@ -11,6 +11,7 @@ describe("storefront navigation", () => {
       ordersHref: "/store/boutique-demo-store/orders",
       cartHref: "/store/boutique-demo-store/cart",
       profileHref: "/store/boutique-demo-store/profile",
+      startStoreHref: "/merchant/register",
     });
   });
 });

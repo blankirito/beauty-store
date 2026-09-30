@@ -6,6 +6,7 @@ export type StorefrontNavigation = {
   ordersHref: string;
   cartHref: string;
   profileHref: string;
+  startStoreHref: string;
 };
 
 export function getStorefrontNavigation(
@@ -21,5 +22,6 @@ export function getStorefrontNavigation(
     ordersHref: `${storePath}/orders`,
     cartHref: `${storePath}/cart`,
     profileHref: `${storePath}/profile`,
+    startStoreHref: "/merchant/register",
   };
 }

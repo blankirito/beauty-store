@@ -28,7 +28,11 @@ export default function StorefrontProfileMenu({
 }: StorefrontProfileMenuProps) {
   const navigation = getStorefrontNavigation(storeSlug);
   const items: StorefrontMenuItem[] = [
-    { name: "Start your store", icon: Store },
+    {
+      name: "Start your store",
+      icon: Store,
+      href: navigation.startStoreHref,
+    },
     { name: "Orders", icon: ReceiptText, href: navigation.ordersHref },
     {
       name: "Payment Method",

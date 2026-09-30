@@ -14,6 +14,7 @@ import FulfillmentActionButton from "./FulfillmentActionButton";
 import ShipmentForm from "./ShipmentForm";
 import { getPublicProductImageUrl } from "@/lib/products/productImageUrl";
 import PaymentConfirmationButton from "./PaymentConfirmationButton";
+import { formatAdminOrderDateTime } from "@/lib/admin/formatAdminOrderDate";
 
 type RealOrderDetailProps = {
     order: AdminOrder;
@@ -29,16 +30,6 @@ function formatCurrency(value: number) {
         currency: "MYR",
         minimumFractionDigits: 2,
     }).format(value);
-}
-
-function formatDate(value: string) {
-    return new Intl.DateTimeFormat("en-MY", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-    }).format(new Date(value));
 }
 
 function getStatusClass(status: AdminOrder["status"]) {
@@ -114,7 +105,7 @@ export default function RealOrderDetail({
                         </h1>
 
                         <p className="mt-2 text-sm text-on-surface-variant">
-                            {formatDate(order.createdAt)}
+                            {formatAdminOrderDateTime(order.createdAt)}
                         </p>
                     </div>
 
@@ -312,7 +303,7 @@ export default function RealOrderDetail({
                                 )}
 
                                 <p className="mt-1 text-[11px] text-on-surface-variant">
-                                    {formatDate(event.createdAt)}
+                                    {formatAdminOrderDateTime(order.createdAt)}
                                 </p>
                             </article>
                         ))}
