@@ -2,17 +2,20 @@ import LoginHeader from "@/components/login/LoginHeader";
 import LoginForm from "@/components/login/LoginForm";
 import SocialLogin from "@/components/login/SocialLogin";
 import Link from "next/link";
+import { getSafeLoginNotice } from "@/lib/auth/authCallback";
 
 type LoginPageProps = {
     searchParams: Promise<{
         store?: string;
+        notice?: string;
     }>;
 };
 
 export default async function LoginPage({
     searchParams,
 }: LoginPageProps) {
-    const { store } = await searchParams;
+    const { store, notice } = await searchParams;
+    const initialNotice = getSafeLoginNotice(notice ?? null);
 
     const registerHref = store
         ? `/register?store=${encodeURIComponent(store)}`
@@ -41,7 +44,10 @@ export default async function LoginPage({
                     p-6
                     shadow-[0px_4px_12px_rgba(132, 81, 69, 0.08)]
                 ">
-                    <LoginForm storeSlug={store} />
+                    <LoginForm
+                        storeSlug={store}
+                        initialNotice={initialNotice}
+                    />
 
                     <div className="
                         flex
@@ -67,7 +73,7 @@ export default async function LoginPage({
                         "/>
                     </div>
 
-                    <SocialLogin />
+                    <SocialLogin storeSlug={store} />
                 </section>
 
                 <p className="

@@ -19,6 +19,7 @@ import { useStorefrontCart } from "./StorefrontCartProvider";
 import type { StorefrontSavedAddress } from "@/lib/storefront/storefrontAddresses";
 import { submitGuestCheckout } from "@/app/store/[slug]/checkout/actions";
 import { getStorefrontPaymentQrView } from "@/lib/storefront/storefrontPaymentQr";
+import { getGuestTrackingLink } from "@/lib/storefront/guestTrackingLink";
 
 type StorefrontCheckoutPageProps = {
   storeId: string;
@@ -58,6 +59,7 @@ export default function StorefrontCheckoutPage({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [success, setSuccess] = useState<CheckoutSuccess | null>(null);
+  const [trackingCopyMessage, setTrackingCopyMessage] = useState("");
   const initialPaymentMethodId =
     preferredPaymentMethodId &&
       paymentMethods.some(
@@ -253,6 +255,25 @@ export default function StorefrontCheckoutPage({
     }
   }
 
+  async function handleCopyTrackingLink(trackingLink: string) {
+    try {
+      await navigator.clipboard.writeText(
+        `${window.location.origin}${trackingLink}`,
+      );
+      setTrackingCopyMessage(
+        "Tracking link copied. Keep it private and save it somewhere safe.",
+      );
+
+      window.setTimeout(() => {
+        setTrackingCopyMessage("");
+      }, 3000);
+    } catch {
+      setTrackingCopyMessage(
+        "Could not copy the tracking link. Please use Track this order instead.",
+      );
+    }
+  }
+
   if (!isReady || isLoadingProducts) {
     return (
       <main className="min-h-screen bg-background px-5 py-6">
@@ -262,6 +283,12 @@ export default function StorefrontCheckoutPage({
   }
 
   if (success) {
+    const trackingLink = getGuestTrackingLink(
+      storeSlug,
+      success.order_number,
+      success.tracking_token,
+    );
+
     return (
       <main className="min-h-screen bg-background px-5 py-12">
         <section className="mx-auto max-w-lg rounded-2xl bg-surface p-8 text-center shadow-sm">
@@ -313,20 +340,44 @@ export default function StorefrontCheckoutPage({
             </div>
           )}
 
-          <div className="mt-6 flex flex-col gap-3">
-            <a
-              href={`/store/${storeSlug}/orders/${success.order_number}?token=${encodeURIComponent(success.tracking_token)}`}
-              className="inline-flex w-full items-center justify-center rounded-2xl border-2 border-[#915747] px-5 py-3 font-semibold text-[#915747]"
-            >
-              Track this order
-            </a>
+          <div className="mt-6">
+            <p className="mb-3 text-sm leading-relaxed text-on-surface-variant">
+              This private tracking link is the only way for a guest to view this
+              order later. Save it somewhere safe and do not share it.
+            </p>
 
-            <Link
-              href={`/store/${storeSlug}`}
-              className="inline-flex w-full items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white"
-            >
-              Back to store
-            </Link>
+            <div className="flex flex-col gap-3">
+              <a
+                href={trackingLink}
+                className="inline-flex w-full items-center justify-center rounded-2xl border-2 border-[#915747] px-5 py-3 font-semibold text-[#915747]"
+              >
+                Track this order
+              </a>
+
+              <button
+                type="button"
+                onClick={() => void handleCopyTrackingLink(trackingLink)}
+                className="inline-flex w-full items-center justify-center rounded-xl border border-outline px-5 py-3 text-sm font-semibold text-primary transition hover:bg-surface-low"
+              >
+                Copy tracking link
+              </button>
+
+              <Link
+                href={`/store/${storeSlug}`}
+                className="inline-flex w-full items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white"
+              >
+                Back to store
+              </Link>
+            </div>
+
+            {trackingCopyMessage && (
+              <p
+                role="status"
+                className="mt-3 rounded-lg bg-primary-container/25 px-3 py-2 text-sm leading-relaxed text-on-primary-container"
+              >
+                {trackingCopyMessage}
+              </p>
+            )}
           </div>
         </section>
       </main>

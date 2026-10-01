@@ -8,18 +8,25 @@ import AuthInput from "../auth/AuthInput";
 import { useRouter } from "next/navigation";
 import { getSignInDestination } from "@/lib/auth/getSignInDestination";
 import { createClient } from "@/lib/supabase/client";
+import { getWhatsAppSupportHref } from "@/lib/support/whatsAppSupport";
 
 type LoginFormProps = {
   storeSlug?: string;
+  initialNotice?: string;
 };
 
 export default function LoginForm({
   storeSlug,
-}: LoginFormProps) {  const [email, setEmail] = useState("");
+  initialNotice = "",
+}: LoginFormProps) {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [notice, setNotice] = useState("");
+  const [notice, setNotice] = useState(initialNotice);
   const router = useRouter();
+  const supportHref = getWhatsAppSupportHref(
+    process.env.NEXT_PUBLIC_SUPPORT_WHATSAPP_NUMBER,
+  );
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -104,17 +111,28 @@ export default function LoginForm({
         />
 
         <div className="mt-2 text-right">
-          <button
-            type="button"
-            onClick={() =>
-              setNotice(
-                "Password reset will be available after authentication is connected.",
-              )
-            }
-            className="text-sm font-semibold text-primary transition hover:underline"
-          >
-            Forgot Password?
-          </button>
+          {supportHref ? (
+            <a
+              href={supportHref}
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm font-semibold text-primary transition hover:underline"
+            >
+              Forgot Password? Contact support
+            </a>
+          ) : (
+            <button
+              type="button"
+              onClick={() =>
+                setNotice(
+                  "Support is temporarily unavailable. Please try again later.",
+                )
+              }
+              className="text-sm font-semibold text-primary transition hover:underline"
+            >
+              Forgot Password?
+            </button>
+          )}
         </div>
       </div>
 
