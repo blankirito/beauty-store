@@ -3,6 +3,7 @@ import type { AdminCustomerStatus, AdminReportingCustomer } from "./adminCustome
 import {
   buildAdminOrdersCsv,
   filterAndSortAdminOrders,
+  getAdminListPage,
   sortAdminCustomers,
   sortAdminProducts,
 } from "./adminListControls";
@@ -184,5 +185,27 @@ describe("admin list controls", () => {
         `ORD-001001,2026-09-30T12:00:00.000Z,"'=HYPERLINK(""https://example.com"")","lee,customer@example.com",Processing,Paid,Bank Transfer,123.45`,
       ].join("\r\n"),
     );
+  });
+  it("shows the remaining orders on the second page", () => {
+    const orders = Array.from({ length: 8 }, (_, index) =>
+      order(
+        `ORD-00000${index + 1}`,
+        `2026-09-${String(index + 1).padStart(2, "0")}T10:00:00.000Z`,
+      ),
+    );
+
+    expect(getAdminListPage(orders, 1, 5).items.map((item) => item.id)).toEqual([
+      "ORD-000001",
+      "ORD-000002",
+      "ORD-000003",
+      "ORD-000004",
+      "ORD-000005",
+    ]);
+
+    expect(getAdminListPage(orders, 2, 5).items.map((item) => item.id)).toEqual([
+      "ORD-000006",
+      "ORD-000007",
+      "ORD-000008",
+    ]);
   });
 });

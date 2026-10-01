@@ -163,14 +163,6 @@ export default function OrderStatusFilters({
             )}
           </div>
         </div>
-
-        <span className="whitespace-nowrap">
-          Showing{" "}
-          <strong className="text-on-surface">
-            {totalOrders === 0 ? 0 : `1–${Math.min(5, totalOrders)}`}
-          </strong>{" "}
-          of {totalOrders}
-        </span>
       </div>
     </section>
   );

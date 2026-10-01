@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import {
   filterAndSortAdminOrders,
+  getAdminListPage,
   type OrderDateRange,
   type OrderSort,
 } from "@/lib/admin/adminListControls";
@@ -21,6 +22,8 @@ import OrderMetrics from "./OrderMetrics";
 import OrdersHero from "./OrdersHero";
 
 type OrderFilter = "All" | OrderStatus;
+
+const ordersPerPage = 5;
 
 type OrdersClientProps = {
   customerId?: string;
@@ -40,6 +43,7 @@ export default function OrdersClient({
   const [selectedDateRange, setSelectedDateRange] =
     useState<OrderDateRange>("all");
   const [selectedSort, setSelectedSort] = useState<OrderSort>("newest");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const normalizedQuery = searchQuery.trim().toLowerCase();
 
@@ -65,7 +69,13 @@ export default function OrdersClient({
     now: new Date(),
   });
 
-    function handleExport() {
+  const paginatedOrders = getAdminListPage(
+    filteredOrders,
+    currentPage,
+    ordersPerPage,
+  );
+
+  function handleExport() {
     const csv = buildAdminOrdersCsv(filteredOrders);
     const blob = new Blob([csv], {
       type: "text/csv;charset=utf-8",
@@ -112,21 +122,37 @@ export default function OrdersClient({
 
       <OrdersToolbar
         searchQuery={searchQuery}
-        onSearchQueryChange={setSearchQuery}
+        onSearchQueryChange={(value) => {
+          setSearchQuery(value);
+          setCurrentPage(1);
+        }}
       />
 
       <OrderStatusFilters
         selectedStatus={selectedStatus}
-        onStatusChange={setSelectedStatus}
+        onStatusChange={(status) => {
+          setSelectedStatus(status);
+          setCurrentPage(1);
+        }}
         selectedDateRange={selectedDateRange}
-        onDateRangeChange={setSelectedDateRange}
+        onDateRangeChange={(range) => {
+          setSelectedDateRange(range);
+          setCurrentPage(1);
+        }}
         selectedSort={selectedSort}
-        onSortChange={setSelectedSort}
+        onSortChange={(sort) => {
+          setSelectedSort(sort);
+          setCurrentPage(1);
+        }}
         totalOrders={filteredOrders.length}
       />
 
-      <OrderList items={filteredOrders} />
-      <OrderPagination totalOrders={filteredOrders.length} />
+      <OrderList items={paginatedOrders.items} />
+      <OrderPagination
+        currentPage={paginatedOrders.currentPage}
+        totalOrders={filteredOrders.length}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 }

@@ -56,7 +56,7 @@ export default function OrderList({ items }: OrderListProps) {
 
   return (
     <section className="space-y-3">
-      {items.slice(0, 5).map((order) => {
+      {items.map((order) => {
         const imageUrl =
           order.firstItemImagePath && supabaseUrl
             ? getPublicProductImageUrl(supabaseUrl, order.firstItemImagePath)
