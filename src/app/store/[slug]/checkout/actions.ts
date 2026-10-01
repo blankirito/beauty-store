@@ -51,18 +51,13 @@ export async function submitGuestCheckout(
         const authSupabase = await createClient();
         const {
             data: { user },
-            error: authError,
         } = await authSupabase.auth.getUser();
-
-        if (authError) {
-            throw new Error("Could not verify your account. Please try again.");
-        }
 
         const supabase = createServiceClient();
 
         const { data, error } = await supabase.rpc(
             "create_guest_checkout_order",
-            buildCheckoutOrderRpcParams(request, user?.id ?? null),
+            buildCheckoutOrderRpcParams(request, user?.id),
         );
 
         if (error) {

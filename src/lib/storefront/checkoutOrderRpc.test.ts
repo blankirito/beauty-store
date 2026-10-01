@@ -43,4 +43,11 @@ describe("checkout order RPC parameters", () => {
       p_customer_id: null,
     });
   });
+  it("keeps a missing sign-in session as an unassociated guest", () => {
+    expect(
+      buildCheckoutOrderRpcParams(request, undefined),
+    ).toMatchObject({
+      p_customer_id: null,
+    });
+  });
 });

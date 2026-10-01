@@ -2,7 +2,7 @@ import type { GuestCheckoutRequest } from "./guestCheckout";
 
 export function buildCheckoutOrderRpcParams(
   request: GuestCheckoutRequest,
-  customerId: string | null,
+  customerId: string | null | undefined,
 ) {
   return {
     p_store_slug: request.storeSlug,
@@ -17,6 +17,6 @@ export function buildCheckoutOrderRpcParams(
     p_country: request.country,
     p_payment_method_id: request.paymentMethodId,
     p_items: request.items,
-    p_customer_id: customerId,
+    p_customer_id: customerId ?? null,
   };
 }
