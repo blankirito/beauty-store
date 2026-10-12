@@ -119,13 +119,13 @@ export default function StorefrontProductClient({
         </button>
       </header>
 
-      <section className="aspect-[4/5] w-full overflow-hidden bg-surface-low sm:aspect-square">
+      <section className="aspect-square w-full overflow-hidden bg-surface-low">
         {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={imageUrl}
             alt={product.imageAlt ?? product.name}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-contain"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-on-surface-variant">
@@ -223,7 +223,7 @@ export default function StorefrontProductClient({
           Product Description
         </h3>
 
-        <p className="text-sm leading-relaxed text-on-surface-variant">
+        <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-on-surface-variant">
           {product.description}
         </p>
       </section>

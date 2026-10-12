@@ -132,7 +132,7 @@ export default function ProductDetailClient({
               onError={(event) => {
                 event.currentTarget.classList.add("hidden");
               }}
-              className="absolute inset-0 aspect-[4/3] w-full object-cover"
+              className="absolute inset-0 h-full w-full object-contain"
             />
           ) : null}
         </div>
@@ -157,7 +157,7 @@ export default function ProductDetailClient({
                   <img
                     src={imageUrl}
                     alt={`${product.name} view ${index + 1}`}
-                    className="aspect-square w-full object-cover"
+                    className="aspect-square w-full object-contain"
                   />
                 </button>
               );
@@ -326,7 +326,7 @@ export default function ProductDetailClient({
             Description
           </h3>
 
-          <p className="mt-2 text-sm leading-relaxed text-on-surface">
+          <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-relaxed text-on-surface">
             {product.description}
           </p>
         </div>

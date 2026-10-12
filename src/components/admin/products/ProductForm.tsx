@@ -330,6 +330,9 @@ export default function ProductForm({
                 <p className="mt-1 text-xs text-on-surface-variant">
                   Up to 5 images · Choose one primary display image
                 </p>
+                <p className="mt-1 text-xs leading-relaxed text-on-surface-variant">
+                  Recommended: 1200 × 1200 px square photos. Keep the product centred with some space around it.
+                </p>
               </div>
 
               <span className="rounded-full bg-surface-container px-2.5 py-1 text-xs font-semibold text-primary">
@@ -381,7 +384,7 @@ export default function ProductForm({
                       <img
                         src={image.previewUrl}
                         alt={`Product preview ${index + 1}`}
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-contain"
                       />
 
                       {isPrimary ? (

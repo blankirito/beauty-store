@@ -68,7 +68,7 @@ export default function StorefrontProductCard({
             <img
               src={imageUrl}
               alt={product.imageAlt ?? product.name}
-              className="h-full w-full object-cover transition duration-300 hover:scale-105"
+              className="h-full w-full object-contain"
             />
           ) : (
             <div className="flex h-full items-center justify-center px-4 text-center text-sm text-on-surface-variant">
